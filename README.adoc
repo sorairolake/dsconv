@@ -1,0 +1,15 @@
+= dsconv
+
+*dsconv* is a command-line utilities for converting from one data-serialization format to another.
+
+== Contributing
+
+Please refer to the link:CONTRIBUTING.adoc[Contribution Guide].
+
+== License
+
+Copyright (C) 2021 Shun Sakai (see link:AUTHORS.adoc[])
+
+This program is distributed under the terms of the _Apache License 2.0_.
+
+See link:COPYING[] for details.
