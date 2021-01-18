@@ -19,19 +19,19 @@ First, either download the source archive or clone the https://github.com/sorair
 
 .To clone the Git repository
 ----
-git clone https://github.com/sorairolake/dsconv.git
-cd dsconv
+$ git clone https://github.com/sorairolake/dsconv.git
+$ cd dsconv
 ----
 
 .To install the executable
 ----
-cargo install --path .
+$ cargo install --path .
 ----
 
 .To install the documentation as well (when installing to `/usr/local`)
 ----
-cargo install --root /usr/local --path .
-meson setup builddir
-ninja -C builddir
-ninja -C builddir install
+# cargo install --root /usr/local --path .
+$ meson setup builddir
+$ ninja -C builddir
+# ninja -C builddir install
 ----
