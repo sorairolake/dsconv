@@ -13,7 +13,7 @@ To build the documentation, you need to have the following additional dependenci
   * https://mesonbuild.com/[Meson] (≥ 0.52.0)
   * https://asciidoctor.org/[Asciidoctor] (for building man page)
 
-== Building and Installing from Source
+== Building and installing from source
 
 First, either download the source archive or clone the https://github.com/sorairolake/dsconv[Git repository].
 

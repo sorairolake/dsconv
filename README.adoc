@@ -2,7 +2,7 @@
 
 *dsconv* is a command-line utilities for converting from one data-serialization format to another.
 
-== How to Build and Install
+== How to build and install
 
 Please refer to the link:INSTALL.adoc[Installation Guide].
 
