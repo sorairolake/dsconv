@@ -1,0 +1,17 @@
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Copyright (C) 2021 Shun Sakai
+#
+
+option('enable_doc',
+    type : 'boolean',
+    description : 'Enable install of documentation')
+
+option('enable_license',
+    type : 'boolean',
+    description : 'Enable install of the license')
+
+option('enable_man',
+    type : 'boolean',
+    description : 'Enable build and install of man page')
