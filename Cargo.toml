@@ -1,0 +1,13 @@
+[package]
+name = "dsconv"
+version = "0.1.0"
+authors = ["Shun Sakai <sorairolake@protonmail.ch>"]
+edition = "2018"
+description = "A data-serialization format converter"
+readme = "README.adoc"
+repository = "https://github.com/sorairolake/dsconv"
+license = "Apache-2.0"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
