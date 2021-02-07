@@ -1,6 +1,6 @@
 = dsconv
 
-*dsconv* is a command-line utilities for converting from one data-serialization format to another.
+*dsconv* is a command-line utility for converting from one data-serialization format to another.
 
 == How to build and install
 
