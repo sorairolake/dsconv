@@ -1,0 +1,91 @@
+//
+// SPDX-License-Identifier: Apache-2.0
+//
+// Copyright (C) 2021 Shun Sakai
+//
+
+= dsconv(1)
+// Specify in UTC.
+:docdate: 2021-02-14
+:doctype: manpage
+:mansource: dsconv {manversion}
+:manmanual: General Commands Manual
+:includedir: ../include
+
+== NAME
+
+dsconv - a data-serialization format converter
+
+== SYNOPSIS
+
+*{manname}* [_OPTION_...] [_FILE_]
+
+== DESCRIPTION
+
+*{manname}* is a command-line utility for converting from one data-serialization format to another.
+If _FILE_ is not specified, or when _FILE_ is "*-*", the input is read from stdin.
+
+== OPTIONS
+
+=== Conversion options
+
+*-f* _FORMAT_, *--from*=_FORMAT_::
+  Specify input format.
+  This option can be omitted if the input file is specified and _FORMAT_ can be determined from the filename extension.
+
+  _FORMAT_ can be:{blank}:::
+
+    * *json* (JSON)
+    * *yaml* (YAML)
+    * *toml* (TOML)
+
+*-t* _FORMAT_, *--to*=_FORMAT_::
+  Specify output format.
+  This option can be omitted if the output file is specified and _FORMAT_ can be determined from the filename extension.
+
+  _FORMAT_ can be:{blank}:::
+
+    * *json* (JSON)
+    * *yaml* (YAML)
+    * *toml* (TOML)
+
+*--list-input-formats*::
+  List supported input formats.
+
+*--list-output-formats*::
+  List supported output formats.
+
+=== I/O options
+
+*-o* _FILE_, *--output*=_FILE_::
+  Output to _FILE_ instead of stdout.
+
+*--pretty*=[*true*|*false*]::
+  Output as a pretty-printed string.
+  If the value is omitted, it is the same as selecting *true*.
+  This option is available when the output is JSON or TOML (default: *false*).
+
+=== General options
+
+*-h*, *--help*::
+  Print help message and exit.
+
+*-V*, *--version*::
+  Print the version number and exit.
+
+include::{includedir}/section-exit-status.adoc[]
+
+include::{includedir}/section-notes.adoc[]
+
+== EXAMPLES
+
+Convert a JSON file to TOML:{blank}::
+  $ *{manname} -t toml file.json*
+
+include::{includedir}/section-reporting-bugs.adoc[]
+
+include::{includedir}/section-copyright.adoc[]
+
+== SEE ALSO
+
+*bat*(1), *jq*(1)
