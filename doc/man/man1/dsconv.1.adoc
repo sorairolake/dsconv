@@ -6,7 +6,7 @@
 
 = dsconv(1)
 // Specify in UTC.
-:docdate: 2021-02-14
+:docdate: 2021-04-27
 :doctype: manpage
 :mansource: dsconv {manversion}
 :manmanual: General Commands Manual
@@ -23,7 +23,7 @@ dsconv - a data-serialization format converter
 == DESCRIPTION
 
 *{manname}* is a command-line utility for converting from one data-serialization format to another.
-If _FILE_ is not specified, or when _FILE_ is "*-*", the input is read from stdin.
+If _FILE_ is not specified, the input is read from stdin.
 
 == OPTIONS
 
@@ -35,9 +35,9 @@ If _FILE_ is not specified, or when _FILE_ is "*-*", the input is read from stdi
 
   _FORMAT_ can be:{blank}:::
 
-    * *json* (JSON)
-    * *yaml* (YAML)
-    * *toml* (TOML)
+    * *JSON*
+    * *YAML*
+    * *TOML*
 
 *-t* _FORMAT_, *--to*=_FORMAT_::
   Specify output format.
@@ -45,9 +45,9 @@ If _FILE_ is not specified, or when _FILE_ is "*-*", the input is read from stdi
 
   _FORMAT_ can be:{blank}:::
 
-    * *json* (JSON)
-    * *yaml* (YAML)
-    * *toml* (TOML)
+    * *JSON*
+    * *YAML*
+    * *TOML*
 
 *--list-input-formats*::
   List supported input formats.
@@ -72,6 +72,7 @@ If _FILE_ is not specified, or when _FILE_ is "*-*", the input is read from stdi
 
 *-V*, *--version*::
   Print the version number and exit.
+  When the long option is specified, additional information will also be printed.
 
 include::{includedir}/section-exit-status.adoc[]
 
