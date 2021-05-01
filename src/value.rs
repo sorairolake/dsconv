@@ -8,6 +8,7 @@ use std::fmt;
 use std::str::FromStr;
 
 use anyhow::{Error, Result};
+use indexmap::IndexMap;
 
 #[derive(Debug)]
 pub enum Format {
@@ -37,4 +38,16 @@ impl fmt::Display for Format {
             Format::Toml => write!(f, "TOML"),
         }
     }
+}
+
+#[derive(Debug)]
+pub enum Value {
+    Null,
+    Bool(bool),
+    Int(i64),
+    UInt(u64),
+    Float(f64),
+    String(String),
+    Array(Vec<Value>),
+    Map(IndexMap<String, Value>),
 }

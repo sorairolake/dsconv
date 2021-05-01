@@ -5,18 +5,35 @@
 //
 
 mod cli;
+mod convert;
 mod value;
 
+use std::convert::TryInto;
 use std::fs;
 use std::io::{self, Read};
 
 use anyhow::{bail, Result};
+use serde_json::Value as Json;
+use serde_yaml::Value as Yaml;
 use structopt::StructOpt;
+use toml::Value as Toml;
 
 use crate::cli::Opt;
+use crate::value::{Format, Value};
 
 fn main() -> Result<()> {
     let opt = Opt::from_args();
+
+    if opt.list_input_formats {
+        println!("{}\n{}\n{}", Format::Json, Format::Yaml, Format::Toml);
+
+        return Ok(());
+    }
+    if opt.list_output_formats {
+        println!("{}\n{}\n{}", Format::Json, Format::Yaml, Format::Toml);
+
+        return Ok(());
+    }
 
     let input = match opt.input {
         Some(ref f) => fs::read_to_string(f)?,
@@ -30,9 +47,59 @@ fn main() -> Result<()> {
 
     let opt = opt.process();
 
+    if opt.from.is_none() || opt.to.is_none() {
+        bail!("Unable to determine input and/or output format.")
+    }
+
+    let ir_value: Value = match opt.from {
+        Some(Format::Json) => {
+            let json: Json = serde_json::from_str(&input)?;
+
+            json.into()
+        }
+        Some(Format::Yaml) => {
+            let yaml: Yaml = serde_yaml::from_str(&input)?;
+
+            yaml.try_into()?
+        }
+        Some(Format::Toml) => {
+            let toml: Toml = toml::from_str(&input)?;
+
+            toml.into()
+        }
+        None => unreachable!(),
+    };
+
+    let output = match opt.to {
+        Some(Format::Json) => {
+            let json: Json = ir_value.try_into()?;
+
+            if opt.is_pretty_print() {
+                serde_json::to_string_pretty(&json)? + "\n"
+            } else {
+                serde_json::to_string(&json)? + "\n"
+            }
+        }
+        Some(Format::Yaml) => {
+            let yaml: Yaml = ir_value.into();
+
+            serde_yaml::to_string(&yaml)?
+        }
+        Some(Format::Toml) => {
+            let toml: Toml = ir_value.try_into()?;
+
+            if opt.is_pretty_print() {
+                toml::to_string_pretty(&toml)?
+            } else {
+                toml::to_string(&toml)?
+            }
+        }
+        None => unreachable!(),
+    };
+
     match opt.output {
-        Some(f) => fs::write(f, input)?,
-        None => print!("{}", input),
+        Some(f) => fs::write(f, output)?,
+        None => print!("{}", output),
     }
 
     Ok(())

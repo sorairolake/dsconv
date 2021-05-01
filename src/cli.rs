@@ -36,11 +36,11 @@ pub struct Opt {
     pub to: Option<Format>,
 
     /// List supported input formats.
-    #[structopt(long)]
+    #[structopt(long, conflicts_with = "list-output-formats")]
     pub list_input_formats: bool,
 
     /// List supported output formats.
-    #[structopt(long)]
+    #[structopt(long, conflicts_with = "list-input-formats")]
     pub list_output_formats: bool,
 
     /// Output to <FILE> instead of stdout.
@@ -57,10 +57,23 @@ pub struct Opt {
 }
 
 impl Opt {
+    /// Guess the format from the extension.
+    fn guess_format(ext: &str) -> Option<Format> {
+        match ext {
+            "json" => Some(Format::Json),
+            "yaml" | "yml" => Some(Format::Yaml),
+            "toml" => Some(Format::Toml),
+            _ => None,
+        }
+    }
+
     /// Guess the input format from the extension of a input file.
     fn guess_input_format(mut self) -> Self {
         if let Some(ref f) = self.input {
-            self.from = f.extension().and_then(OsStr::to_str).and_then(guess_format);
+            self.from = f
+                .extension()
+                .and_then(OsStr::to_str)
+                .and_then(Self::guess_format);
         }
 
         self
@@ -69,10 +82,22 @@ impl Opt {
     /// Guess the output format from the extension of a output file.
     fn guess_output_format(mut self) -> Self {
         if let Some(ref f) = self.output {
-            self.to = f.extension().and_then(OsStr::to_str).and_then(guess_format);
+            self.to = f
+                .extension()
+                .and_then(OsStr::to_str)
+                .and_then(Self::guess_format);
         }
 
         self
+    }
+
+    /// Do processing pretty option.
+    pub fn is_pretty_print(&self) -> bool {
+        if self.pretty.is_none() {
+            return false;
+        }
+
+        self.pretty.flatten().unwrap_or(true)
     }
 
     /// Do processing related to options.
@@ -80,15 +105,5 @@ impl Opt {
         self = self.guess_input_format().guess_output_format();
 
         self
-    }
-}
-
-/// Guess the format from the extension.
-fn guess_format(ext: &str) -> Option<Format> {
-    match ext {
-        "json" => Some(Format::Json),
-        "yaml" | "yml" => Some(Format::Yaml),
-        "toml" => Some(Format::Toml),
-        _ => None,
     }
 }
