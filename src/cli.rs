@@ -8,7 +8,7 @@ use std::ffi::OsStr;
 use std::path::PathBuf;
 
 use const_format::formatcp;
-use structopt::clap::crate_version;
+use structopt::clap::{crate_version, AppSettings};
 use structopt::StructOpt;
 
 use crate::value::Format;
@@ -25,7 +25,7 @@ const LONG_VERSION: &str = formatcp!(
 );
 
 #[derive(Debug, StructOpt)]
-#[structopt(long_version = LONG_VERSION, about)]
+#[structopt(long_version = LONG_VERSION, about, setting = AppSettings::ColoredHelp)]
 pub struct Opt {
     /// Specify input format.
     #[structopt(short, long, value_name = "FORMAT", possible_values = &["JSON", "YAML", "TOML"], case_insensitive = true)]
