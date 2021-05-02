@@ -193,54 +193,111 @@ mod tests {
 
     use super::*;
 
+    // This sample data was imported from Wikidata.
     const JSON_SAMPLE_STRING: &str = indoc! {r#"
         {
-          "route_name": "Joetsu Shinkansen",
-          "opened": "1982-11-15",
-          "stations": 10,
+          "name": "Joetsu Shinkansen",
+          "operating_speed": 240,
           "line_length": 269.5,
           "is_owned_by_operator": true,
+          "opened": "1982-11-15",
           "rolling_stock": [
             "E2 series",
             "E4 series",
             "E7 series"
           ],
-          "niigata_station": {
-            "platforms": 4,
-            "is_all_trains_stop": true
+          "stations": {
+            "omiya": {
+              "platforms": 6,
+              "transfers": [
+                "Kawagoe Line",
+                "Keihin-Tohoku Line",
+                "New Shuttle",
+                "Saikyo Line",
+                "Takasaki Line",
+                "Tobu Urban Park Line",
+                "Tohoku Main Line",
+                "Tohoku Shinkansen",
+                "Utsunomiya Line"
+              ]
+            },
+            "niigata": {
+              "platforms": 4,
+              "transfers": [
+                "Banetsu West Line",
+                "Echigo Line",
+                "Hakushin Line",
+                "Shinetsu Main Line"
+              ]
+            }
           }
         }
     "#};
     const YAML_SAMPLE_STRING: &str = indoc! {r#"
         ---
-        route_name: Joetsu Shinkansen
-        opened: 1982-11-15
-        stations: 10
+        name: Joetsu Shinkansen
+        operating_speed: 240
         line_length: 269.5
         is_owned_by_operator: true
+        opened: 1982-11-15
         rolling_stock:
           - E2 series
           - E4 series
           - E7 series
-        niigata_station:
-          platforms: 4
-          is_all_trains_stop: true
+        stations:
+          omiya:
+            platforms: 6
+            transfers:
+              - Kawagoe Line
+              - Keihin-Tohoku Line
+              - New Shuttle
+              - Saikyo Line
+              - Takasaki Line
+              - Tobu Urban Park Line
+              - Tohoku Main Line
+              - Tohoku Shinkansen
+              - Utsunomiya Line
+          niigata:
+            platforms: 4
+            transfers:
+              - Banetsu West Line
+              - Echigo Line
+              - Hakushin Line
+              - Shinetsu Main Line
     "#};
     const TOML_SAMPLE_STRING: &str = indoc! {r#"
-        route_name = 'Joetsu Shinkansen'
-        opened = 1982-11-15
-        stations = 10
+        name = 'Joetsu Shinkansen'
+        operating_speed = 240
         line_length = 269.5
         is_owned_by_operator = true
+        opened = 1982-11-15
         rolling_stock = [
             'E2 series',
             'E4 series',
             'E7 series',
         ]
+        [stations.omiya]
+        platforms = 6
+        transfers = [
+            'Kawagoe Line',
+            'Keihin-Tohoku Line',
+            'New Shuttle',
+            'Saikyo Line',
+            'Takasaki Line',
+            'Tobu Urban Park Line',
+            'Tohoku Main Line',
+            'Tohoku Shinkansen',
+            'Utsunomiya Line',
+        ]
 
-        [niigata_station]
+        [stations.niigata]
         platforms = 4
-        is_all_trains_stop = true
+        transfers = [
+            'Banetsu West Line',
+            'Echigo Line',
+            'Hakushin Line',
+            'Shinetsu Main Line',
+        ]
     "#};
 
     const JSON_SAMPLE_VALUE: Lazy<Json> =
