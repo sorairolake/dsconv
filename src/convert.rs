@@ -75,9 +75,10 @@ impl TryFrom<Yaml> for Value {
                 let keys = keys?;
                 let values: Result<Vec<_>> = values.into_iter().map(|v| v.try_into()).collect();
                 let values = values?;
-                let map = keys.into_iter().zip(values.into_iter()).collect();
 
-                Ok(Value::Map(map))
+                Ok(Value::Map(
+                    keys.into_iter().zip(values.into_iter()).collect(),
+                ))
             }
         }
     }
@@ -126,9 +127,10 @@ impl TryFrom<Value> for Json {
                 let (keys, values): (Vec<_>, Vec<_>) = map.into_iter().unzip();
                 let values: Result<Vec<_>> = values.into_iter().map(|v| v.try_into()).collect();
                 let values = values?;
-                let obj = keys.into_iter().zip(values.into_iter()).collect();
 
-                Ok(Json::Object(obj))
+                Ok(Json::Object(
+                    keys.into_iter().zip(values.into_iter()).collect(),
+                ))
             }
         }
     }
@@ -178,9 +180,10 @@ impl TryFrom<Value> for Toml {
                 let (keys, values): (Vec<_>, Vec<_>) = map.into_iter().unzip();
                 let values: Result<Vec<_>> = values.into_iter().map(|v| v.try_into()).collect();
                 let values = values?;
-                let table = keys.into_iter().zip(values.into_iter()).collect();
 
-                Ok(Toml::Table(table))
+                Ok(Toml::Table(
+                    keys.into_iter().zip(values.into_iter()).collect(),
+                ))
             }
         }
     }

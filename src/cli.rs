@@ -13,15 +13,12 @@ use structopt::StructOpt;
 
 use crate::value::Format;
 
-const COPYRIGHT: &str = "Copyright (C) 2021 Shun Sakai";
-const LICENSE: &str = "License: Apache License 2.0";
-const REPORTING_BUGS: &str = "Reporting bugs: https://github.com/sorairolake/dsconv/issues";
 const LONG_VERSION: &str = formatcp!(
     "{}\n\n{}\n{}\n{}",
     crate_version!(),
-    COPYRIGHT,
-    LICENSE,
-    REPORTING_BUGS
+    "Copyright (C) 2021 Shun Sakai",
+    "License: Apache License 2.0",
+    "Reporting bugs: https://github.com/sorairolake/dsconv/issues"
 );
 
 #[derive(Debug, StructOpt)]
@@ -101,9 +98,7 @@ impl Opt {
     }
 
     /// Do processing related to options.
-    pub fn process(mut self) -> Self {
-        self = self.guess_input_format().guess_output_format();
-
-        self
+    pub fn process(self) -> Self {
+        self.guess_input_format().guess_output_format()
     }
 }
