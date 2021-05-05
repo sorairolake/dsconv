@@ -5,7 +5,6 @@
 //
 
 use std::convert::{From, TryFrom, TryInto};
-use std::str::FromStr;
 
 use anyhow::{bail, Context, Result};
 use serde_json::Value as Json;
@@ -164,7 +163,7 @@ impl TryFrom<Value> for Toml {
             Value::UInt(u) => bail!("Out of range of integer of TOML: {}", u),
             Value::Float(f) => Ok(Toml::Float(f)),
             Value::String(s) => {
-                if let Ok(dt) = toml::value::Datetime::from_str(&s) {
+                if let Ok(dt) = s.parse() {
                     return Ok(Toml::Datetime(dt));
                 }
 
