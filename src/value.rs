@@ -40,7 +40,7 @@ impl fmt::Display for Format {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum Value {
     Null,
     Bool(bool),

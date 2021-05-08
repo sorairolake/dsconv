@@ -64,19 +64,18 @@ impl TryFrom<Yaml> for Value {
             Yaml::Mapping(map) => {
                 let (keys, values): (Vec<_>, Vec<_>) = map.into_iter().unzip();
                 let keys: Result<Vec<_>> = keys
-                    .into_iter()
-                    .map(|k| {
-                        k.as_str()
-                            .context("The key is not a string.")
-                            .map(|k| k.to_string())
-                    })
+                    .iter()
+                    .map(|k| k.as_str().context("The key is not a string."))
                     .collect();
                 let keys = keys?;
                 let values: Result<Vec<_>> = values.into_iter().map(|v| v.try_into()).collect();
                 let values = values?;
 
                 Ok(Value::Map(
-                    keys.into_iter().zip(values.into_iter()).collect(),
+                    keys.into_iter()
+                        .map(|k| k.to_string())
+                        .zip(values.into_iter())
+                        .collect(),
                 ))
             }
         }
@@ -123,12 +122,11 @@ impl TryFrom<Value> for Json {
                 Ok(Json::Array(arr))
             }
             Value::Map(map) => {
-                let (keys, values): (Vec<_>, Vec<_>) = map.into_iter().unzip();
-                let values: Result<Vec<_>> = values.into_iter().map(|v| v.try_into()).collect();
+                let values: Result<Vec<_>> = map.values().cloned().map(|v| v.try_into()).collect();
                 let values = values?;
 
                 Ok(Json::Object(
-                    keys.into_iter().zip(values.into_iter()).collect(),
+                    map.keys().cloned().zip(values.into_iter()).collect(),
                 ))
             }
         }
@@ -176,12 +174,11 @@ impl TryFrom<Value> for Toml {
                 Ok(Toml::Array(arr))
             }
             Value::Map(map) => {
-                let (keys, values): (Vec<_>, Vec<_>) = map.into_iter().unzip();
-                let values: Result<Vec<_>> = values.into_iter().map(|v| v.try_into()).collect();
+                let values: Result<Vec<_>> = map.values().cloned().map(|v| v.try_into()).collect();
                 let values = values?;
 
                 Ok(Toml::Table(
-                    keys.into_iter().zip(values.into_iter()).collect(),
+                    map.keys().cloned().zip(values.into_iter()).collect(),
                 ))
             }
         }

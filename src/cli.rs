@@ -20,16 +20,30 @@ const LONG_VERSION: &str = formatcp!(
     "License: Apache License 2.0",
     "Reporting bugs: https://github.com/sorairolake/dsconv/issues"
 );
+const INPUT_FORMATS: [&str; 3] = ["JSON", "YAML", "TOML"];
+const OUTPUT_FORMATS: [&str; 3] = ["JSON", "YAML", "TOML"];
 
 #[derive(Debug, StructOpt)]
 #[structopt(long_version = LONG_VERSION, about, setting = AppSettings::ColoredHelp)]
 pub struct Opt {
     /// Specify input format.
-    #[structopt(short, long, value_name = "FORMAT", possible_values = &["JSON", "YAML", "TOML"], case_insensitive = true)]
+    #[structopt(
+        short,
+        long,
+        value_name = "FORMAT",
+        possible_values = &INPUT_FORMATS,
+        case_insensitive = true
+    )]
     pub from: Option<Format>,
 
     /// Specify output format.
-    #[structopt(short, long, value_name = "FORMAT", possible_values = &["JSON", "YAML", "TOML"], case_insensitive = true)]
+    #[structopt(
+        short,
+        long,
+        value_name = "FORMAT",
+        possible_values = &OUTPUT_FORMATS,
+        case_insensitive = true
+    )]
     pub to: Option<Format>,
 
     /// List supported input formats.
