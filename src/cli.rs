@@ -20,8 +20,8 @@ const LONG_VERSION: &str = formatcp!(
     "License: Apache License 2.0",
     "Reporting bugs: https://github.com/sorairolake/dsconv/issues"
 );
-const INPUT_FORMATS: [&str; 3] = ["JSON", "YAML", "TOML"];
-const OUTPUT_FORMATS: [&str; 3] = ["JSON", "YAML", "TOML"];
+const INPUT_FORMATS: [&str; 3] = ["json", "yaml", "toml"];
+const OUTPUT_FORMATS: [&str; 3] = ["json", "yaml", "toml"];
 
 #[derive(Debug, StructOpt)]
 #[structopt(long_version = LONG_VERSION, about, setting = AppSettings::ColoredHelp)]
