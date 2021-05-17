@@ -13,9 +13,9 @@ use indexmap::IndexMap;
 #[derive(Debug)]
 pub enum Format {
     Json,
-    Yaml,
-    Toml,
     Json5,
+    Toml,
+    Yaml,
 }
 
 impl FromStr for Format {
@@ -24,9 +24,9 @@ impl FromStr for Format {
     fn from_str(format: &str) -> Result<Self> {
         match format.to_ascii_lowercase().as_str() {
             "json" => Ok(Format::Json),
-            "yaml" => Ok(Format::Yaml),
-            "toml" => Ok(Format::Toml),
             "json5" => Ok(Format::Json5),
+            "toml" => Ok(Format::Toml),
+            "yaml" => Ok(Format::Yaml),
             _ => unreachable!(),
         }
     }
@@ -36,9 +36,9 @@ impl fmt::Display for Format {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Format::Json => write!(f, "JSON"),
-            Format::Yaml => write!(f, "YAML"),
-            Format::Toml => write!(f, "TOML"),
             Format::Json5 => write!(f, "JSON5"),
+            Format::Toml => write!(f, "TOML"),
+            Format::Yaml => write!(f, "YAML"),
         }
     }
 }

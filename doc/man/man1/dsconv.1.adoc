@@ -36,9 +36,9 @@ If _FILE_ is not specified, the input is read from stdin.
   _FORMAT_ can be:{blank}:::
 
     * *json* (JSON)
-    * *yaml* (YAML)
-    * *toml* (TOML)
     * *json5* (JSON5)
+    * *toml* (TOML)
+    * *yaml* (YAML)
 
 *-t* _FORMAT_, *--to*=_FORMAT_::
   Specify output format.
@@ -47,8 +47,8 @@ If _FILE_ is not specified, the input is read from stdin.
   _FORMAT_ can be:{blank}:::
 
     * *json* (JSON)
-    * *yaml* (YAML)
     * *toml* (TOML)
+    * *yaml* (YAML)
 
 *--list-input-formats*::
   List supported input formats.
