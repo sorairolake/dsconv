@@ -25,7 +25,13 @@ fn main() -> Result<()> {
     let opt = Opt::from_args();
 
     if opt.list_input_formats {
-        println!("{}\n{}\n{}", Format::Json, Format::Yaml, Format::Toml);
+        println!(
+            "{}\n{}\n{}\n{}",
+            Format::Json,
+            Format::Yaml,
+            Format::Toml,
+            Format::Json5
+        );
 
         return Ok(());
     }
@@ -67,6 +73,11 @@ fn main() -> Result<()> {
 
             toml.into()
         }
+        Some(Format::Json5) => {
+            let json5: Json = json5::from_str(&input)?;
+
+            json5.into()
+        }
         None => unreachable!(),
     };
 
@@ -94,7 +105,7 @@ fn main() -> Result<()> {
                 toml::to_string(&toml)?
             }
         }
-        None => unreachable!(),
+        _ => unreachable!(),
     };
 
     match opt.output {

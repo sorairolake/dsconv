@@ -6,7 +6,7 @@
 
 = dsconv(1)
 // Specify in UTC.
-:docdate: 2021-05-10
+:docdate: 2021-05-17
 :doctype: manpage
 :mansource: dsconv {manversion}
 :manmanual: General Commands Manual
@@ -38,6 +38,7 @@ If _FILE_ is not specified, the input is read from stdin.
     * *json* (JSON)
     * *yaml* (YAML)
     * *toml* (TOML)
+    * *json5* (JSON5)
 
 *-t* _FORMAT_, *--to*=_FORMAT_::
   Specify output format.

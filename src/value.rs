@@ -15,6 +15,7 @@ pub enum Format {
     Json,
     Yaml,
     Toml,
+    Json5,
 }
 
 impl FromStr for Format {
@@ -25,6 +26,7 @@ impl FromStr for Format {
             "json" => Ok(Format::Json),
             "yaml" => Ok(Format::Yaml),
             "toml" => Ok(Format::Toml),
+            "json5" => Ok(Format::Json5),
             _ => unreachable!(),
         }
     }
@@ -36,6 +38,7 @@ impl fmt::Display for Format {
             Format::Json => write!(f, "JSON"),
             Format::Yaml => write!(f, "YAML"),
             Format::Toml => write!(f, "TOML"),
+            Format::Json5 => write!(f, "JSON5"),
         }
     }
 }

@@ -20,7 +20,7 @@ const LONG_VERSION: &str = formatcp!(
     "License: Apache License 2.0",
     "Reporting bugs: https://github.com/sorairolake/dsconv/issues"
 );
-const INPUT_FORMATS: [&str; 3] = ["json", "yaml", "toml"];
+const INPUT_FORMATS: [&str; 4] = ["json", "yaml", "toml", "json5"];
 const OUTPUT_FORMATS: [&str; 3] = ["json", "yaml", "toml"];
 
 #[derive(Debug, StructOpt)]
@@ -74,6 +74,7 @@ impl Opt {
             "json" => Some(Format::Json),
             "yaml" | "yml" => Some(Format::Yaml),
             "toml" => Some(Format::Toml),
+            "json5" => Some(Format::Json5),
             _ => None,
         }
     }
