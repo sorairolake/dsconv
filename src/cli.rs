@@ -81,6 +81,10 @@ impl Opt {
 
     /// Guess the input format from the extension of a input file.
     fn guess_input_format(mut self) -> Self {
+        if self.from.is_some() {
+            return self;
+        }
+
         if let Some(ref f) = self.input {
             self.from = f
                 .extension()
@@ -93,6 +97,10 @@ impl Opt {
 
     /// Guess the output format from the extension of a output file.
     fn guess_output_format(mut self) -> Self {
+        if self.to.is_some() {
+            return self;
+        }
+
         if let Some(ref f) = self.output {
             self.to = f
                 .extension()
