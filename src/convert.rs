@@ -36,6 +36,22 @@ impl From<Json> for Value {
     }
 }
 
+impl From<Toml> for Value {
+    fn from(value: Toml) -> Self {
+        match value {
+            Toml::String(s) => Value::String(s),
+            Toml::Integer(i) => Value::Int(i),
+            Toml::Float(f) => Value::Float(f),
+            Toml::Boolean(b) => Value::Bool(b),
+            Toml::Datetime(dt) => Value::String(dt.to_string()),
+            Toml::Array(arr) => Value::Array(arr.into_iter().map(|v| v.into()).collect()),
+            Toml::Table(table) => {
+                Value::Map(table.into_iter().map(|(k, v)| (k, v.into())).collect())
+            }
+        }
+    }
+}
+
 impl TryFrom<Yaml> for Value {
     type Error = anyhow::Error;
 
@@ -82,22 +98,6 @@ impl TryFrom<Yaml> for Value {
     }
 }
 
-impl From<Toml> for Value {
-    fn from(value: Toml) -> Self {
-        match value {
-            Toml::String(s) => Value::String(s),
-            Toml::Integer(i) => Value::Int(i),
-            Toml::Float(f) => Value::Float(f),
-            Toml::Boolean(b) => Value::Bool(b),
-            Toml::Datetime(dt) => Value::String(dt.to_string()),
-            Toml::Array(arr) => Value::Array(arr.into_iter().map(|v| v.into()).collect()),
-            Toml::Table(table) => {
-                Value::Map(table.into_iter().map(|(k, v)| (k, v.into())).collect())
-            }
-        }
-    }
-}
-
 impl TryFrom<Value> for Json {
     type Error = anyhow::Error;
 
@@ -133,23 +133,6 @@ impl TryFrom<Value> for Json {
     }
 }
 
-impl From<Value> for Yaml {
-    fn from(value: Value) -> Self {
-        match value {
-            Value::Null => Yaml::Null,
-            Value::Bool(b) => Yaml::Bool(b),
-            Value::Int(i) => Yaml::Number(i.into()),
-            Value::UInt(u) => Yaml::Number(u.into()),
-            Value::Float(f) => Yaml::Number(f.into()),
-            Value::String(s) => Yaml::String(s),
-            Value::Array(arr) => Yaml::Sequence(arr.into_iter().map(|v| v.into()).collect()),
-            Value::Map(map) => {
-                Yaml::Mapping(map.into_iter().map(|(k, v)| (k.into(), v.into())).collect())
-            }
-        }
-    }
-}
-
 impl TryFrom<Value> for Toml {
     type Error = anyhow::Error;
 
@@ -180,6 +163,23 @@ impl TryFrom<Value> for Toml {
                 Ok(Toml::Table(
                     map.keys().cloned().zip(values.into_iter()).collect(),
                 ))
+            }
+        }
+    }
+}
+
+impl From<Value> for Yaml {
+    fn from(value: Value) -> Self {
+        match value {
+            Value::Null => Yaml::Null,
+            Value::Bool(b) => Yaml::Bool(b),
+            Value::Int(i) => Yaml::Number(i.into()),
+            Value::UInt(u) => Yaml::Number(u.into()),
+            Value::Float(f) => Yaml::Number(f.into()),
+            Value::String(s) => Yaml::String(s),
+            Value::Array(arr) => Yaml::Sequence(arr.into_iter().map(|v| v.into()).collect()),
+            Value::Map(map) => {
+                Yaml::Mapping(map.into_iter().map(|(k, v)| (k.into(), v.into())).collect())
             }
         }
     }
@@ -232,38 +232,6 @@ mod tests {
           }
         }
     "#};
-    const YAML_SAMPLE_STRING: &str = indoc! {r#"
-        ---
-        name: Joetsu Shinkansen
-        operating_speed: 240
-        line_length: 269.5
-        is_owned_by_operator: true
-        opened: 1982-11-15
-        rolling_stock:
-          - E2 series
-          - E4 series
-          - E7 series
-        stations:
-          omiya:
-            platforms: 6
-            transfers:
-              - Kawagoe Line
-              - Keihin-Tohoku Line
-              - New Shuttle
-              - Saikyo Line
-              - Takasaki Line
-              - Tobu Urban Park Line
-              - Tohoku Main Line
-              - Tohoku Shinkansen
-              - Utsunomiya Line
-          niigata:
-            platforms: 4
-            transfers:
-              - Banetsu West Line
-              - Echigo Line
-              - Hakushin Line
-              - Shinetsu Main Line
-    "#};
     const TOML_SAMPLE_STRING: &str = indoc! {r#"
         name = 'Joetsu Shinkansen'
         operating_speed = 240
@@ -298,20 +266,44 @@ mod tests {
             'Shinetsu Main Line',
         ]
     "#};
+    const YAML_SAMPLE_STRING: &str = indoc! {r#"
+        ---
+        name: Joetsu Shinkansen
+        operating_speed: 240
+        line_length: 269.5
+        is_owned_by_operator: true
+        opened: 1982-11-15
+        rolling_stock:
+          - E2 series
+          - E4 series
+          - E7 series
+        stations:
+          omiya:
+            platforms: 6
+            transfers:
+              - Kawagoe Line
+              - Keihin-Tohoku Line
+              - New Shuttle
+              - Saikyo Line
+              - Takasaki Line
+              - Tobu Urban Park Line
+              - Tohoku Main Line
+              - Tohoku Shinkansen
+              - Utsunomiya Line
+          niigata:
+            platforms: 4
+            transfers:
+              - Banetsu West Line
+              - Echigo Line
+              - Hakushin Line
+              - Shinetsu Main Line
+    "#};
 
     const JSON_SAMPLE_VALUE: Lazy<Json> =
         Lazy::new(|| serde_json::from_str(JSON_SAMPLE_STRING).unwrap());
+    const TOML_SAMPLE_VALUE: Lazy<Toml> = Lazy::new(|| toml::from_str(TOML_SAMPLE_STRING).unwrap());
     const YAML_SAMPLE_VALUE: Lazy<Yaml> =
         Lazy::new(|| serde_yaml::from_str(YAML_SAMPLE_STRING).unwrap());
-    const TOML_SAMPLE_VALUE: Lazy<Toml> = Lazy::new(|| toml::from_str(TOML_SAMPLE_STRING).unwrap());
-
-    #[test]
-    fn json2yaml() {
-        let ir_value: Value = Lazy::force(&JSON_SAMPLE_VALUE).clone().into();
-        let converted: Yaml = ir_value.into();
-
-        assert_eq!(converted, *YAML_SAMPLE_VALUE);
-    }
 
     #[test]
     fn json2toml() {
@@ -322,19 +314,11 @@ mod tests {
     }
 
     #[test]
-    fn yaml2json() {
-        let ir_value: Value = Lazy::force(&YAML_SAMPLE_VALUE).clone().try_into().unwrap();
-        let converted: Json = ir_value.try_into().unwrap();
+    fn json2yaml() {
+        let ir_value: Value = Lazy::force(&JSON_SAMPLE_VALUE).clone().into();
+        let converted: Yaml = ir_value.into();
 
-        assert_eq!(converted, *JSON_SAMPLE_VALUE);
-    }
-
-    #[test]
-    fn yaml2toml() {
-        let ir_value: Value = Lazy::force(&YAML_SAMPLE_VALUE).clone().try_into().unwrap();
-        let converted: Toml = ir_value.try_into().unwrap();
-
-        assert_eq!(converted, *TOML_SAMPLE_VALUE);
+        assert_eq!(converted, *YAML_SAMPLE_VALUE);
     }
 
     #[test]
@@ -351,6 +335,22 @@ mod tests {
         let converted: Yaml = ir_value.into();
 
         assert_eq!(converted, *YAML_SAMPLE_VALUE);
+    }
+
+    #[test]
+    fn yaml2json() {
+        let ir_value: Value = Lazy::force(&YAML_SAMPLE_VALUE).clone().try_into().unwrap();
+        let converted: Json = ir_value.try_into().unwrap();
+
+        assert_eq!(converted, *JSON_SAMPLE_VALUE);
+    }
+
+    #[test]
+    fn yaml2toml() {
+        let ir_value: Value = Lazy::force(&YAML_SAMPLE_VALUE).clone().try_into().unwrap();
+        let converted: Toml = ir_value.try_into().unwrap();
+
+        assert_eq!(converted, *TOML_SAMPLE_VALUE);
     }
 
     #[test]

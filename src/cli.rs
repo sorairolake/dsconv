@@ -20,8 +20,8 @@ const LONG_VERSION: &str = formatcp!(
     "License: Apache License 2.0",
     "Reporting bugs: https://github.com/sorairolake/dsconv/issues"
 );
-const INPUT_FORMATS: [&str; 3] = ["json", "yaml", "toml"];
-const OUTPUT_FORMATS: [&str; 3] = ["json", "yaml", "toml"];
+const INPUT_FORMATS: [&str; 4] = ["json", "json5", "toml", "yaml"];
+const OUTPUT_FORMATS: [&str; 3] = ["json", "toml", "yaml"];
 
 #[derive(Debug, StructOpt)]
 #[structopt(long_version = LONG_VERSION, about, setting = AppSettings::ColoredHelp)]
@@ -72,14 +72,19 @@ impl Opt {
     fn guess_format(ext: &str) -> Option<Format> {
         match ext {
             "json" => Some(Format::Json),
-            "yaml" | "yml" => Some(Format::Yaml),
+            "json5" => Some(Format::Json5),
             "toml" => Some(Format::Toml),
+            "yaml" | "yml" => Some(Format::Yaml),
             _ => None,
         }
     }
 
     /// Guess the input format from the extension of a input file.
     fn guess_input_format(mut self) -> Self {
+        if self.from.is_some() {
+            return self;
+        }
+
         if let Some(ref f) = self.input {
             self.from = f
                 .extension()
@@ -92,6 +97,10 @@ impl Opt {
 
     /// Guess the output format from the extension of a output file.
     fn guess_output_format(mut self) -> Self {
+        if self.to.is_some() {
+            return self;
+        }
+
         if let Some(ref f) = self.output {
             self.to = f
                 .extension()

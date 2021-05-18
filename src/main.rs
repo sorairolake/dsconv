@@ -25,12 +25,18 @@ fn main() -> Result<()> {
     let opt = Opt::from_args();
 
     if opt.list_input_formats {
-        println!("{}\n{}\n{}", Format::Json, Format::Yaml, Format::Toml);
+        println!(
+            "{}\n{}\n{}\n{}",
+            Format::Json,
+            Format::Json5,
+            Format::Toml,
+            Format::Yaml
+        );
 
         return Ok(());
     }
     if opt.list_output_formats {
-        println!("{}\n{}\n{}", Format::Json, Format::Yaml, Format::Toml);
+        println!("{}\n{}\n{}", Format::Json, Format::Toml, Format::Yaml);
 
         return Ok(());
     }
@@ -57,15 +63,20 @@ fn main() -> Result<()> {
 
             json.into()
         }
-        Some(Format::Yaml) => {
-            let yaml: Yaml = serde_yaml::from_str(&input)?;
+        Some(Format::Json5) => {
+            let json5: Json = json5::from_str(&input)?;
 
-            yaml.try_into()?
+            json5.into()
         }
         Some(Format::Toml) => {
             let toml: Toml = toml::from_str(&input)?;
 
             toml.into()
+        }
+        Some(Format::Yaml) => {
+            let yaml: Yaml = serde_yaml::from_str(&input)?;
+
+            yaml.try_into()?
         }
         None => unreachable!(),
     };
@@ -80,11 +91,6 @@ fn main() -> Result<()> {
                 serde_json::to_string(&json)? + "\n"
             }
         }
-        Some(Format::Yaml) => {
-            let yaml: Yaml = ir_value.into();
-
-            serde_yaml::to_string(&yaml)?
-        }
         Some(Format::Toml) => {
             let toml: Toml = ir_value.try_into()?;
 
@@ -94,7 +100,12 @@ fn main() -> Result<()> {
                 toml::to_string(&toml)?
             }
         }
-        None => unreachable!(),
+        Some(Format::Yaml) => {
+            let yaml: Yaml = ir_value.into();
+
+            serde_yaml::to_string(&yaml)?
+        }
+        _ => unreachable!(),
     };
 
     match opt.output {
