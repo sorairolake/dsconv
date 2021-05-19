@@ -20,8 +20,8 @@ const LONG_VERSION: &str = formatcp!(
     "License: Apache License 2.0",
     "Reporting bugs: https://github.com/sorairolake/dsconv/issues"
 );
-const INPUT_FORMATS: [&str; 4] = ["json", "json5", "toml", "yaml"];
-const OUTPUT_FORMATS: [&str; 3] = ["json", "toml", "yaml"];
+const INPUT_FORMATS: [&str; 5] = ["hjson", "json", "json5", "toml", "yaml"];
+const OUTPUT_FORMATS: [&str; 4] = ["hjson", "json", "toml", "yaml"];
 
 #[derive(Debug, StructOpt)]
 #[structopt(long_version = LONG_VERSION, about, setting = AppSettings::ColoredHelp)]
@@ -71,6 +71,7 @@ impl Opt {
     /// Guess the format from the extension.
     fn guess_format(ext: &str) -> Option<Format> {
         match ext {
+            "hjson" => Some(Format::Hjson),
             "json" => Some(Format::Json),
             "json5" => Some(Format::Json5),
             "toml" => Some(Format::Toml),

@@ -13,6 +13,7 @@ use std::fs;
 use std::io::{self, Read};
 
 use anyhow::{bail, Result};
+use serde_hjson::Value as Hjson;
 use serde_json::Value as Json;
 use serde_yaml::Value as Yaml;
 use structopt::StructOpt;
@@ -26,7 +27,8 @@ fn main() -> Result<()> {
 
     if opt.list_input_formats {
         println!(
-            "{}\n{}\n{}\n{}",
+            "{}\n{}\n{}\n{}\n{}",
+            Format::Hjson,
             Format::Json,
             Format::Json5,
             Format::Toml,
@@ -58,6 +60,11 @@ fn main() -> Result<()> {
     }
 
     let ir_value: Value = match opt.from {
+        Some(Format::Hjson) => {
+            let hjson: Hjson = serde_hjson::from_str(&input)?;
+
+            hjson.into()
+        }
         Some(Format::Json) => {
             let json: Json = serde_json::from_str(&input)?;
 
@@ -82,6 +89,11 @@ fn main() -> Result<()> {
     };
 
     let output = match opt.to {
+        Some(Format::Hjson) => {
+            let hjson: Hjson = ir_value.into();
+
+            serde_hjson::to_string(&hjson)? + "\n"
+        }
         Some(Format::Json) => {
             let json: Json = ir_value.try_into()?;
 

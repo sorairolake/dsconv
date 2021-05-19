@@ -7,11 +7,33 @@
 use std::convert::{From, TryFrom, TryInto};
 
 use anyhow::{bail, Context, Result};
+use serde_hjson::Value as Hjson;
 use serde_json::Value as Json;
 use serde_yaml::Value as Yaml;
 use toml::Value as Toml;
 
 use crate::value::Value;
+
+impl From<Hjson> for Value {
+    fn from(value: Hjson) -> Self {
+        match value {
+            Hjson::Null => Value::Null,
+            Hjson::Bool(b) => Value::Bool(b),
+            Hjson::I64(i) => Value::Int(i),
+            Hjson::U64(u) => {
+                if let Ok(i) = u.try_into() {
+                    return Value::Int(i);
+                }
+
+                Value::UInt(u)
+            }
+            Hjson::F64(f) => Value::Float(f),
+            Hjson::String(s) => Value::String(s),
+            Hjson::Array(arr) => Value::Array(arr.into_iter().map(|v| v.into()).collect()),
+            Hjson::Object(obj) => Value::Map(obj.into_iter().map(|(k, v)| (k, v.into())).collect()),
+        }
+    }
+}
 
 impl From<Json> for Value {
     fn from(value: Json) -> Self {
@@ -94,6 +116,27 @@ impl TryFrom<Yaml> for Value {
                         .collect(),
                 ))
             }
+        }
+    }
+}
+
+impl From<Value> for Hjson {
+    fn from(value: Value) -> Self {
+        match value {
+            Value::Null => Hjson::Null,
+            Value::Bool(b) => Hjson::Bool(b),
+            Value::Int(i) => {
+                if let Ok(u) = i.try_into() {
+                    return Hjson::U64(u);
+                }
+
+                Hjson::I64(i)
+            }
+            Value::UInt(u) => Hjson::U64(u),
+            Value::Float(f) => Hjson::F64(f),
+            Value::String(s) => Hjson::String(s),
+            Value::Array(arr) => Hjson::Array(arr.into_iter().map(|v| v.into()).collect()),
+            Value::Map(map) => Hjson::Object(map.into_iter().map(|(k, v)| (k, v.into())).collect()),
         }
     }
 }
@@ -193,6 +236,51 @@ mod tests {
     use super::*;
 
     // This sample data was imported from Wikidata.
+    const HJSON_SAMPLE_STRING: &str = indoc! {r#"
+        {
+          name: Joetsu Shinkansen
+          operating_speed: 240
+          line_length: 269.5
+          is_owned_by_operator: true
+          opened: 1982-11-15
+          rolling_stock:
+          [
+            E2 series
+            E4 series
+            E7 series
+          ]
+          stations:
+          {
+            omiya:
+            {
+              platforms: 6
+              transfers:
+              [
+                Kawagoe Line
+                Keihin-Tohoku Line
+                New Shuttle
+                Saikyo Line
+                Takasaki Line
+                Tobu Urban Park Line
+                Tohoku Main Line
+                Tohoku Shinkansen
+                Utsunomiya Line
+              ]
+            }
+            niigata:
+            {
+              platforms: 4
+              transfers:
+              [
+                Banetsu West Line
+                Echigo Line
+                Hakushin Line
+                Shinetsu Main Line
+              ]
+            }
+          }
+        }
+    "#};
     const JSON_SAMPLE_STRING: &str = indoc! {r#"
         {
           "name": "Joetsu Shinkansen",
@@ -299,11 +387,45 @@ mod tests {
               - Shinetsu Main Line
     "#};
 
+    const HJSON_SAMPLE_VALUE: Lazy<Hjson> =
+        Lazy::new(|| serde_hjson::from_str(HJSON_SAMPLE_STRING).unwrap());
     const JSON_SAMPLE_VALUE: Lazy<Json> =
         Lazy::new(|| serde_json::from_str(JSON_SAMPLE_STRING).unwrap());
     const TOML_SAMPLE_VALUE: Lazy<Toml> = Lazy::new(|| toml::from_str(TOML_SAMPLE_STRING).unwrap());
     const YAML_SAMPLE_VALUE: Lazy<Yaml> =
         Lazy::new(|| serde_yaml::from_str(YAML_SAMPLE_STRING).unwrap());
+
+    #[test]
+    fn hjson2json() {
+        let ir_value: Value = Lazy::force(&HJSON_SAMPLE_VALUE).clone().into();
+        let converted: Json = ir_value.try_into().unwrap();
+
+        assert_eq!(converted, *JSON_SAMPLE_VALUE);
+    }
+
+    #[test]
+    fn hjson2toml() {
+        let ir_value: Value = Lazy::force(&HJSON_SAMPLE_VALUE).clone().into();
+        let converted: Toml = ir_value.try_into().unwrap();
+
+        assert_eq!(converted, *TOML_SAMPLE_VALUE);
+    }
+
+    #[test]
+    fn hjson2yaml() {
+        let ir_value: Value = Lazy::force(&HJSON_SAMPLE_VALUE).clone().into();
+        let converted: Yaml = ir_value.into();
+
+        assert_eq!(converted, *YAML_SAMPLE_VALUE);
+    }
+
+    #[test]
+    fn json2hjson() {
+        let ir_value: Value = Lazy::force(&JSON_SAMPLE_VALUE).clone().into();
+        let converted: Hjson = ir_value.into();
+
+        assert_eq!(converted, *HJSON_SAMPLE_VALUE);
+    }
 
     #[test]
     fn json2toml() {
@@ -322,6 +444,14 @@ mod tests {
     }
 
     #[test]
+    fn toml2hjson() {
+        let ir_value: Value = Lazy::force(&TOML_SAMPLE_VALUE).clone().into();
+        let converted: Hjson = ir_value.into();
+
+        assert_eq!(converted, *HJSON_SAMPLE_VALUE);
+    }
+
+    #[test]
     fn toml2json() {
         let ir_value: Value = Lazy::force(&TOML_SAMPLE_VALUE).clone().into();
         let converted: Json = ir_value.try_into().unwrap();
@@ -335,6 +465,14 @@ mod tests {
         let converted: Yaml = ir_value.into();
 
         assert_eq!(converted, *YAML_SAMPLE_VALUE);
+    }
+
+    #[test]
+    fn yaml2hjson() {
+        let ir_value: Value = Lazy::force(&YAML_SAMPLE_VALUE).clone().try_into().unwrap();
+        let converted: Hjson = ir_value.into();
+
+        assert_eq!(converted, *HJSON_SAMPLE_VALUE);
     }
 
     #[test]
