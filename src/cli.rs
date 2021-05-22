@@ -5,10 +5,12 @@
 //
 
 use std::ffi::OsStr;
-use std::path::PathBuf;
+use std::fs;
+use std::path::{Path, PathBuf};
 
+use anyhow::Result;
 use const_format::formatcp;
-use structopt::clap::{crate_version, AppSettings};
+use structopt::clap::{crate_name, crate_version, AppSettings, Shell};
 use structopt::StructOpt;
 
 use crate::value::Format;
@@ -65,6 +67,10 @@ pub struct Opt {
     /// Input from <FILE>.
     #[structopt(value_name = "FILE", parse(from_os_str))]
     pub input: Option<PathBuf>,
+
+    /// Generate completions.
+    #[structopt(long, hidden = true)]
+    pub generate_completions: bool,
 }
 
 impl Opt {
@@ -124,5 +130,20 @@ impl Opt {
     /// Do processing related to options.
     pub fn process(self) -> Self {
         self.guess_input_format().guess_output_format()
+    }
+
+    /// Generate completions.
+    pub fn generate_completions() -> Result<()> {
+        let outdir = Path::new("completion");
+        if !outdir.exists() {
+            fs::create_dir(outdir)?;
+        }
+
+        let shells: Vec<Shell> = Shell::variants().iter().flat_map(|s| s.parse()).collect();
+        for s in shells {
+            Self::clap().gen_completions(crate_name!(), s, outdir);
+        }
+
+        Ok(())
     }
 }

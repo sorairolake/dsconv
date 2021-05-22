@@ -35,3 +35,8 @@ $ meson setup builddir
 $ ninja -C builddir
 # ninja -C builddir install
 ----
+
+.To generate shell completions (stored in `completion/`)
+----
+$ cargo run -- --generate-completions
+----
