@@ -32,19 +32,19 @@ fn main() -> Result<()> {
     }
 
     if opt.list_input_formats {
-        println!(
-            "{}\n{}\n{}\n{}\n{}",
-            Format::Hjson,
-            Format::Json,
-            Format::Json5,
-            Format::Toml,
-            Format::Yaml
-        );
+        println!("{}", Format::Hjson);
+        println!("{}", Format::Json);
+        println!("{}", Format::Json5);
+        println!("{}", Format::Toml);
+        println!("{}", Format::Yaml);
 
         return Ok(());
     }
     if opt.list_output_formats {
-        println!("{}\n{}\n{}", Format::Json, Format::Toml, Format::Yaml);
+        println!("{}", Format::Hjson);
+        println!("{}", Format::Json);
+        println!("{}", Format::Toml);
+        println!("{}", Format::Yaml);
 
         return Ok(());
     }
