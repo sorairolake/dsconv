@@ -2,6 +2,30 @@
 
 *dsconv* is a command-line utility for converting from one data-serialization format to another.
 
+== Usage
+
+....
+USAGE:
+    dsconv [FLAGS] [OPTIONS] [FILE]
+
+FLAGS:
+    -h, --help                   Prints help information
+        --list-input-formats     List supported input formats
+        --list-output-formats    List supported output formats
+    -V, --version                Prints version information
+
+OPTIONS:
+    -f, --from <FORMAT>       Specify input format [possible values: hjson, json, json5, toml, yaml]
+    -o, --output <FILE>       Output to <FILE> instead of stdout
+        --pretty <BOOLEAN>    Output as a pretty-printed string
+    -t, --to <FORMAT>         Specify output format [possible values: hjson, json, toml, yaml]
+
+ARGS:
+    <FILE>    Input from <FILE>
+....
+
+See the link:doc/man/man1/dsconv.1.adoc[man page] (`man dsconv`) for details.
+
 == How to build and install
 
 Please refer to the link:INSTALL.adoc[Installation Guide].
