@@ -14,9 +14,9 @@ license = "Apache-2.0"
 anyhow = "1.0.40"
 atty = "0.2.14"
 const_format = "0.2.14"
+deser-hjson = "0.1.12"
 indexmap = "1.6.2"
 json5 = "0.3.0"
-serde-hjson = { git = "https://github.com/coolreader18/hjson-rust", rev = "1274299" }
 serde_json = { version = "1.0.64", features = ["preserve_order"] }
 serde_yaml = "0.8.17"
 structopt = "0.3.21"
