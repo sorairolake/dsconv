@@ -25,8 +25,8 @@ use crate::value::{Format, Value};
 fn main() -> Result<()> {
     let opt = Opt::from_args();
 
-    if opt.generate_completions {
-        Opt::generate_completions()?;
+    if let Some(s) = opt.generate_completion {
+        Opt::generate_completion(s);
 
         return Ok(());
     }

@@ -5,10 +5,9 @@
 //
 
 use std::ffi::OsStr;
-use std::fs;
-use std::path::{Path, PathBuf};
+use std::io;
+use std::path::PathBuf;
 
-use anyhow::Result;
 use const_format::formatcp;
 use structopt::clap::{crate_name, crate_version, AppSettings, Shell};
 use structopt::StructOpt;
@@ -68,9 +67,9 @@ pub struct Opt {
     #[structopt(value_name = "FILE", parse(from_os_str))]
     pub input: Option<PathBuf>,
 
-    /// Generate completions.
-    #[structopt(long, hidden = true)]
-    pub generate_completions: bool,
+    /// Generate completion.
+    #[structopt(long, value_name = "SHELL", possible_values = &Shell::variants(), hidden = true)]
+    pub generate_completion: Option<Shell>,
 }
 
 impl Opt {
@@ -132,18 +131,8 @@ impl Opt {
         self.guess_input_format().guess_output_format()
     }
 
-    /// Generate completions.
-    pub fn generate_completions() -> Result<()> {
-        let outdir = Path::new("completion");
-        if !outdir.exists() {
-            fs::create_dir(outdir)?;
-        }
-
-        let shells: Vec<Shell> = Shell::variants().iter().flat_map(|s| s.parse()).collect();
-        for s in shells {
-            Self::clap().gen_completions(crate_name!(), s, outdir);
-        }
-
-        Ok(())
+    /// Generate completion.
+    pub fn generate_completion(shell: Shell) {
+        Self::clap().gen_completions_to(crate_name!(), shell, &mut io::stdout())
     }
 }

@@ -36,7 +36,7 @@ $ ninja -C builddir
 # ninja -C builddir install
 ----
 
-.To generate shell completions (stored in `completion/`)
+.To generate shell completion (output to stdout)
 ----
-$ cargo run -- --generate-completions
+$ cargo run -- --generate-completion <SHELL>
 ----
