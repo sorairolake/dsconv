@@ -81,7 +81,7 @@ impl TryFrom<Yaml> for Value {
                 let (keys, values): (Vec<_>, Vec<_>) = map.into_iter().unzip();
                 let keys: Result<Vec<_>> = keys
                     .iter()
-                    .map(|k| k.as_str().context("The key is not a string."))
+                    .map(|k| k.as_str().context("The key is not a string"))
                     .collect();
                 let keys = keys?;
                 let values: Result<Vec<_>> = values.into_iter().map(|v| v.try_into()).collect();
@@ -108,9 +108,8 @@ impl TryFrom<Value> for Json {
             Value::Int(i) => Ok(Json::Number(i.into())),
             Value::UInt(u) => Ok(Json::Number(u.into())),
             Value::Float(f) => {
-                let f = serde_json::Number::from_f64(f).with_context(|| {
-                    format!("Infinite or NaN values are not allowed in JSON: {}", f)
-                })?;
+                let f = serde_json::Number::from_f64(f)
+                    .with_context(|| format!("Infinite or NaN values are not allowed: {}", f))?;
 
                 Ok(Json::Number(f))
             }
@@ -138,10 +137,10 @@ impl TryFrom<Value> for Toml {
 
     fn try_from(value: Value) -> Result<Self> {
         match value {
-            Value::Null => bail!("Null is not allowed in TOML."),
+            Value::Null => bail!("Null is not allowed"),
             Value::Bool(b) => Ok(Toml::Boolean(b)),
             Value::Int(i) => Ok(Toml::Integer(i)),
-            Value::UInt(u) => bail!("Out of range of integer of TOML: {}", u),
+            Value::UInt(u) => bail!("Out of range of integer: {}", u),
             Value::Float(f) => Ok(Toml::Float(f)),
             Value::String(s) => {
                 if let Ok(dt) = s.parse() {
@@ -358,10 +357,7 @@ mod tests {
         let yaml: Yaml = serde_yaml::from_str("256: byte").unwrap();
         let ir_value: Result<Value> = yaml.try_into();
 
-        assert_eq!(
-            ir_value.unwrap_err().to_string(),
-            "The key is not a string."
-        );
+        assert_eq!(ir_value.unwrap_err().to_string(), "The key is not a string");
     }
 
     #[test]
@@ -371,7 +367,7 @@ mod tests {
 
         assert_eq!(
             invalid_value.unwrap_err().to_string(),
-            "Infinite or NaN values are not allowed in JSON: NaN"
+            "Infinite or NaN values are not allowed: NaN"
         );
     }
 
@@ -382,7 +378,7 @@ mod tests {
 
         assert_eq!(
             invalid_value.unwrap_err().to_string(),
-            "Null is not allowed in TOML."
+            "Null is not allowed"
         );
     }
 
@@ -393,7 +389,7 @@ mod tests {
 
         assert_eq!(
             invalid_value.unwrap_err().to_string(),
-            "Out of range of integer of TOML: 9223372036854775808"
+            "Out of range of integer: 9223372036854775808"
         );
     }
 }
