@@ -5,6 +5,9 @@
 == Usage
 
 ....
+dsconv 0.1.0
+A data-serialization format converter
+
 USAGE:
     dsconv [FLAGS] [OPTIONS] [FILE]
 
@@ -18,7 +21,7 @@ OPTIONS:
     -f, --from <FORMAT>       Specify input format [possible values: hjson, json, json5, toml, yaml]
     -o, --output <FILE>       Output to <FILE> instead of stdout
         --pretty <BOOLEAN>    Output as a pretty-printed string
-    -t, --to <FORMAT>         Specify output format [possible values: hjson, json, toml, yaml]
+    -t, --to <FORMAT>         Specify output format [possible values: json, toml, yaml]
 
 ARGS:
     <FILE>    Input from <FILE>
