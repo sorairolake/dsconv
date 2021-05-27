@@ -63,7 +63,7 @@ fn main() -> Result<()> {
     let opt = opt.process();
 
     if opt.from.is_none() || opt.to.is_none() {
-        bail!("Unable to determine input and/or output format")
+        bail!("Unable to determine input and/or output format");
     }
 
     let ir_value: Value = match opt.from {

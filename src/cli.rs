@@ -52,11 +52,11 @@ pub struct Opt {
     pub list_input_formats: bool,
 
     /// List supported output formats.
-    #[structopt(long, conflicts_with = "list-input-formats")]
+    #[structopt(long)]
     pub list_output_formats: bool,
 
     /// Output to <FILE> instead of stdout.
-    #[structopt(short, long, value_name = "FILE", parse(from_os_str))]
+    #[structopt(short, long, value_name = "FILE")]
     pub output: Option<PathBuf>,
 
     /// Output as a pretty-printed string.
@@ -64,7 +64,7 @@ pub struct Opt {
     pub pretty: Option<Option<bool>>,
 
     /// Input from <FILE>.
-    #[structopt(value_name = "FILE", parse(from_os_str))]
+    #[structopt(value_name = "FILE")]
     pub input: Option<PathBuf>,
 
     /// Generate completion.
