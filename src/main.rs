@@ -60,7 +60,7 @@ fn main() -> Result<()> {
         _ => bail!("Input from tty is invalid"),
     };
 
-    let opt = opt.process();
+    let opt = opt.guess_input_format().guess_output_format();
 
     if opt.from.is_none() || opt.to.is_none() {
         bail!("Unable to determine input and/or output format");

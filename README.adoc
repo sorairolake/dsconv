@@ -20,7 +20,7 @@ FLAGS:
 OPTIONS:
     -f, --from <FORMAT>       Specify input format [possible values: hjson, json, json5, toml, yaml]
     -o, --output <FILE>       Output to <FILE> instead of stdout
-        --pretty <BOOLEAN>    Output as a pretty-printed string
+        --pretty <BOOLEAN>    Output as a pretty-printed string [possible values: true, false]
     -t, --to <FORMAT>         Specify output format [possible values: json, toml, yaml]
 
 ARGS:

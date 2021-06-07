@@ -60,7 +60,7 @@ pub struct Opt {
     pub output: Option<PathBuf>,
 
     /// Output as a pretty-printed string.
-    #[structopt(long, value_name = "BOOLEAN")]
+    #[structopt(long, value_name = "BOOLEAN", possible_values = &["true", "false"])]
     pub pretty: Option<Option<bool>>,
 
     /// Input from <FILE>.
@@ -86,7 +86,7 @@ impl Opt {
     }
 
     /// Guess the input format from the extension of a input file.
-    fn guess_input_format(mut self) -> Self {
+    pub fn guess_input_format(mut self) -> Self {
         if self.from.is_some() {
             return self;
         }
@@ -102,7 +102,7 @@ impl Opt {
     }
 
     /// Guess the output format from the extension of a output file.
-    fn guess_output_format(mut self) -> Self {
+    pub fn guess_output_format(mut self) -> Self {
         if self.to.is_some() {
             return self;
         }
@@ -124,11 +124,6 @@ impl Opt {
         }
 
         self.pretty.flatten().unwrap_or(true)
-    }
-
-    /// Do processing related to options.
-    pub fn process(self) -> Self {
-        self.guess_input_format().guess_output_format()
     }
 
     /// Generate completion.
