@@ -6,7 +6,7 @@
 
 = dsconv(1)
 // Specify in UTC.
-:docdate: 2021-05-24
+:docdate: 2021-06-09
 :doctype: manpage
 :mansource: dsconv {manversion}
 :manmanual: General Commands Manual
@@ -18,7 +18,7 @@ dsconv - a data-serialization format converter
 
 == SYNOPSIS
 
-*{manname}* [_OPTION_...] [_FILE_]
+*{manname}* [_OPTION_]... [_FILE_]
 
 == DESCRIPTION
 
