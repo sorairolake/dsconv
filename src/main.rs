@@ -69,31 +69,31 @@ fn main() -> Result<()> {
     let ir_value: Value = match opt.from {
         Some(Format::Hjson) => {
             let hjson: Json = deser_hjson::from_str(&input)
-                .context("Failed to deserialize from a string of Hjson")?;
+                .context("Failed to deserialize from a string into Hjson")?;
 
             hjson.into()
         }
         Some(Format::Json) => {
             let json: Json = serde_json::from_str(&input)
-                .context("Failed to deserialize from a string of JSON")?;
+                .context("Failed to deserialize from a string into JSON")?;
 
             json.into()
         }
         Some(Format::Json5) => {
-            let json5: Json =
-                json5::from_str(&input).context("Failed to deserialize from a string of JSON5")?;
+            let json5: Json = json5::from_str(&input)
+                .context("Failed to deserialize from a string into JSON5")?;
 
             json5.into()
         }
         Some(Format::Toml) => {
             let toml: Toml =
-                toml::from_str(&input).context("Failed to deserialize from a string of TOML")?;
+                toml::from_str(&input).context("Failed to deserialize from a string into TOML")?;
 
             toml.into()
         }
         Some(Format::Yaml) => {
             let yaml: Yaml = serde_yaml::from_str(&input)
-                .context("Failed to deserialize from a string of YAML")?;
+                .context("Failed to deserialize from a string into YAML")?;
 
             yaml.try_into()
                 .context("Failed to convert from a YAML value")?
