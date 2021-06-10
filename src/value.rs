@@ -19,6 +19,18 @@ pub enum Format {
     Yaml,
 }
 
+impl fmt::Display for Format {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Format::Hjson => write!(f, "Hjson"),
+            Format::Json => write!(f, "JSON"),
+            Format::Json5 => write!(f, "JSON5"),
+            Format::Toml => write!(f, "TOML"),
+            Format::Yaml => write!(f, "YAML"),
+        }
+    }
+}
+
 impl FromStr for Format {
     type Err = Error;
 
@@ -30,18 +42,6 @@ impl FromStr for Format {
             "toml" => Ok(Format::Toml),
             "yaml" => Ok(Format::Yaml),
             _ => unreachable!(),
-        }
-    }
-}
-
-impl fmt::Display for Format {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Format::Hjson => write!(f, "Hjson"),
-            Format::Json => write!(f, "JSON"),
-            Format::Json5 => write!(f, "JSON5"),
-            Format::Toml => write!(f, "TOML"),
-            Format::Yaml => write!(f, "YAML"),
         }
     }
 }
