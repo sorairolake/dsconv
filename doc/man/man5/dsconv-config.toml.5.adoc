@@ -50,6 +50,12 @@ Source code repository:{blank}::
 Specifications of TOML:{blank}::
   https://toml.io/
 
+== EXAMPLES
+
+----
+pretty = true
+----
+
 include::{includedir}/section-reporting-bugs.adoc[]
 
 include::{includedir}/section-copyright.adoc[]
