@@ -29,6 +29,18 @@ ARGS:
 
 See the link:doc/man/man1/dsconv.1.adoc[man page] (`man dsconv`) for details.
 
+== Configuration
+
+If you want to change the default behavior, you can use the configuration file.
+
+The location of the configuration file::
+
+  * `$XDG_CONFIG_HOME/dsconv/config.toml` or `$HOME/.config/dsconv/config.toml` (Unix-like)
+  * `$HOME/Library/Application Support/com.github.sorairolake.dsconv/config.toml` (macOS)
+  * `%APPDATA%\sorairolake\dsconv\config.toml` (Windows)
+
+See the link:doc/man/man5/dsconv-config.toml.5.adoc[man page] (`man dsconv-config.toml`) for details.
+
 == How to build and install
 
 Please refer to the link:INSTALL.adoc[Installation Guide].
