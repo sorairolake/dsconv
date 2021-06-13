@@ -8,10 +8,12 @@ use std::ffi::OsStr;
 use std::io;
 use std::path::PathBuf;
 
+use anyhow::Result;
 use const_format::formatcp;
 use structopt::clap::{crate_name, crate_version, AppSettings, Shell};
 use structopt::StructOpt;
 
+use crate::config::Config;
 use crate::value::Format;
 
 const LONG_VERSION: &str = formatcp!(
@@ -124,6 +126,21 @@ impl Opt {
         }
 
         self.pretty.flatten().unwrap_or(true)
+    }
+
+    /// Apply the config from the config file.
+    pub fn apply_config(mut self) -> Result<Self> {
+        if let Some(p) = Config::path() {
+            let config = Config::read(p)?;
+
+            if let Some(p) = config.pretty {
+                if self.pretty.is_none() {
+                    self.pretty = Some(Some(p));
+                }
+            }
+        }
+
+        Ok(self)
     }
 
     /// Generate completion.

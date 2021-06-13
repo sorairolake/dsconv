@@ -76,9 +76,15 @@ If _FILE_ is not specified, the input is read from stdin.
   Print the version number and exit.
   When the long option is specified, additional information will also be printed.
 
-include::{includedir}/section-exit-status.adoc[]
+== EXIT STATUS
 
-include::{includedir}/section-notes.adoc[]
+If successful, return 0 as the exit status.
+Otherwise, return non-zero as the exit status.
+
+== NOTES
+
+Source code repository:{blank}::
+  https://github.com/sorairolake/dsconv
 
 == EXAMPLES
 
@@ -91,4 +97,4 @@ include::{includedir}/section-copyright.adoc[]
 
 == SEE ALSO
 
-*bat*(1), *jq*(1)
+*bat*(1), *jq*(1), *dsconv-config.toml*(5)

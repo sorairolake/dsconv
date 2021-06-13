@@ -5,5 +5,8 @@
 #
 
 if get_option('enable_man')
+    asciidoctor = find_program('asciidoctor')
+
     subdir('man/man1')
+    subdir('man/man5')
 endif

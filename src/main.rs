@@ -5,6 +5,7 @@
 //
 
 mod cli;
+mod config;
 mod convert;
 mod value;
 
@@ -22,7 +23,7 @@ use crate::cli::Opt;
 use crate::value::{Format, Value};
 
 fn main() -> Result<()> {
-    let opt = Opt::from_args();
+    let opt = Opt::from_args().apply_config()?;
 
     if let Some(s) = opt.generate_completion {
         Opt::generate_completion(s);
