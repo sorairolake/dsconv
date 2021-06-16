@@ -1,4 +1,5 @@
 = Contribution Guide
+:toc:
 
 Thank you for your contributions!
 

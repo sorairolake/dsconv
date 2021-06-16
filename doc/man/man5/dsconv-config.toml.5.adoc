@@ -29,29 +29,28 @@ A file format of this file is TOML.
 
 == FILES
 
-Unix-like:{blank}::
+_$XDG_CONFIG_HOME/dsconv/config.toml_::
+_$HOME/.config/dsconv/config.toml_::
+  The location of the configuration file on Unix.
 
-  * _$XDG_CONFIG_HOME/dsconv/config.toml_
-  * _$HOME/.config/dsconv/config.toml_
+_$HOME/Library/Application Support/com.github.sorairolake.dsconv/config.toml_::
+  The location of the configuration file on macOS.
 
-macOS:{blank}::
-
-  * _$HOME/Library/Application Support/com.github.sorairolake.dsconv/config.toml_
-
-Windows:{blank}::
-
-  * _%APPDATA%\sorairolake\dsconv\config.toml_
+_%APPDATA%\sorairolake\dsconv\config.toml_::
+  The location of the configuration file on Windows.
 
 == NOTES
 
-Source code repository:{blank}::
+Source code repository::
   https://github.com/sorairolake/dsconv
 
-Specifications of TOML:{blank}::
+Specifications of TOML::
   https://toml.io/
 
 == EXAMPLES
 
+.The following is an example of the configuration file
+[source, toml]
 ----
 pretty = true
 ----

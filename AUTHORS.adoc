@@ -1,4 +1,5 @@
 = List of Authors
+:toc:
 
 == Original author
 

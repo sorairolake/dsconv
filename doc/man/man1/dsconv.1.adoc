@@ -33,7 +33,7 @@ If _FILE_ is not specified, the input is read from stdin.
   Specify input format.
   This option can be omitted if the input file is specified and _FORMAT_ can be determined from the filename extension.
 
-  _FORMAT_ can be:{blank}:::
+  _FORMAT_ can be:::
 
     * *hjson* (Hjson)
     * *json* (JSON)
@@ -45,7 +45,7 @@ If _FILE_ is not specified, the input is read from stdin.
   Specify output format.
   This option can be omitted if the output file is specified and _FORMAT_ can be determined from the filename extension.
 
-  _FORMAT_ can be:{blank}:::
+  _FORMAT_ can be:::
 
     * *json* (JSON)
     * *toml* (TOML)
@@ -83,12 +83,12 @@ Otherwise, return non-zero as the exit status.
 
 == NOTES
 
-Source code repository:{blank}::
+Source code repository::
   https://github.com/sorairolake/dsconv
 
 == EXAMPLES
 
-Convert a JSON file to TOML:{blank}::
+Convert a JSON file to TOML::
   $ *{manname} -t toml file.json*
 
 include::{includedir}/section-reporting-bugs.adoc[]

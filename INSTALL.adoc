@@ -1,42 +1,45 @@
 = Build and Install
+:toc:
 
 This document describes how to build and install *dsconv* from source code.
 
 == Prerequisites
 
-To build *dsconv*, you need to have the following dependencies installed::
+.To build *dsconv*, you need to have the following dependencies installed
+* https://doc.rust-lang.org/stable/cargo/[Cargo] (v1.46.0 or later)
 
-  * https://doc.rust-lang.org/stable/cargo/[Cargo] (≥ 1.46.0)
-
-To build the documentation, you need to have the following additional dependencies installed::
-
-  * https://mesonbuild.com/[Meson] (≥ 0.52.0)
-  * https://asciidoctor.org/[Asciidoctor] (for building man page)
+.To build the documentation, you need to have the following additional dependencies installed
+* https://mesonbuild.com/[Meson] (v0.52.0 or later)
+* https://asciidoctor.org/[Asciidoctor] (for building man page)
 
 == Building and installing from source
 
 First, either download the source archive or clone the https://github.com/sorairolake/dsconv[Git repository].
 
 .To clone the Git repository
+[source, shell]
 ----
 $ git clone https://github.com/sorairolake/dsconv.git
 $ cd dsconv
 ----
 
 .To install the executable
+[source, shell]
 ----
 $ cargo install --path .
 ----
 
 .To install the documentation as well (when installing to `/usr/local`)
+[source, shell]
 ----
-# cargo install --root /usr/local --path .
+$ sudo cargo install --root /usr/local --path .
 $ meson setup builddir
 $ ninja -C builddir
-# ninja -C builddir install
+$ sudo ninja -C builddir install
 ----
 
 .To generate shell completion (output to stdout)
+[source, shell]
 ----
 $ cargo run -- --generate-completion <SHELL>
 ----
