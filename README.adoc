@@ -1,6 +1,8 @@
 = dsconv
 :toc: macro
 
+image::https://github.com/sorairolake/dsconv/workflows/CI/badge.svg[CI, link=https://github.com/sorairolake/dsconv/actions]
+
 *dsconv* is a command-line utility for converting from one data-serialization format to another.
 
 toc::[]
