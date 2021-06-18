@@ -30,13 +30,12 @@ impl Config {
         let string = fs::read_to_string(path.as_ref()).with_context(|| {
             format!("Failed to read the config from {}", path.as_ref().display())
         })?;
-        let config = toml::from_str(&string).with_context(|| {
+
+        toml::from_str(&string).with_context(|| {
             format!(
                 "Failed to parse the config from {}",
                 path.as_ref().display()
             )
-        })?;
-
-        Ok(config)
+        })
     }
 }
