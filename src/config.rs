@@ -20,7 +20,7 @@ pub struct Config {
 impl Config {
     /// Get the path of the config file.
     pub fn path() -> Option<PathBuf> {
-        ProjectDirs::from("com.github", "sorairolake", crate_name!())
+        ProjectDirs::from("", "", crate_name!())
             .map(|p| p.config_dir().join("config.toml"))
             .filter(|p| p.exists())
     }

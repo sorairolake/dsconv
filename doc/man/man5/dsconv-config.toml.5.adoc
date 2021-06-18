@@ -33,10 +33,10 @@ _$XDG_CONFIG_HOME/dsconv/config.toml_::
 _$HOME/.config/dsconv/config.toml_::
   The location of the configuration file on Unix.
 
-_$HOME/Library/Application Support/com.github.sorairolake.dsconv/config.toml_::
+_$HOME/Library/Application Support/dsconv/config.toml_::
   The location of the configuration file on macOS.
 
-_%APPDATA%\sorairolake\dsconv\config.toml_::
+_%APPDATA%\dsconv\config\config.toml_::
   The location of the configuration file on Windows.
 
 == NOTES
