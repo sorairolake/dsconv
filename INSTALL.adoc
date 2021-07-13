@@ -1,5 +1,4 @@
 = Build and Install
-:toc:
 
 This document describes how to build and install *dsconv* from source code.
 
