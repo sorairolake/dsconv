@@ -37,8 +37,12 @@ $ ninja -C builddir
 $ sudo ninja -C builddir install
 ----
 
-.To generate shell completion (output to stdout)
+.To generate shell completion
 [source, shell]
 ----
+# Output to stdout.
 $ cargo run -- --generate-completion <SHELL>
+
+# Output to a file.
+$ cargo run -- --generate-completion <SHELL> -o <OUTDIR>
 ----

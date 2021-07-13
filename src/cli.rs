@@ -6,9 +6,9 @@
 
 use std::ffi::OsStr;
 use std::io;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
-use anyhow::Result;
+use anyhow::{ensure, Context, Result};
 use const_format::formatcp;
 use structopt::clap::{crate_name, crate_version, AppSettings, Shell};
 use structopt::StructOpt;
@@ -69,7 +69,7 @@ pub struct Opt {
     #[structopt(value_name = "FILE")]
     pub input: Option<PathBuf>,
 
-    /// Generate completion.
+    /// Generate shell completion.
     #[structopt(long, value_name = "SHELL", possible_values = &Shell::variants(), hidden = true)]
     pub generate_completion: Option<Shell>,
 }
@@ -143,8 +143,26 @@ impl Opt {
         Ok(self)
     }
 
-    /// Generate completion.
-    pub fn generate_completion(shell: Shell) {
+    /// Generate shell completion to a file.
+    pub fn generate_completion_to_file(shell: Shell, outdir: impl AsRef<Path>) -> Result<()> {
+        let outdir = outdir
+            .as_ref()
+            .canonicalize()
+            .context("Failed to generate shell completion to a file")?;
+        ensure!(outdir.is_dir(), "Output destination is not a directory");
+
+        Self::clap().gen_completions(crate_name!(), shell, &outdir);
+        eprintln!(
+            "Generated a shell completion file of the {} in {}",
+            shell,
+            outdir.display()
+        );
+
+        Ok(())
+    }
+
+    /// Generate shell completion to stdout.
+    pub fn generate_completion_to_stdout(shell: Shell) {
         Self::clap().gen_completions_to(crate_name!(), shell, &mut io::stdout())
     }
 }

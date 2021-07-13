@@ -26,7 +26,11 @@ fn main() -> Result<()> {
     let opt = Opt::from_args().apply_config()?;
 
     if let Some(s) = opt.generate_completion {
-        Opt::generate_completion(s);
+        if let Some(o) = opt.output {
+            Opt::generate_completion_to_file(s, o)?;
+        } else {
+            Opt::generate_completion_to_stdout(s);
+        }
 
         return Ok(());
     }
