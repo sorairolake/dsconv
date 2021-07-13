@@ -1,7 +1,9 @@
 = dsconv
-:toc:
+:toc: macro
 
 *dsconv* is a command-line utility for converting from one data-serialization format to another.
+
+toc::[]
 
 == Installation
 
