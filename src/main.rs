@@ -11,7 +11,8 @@ mod value;
 
 use std::convert::TryInto;
 use std::fs;
-use std::io::{self, Read};
+use std::io::{self, Read, Write};
+use std::str;
 
 use anyhow::{bail, Context, Result};
 use serde_json::Value as Json;
@@ -53,13 +54,14 @@ fn main() -> Result<()> {
     }
 
     let input = match opt.input {
-        Some(ref f) => fs::read_to_string(f)
-            .with_context(|| format!("Failed to read a string from {}", f.display()))?,
+        Some(ref f) => {
+            fs::read(f).with_context(|| format!("Failed to read bytes from {}", f.display()))?
+        }
         None if atty::isnt(atty::Stream::Stdin) => {
-            let mut buf = String::new();
+            let mut buf = Vec::new();
             io::stdin()
-                .read_to_string(&mut buf)
-                .context("Failed to read a string from stdin")?;
+                .read_to_end(&mut buf)
+                .context("Failed to read bytes from stdin")?;
             buf
         }
         _ => bail!("Input from tty is invalid"),
@@ -71,36 +73,46 @@ fn main() -> Result<()> {
         bail!("Unable to determine input and/or output format");
     }
 
-    let ir_value: Value = match opt.from {
+    let ir: Value = match opt.from {
         Some(Format::Hjson) => {
-            let hjson: Json = deser_hjson::from_str(&input)
-                .context("Failed to deserialize from a string into Hjson")?;
+            let input =
+                str::from_utf8(&input).context("Failed to convert from bytes to a string")?;
+            let obj: Json = deser_hjson::from_str(&input)
+                .context("Failed to deserialize from a Hjson string")?;
 
-            hjson.into()
+            obj.into()
         }
         Some(Format::Json) => {
-            let json: Json = serde_json::from_str(&input)
-                .context("Failed to deserialize from a string into JSON")?;
+            let input =
+                str::from_utf8(&input).context("Failed to convert from bytes to a string")?;
+            let obj: Json =
+                serde_json::from_str(&input).context("Failed to deserialize from a JSON string")?;
 
-            json.into()
+            obj.into()
         }
         Some(Format::Json5) => {
-            let json5: Json = json5::from_str(&input)
-                .context("Failed to deserialize from a string into JSON5")?;
+            let input =
+                str::from_utf8(&input).context("Failed to convert from bytes to a string")?;
+            let obj: Json =
+                json5::from_str(&input).context("Failed to deserialize from a JSON5 string")?;
 
-            json5.into()
+            obj.into()
         }
         Some(Format::Toml) => {
-            let toml: Toml =
-                toml::from_str(&input).context("Failed to deserialize from a string into TOML")?;
+            let input =
+                str::from_utf8(&input).context("Failed to convert from bytes to a string")?;
+            let obj: Toml =
+                toml::from_str(&input).context("Failed to deserialize from a TOML string")?;
 
-            toml.into()
+            obj.into()
         }
         Some(Format::Yaml) => {
-            let yaml: Yaml = serde_yaml::from_str(&input)
-                .context("Failed to deserialize from a string into YAML")?;
+            let input =
+                str::from_utf8(&input).context("Failed to convert from bytes to a string")?;
+            let obj: Yaml =
+                serde_yaml::from_str(&input).context("Failed to deserialize from a YAML string")?;
 
-            yaml.try_into()
+            obj.try_into()
                 .context("Failed to convert from a YAML value")?
         }
         None => unreachable!(),
@@ -108,35 +120,38 @@ fn main() -> Result<()> {
 
     let output = match opt.to {
         Some(Format::Json) => {
-            let json: Json = ir_value
-                .try_into()
-                .context("Failed to convert to a JSON value")?;
+            let obj: Json = ir.try_into().context("Failed to convert to a JSON value")?;
 
             if opt.is_pretty_print() {
-                serde_json::to_string_pretty(&json)
-                    .context("Failed to serialize to a pretty-printed string of JSON")?
-                    + "\n"
+                (serde_json::to_string_pretty(&obj)
+                    .context("Failed to serialize to a pretty-printed JSON string")?
+                    + "\n")
+                    .into_bytes()
             } else {
-                serde_json::to_string(&json).context("Failed to serialize to a string of JSON")?
-                    + "\n"
+                (serde_json::to_string(&obj).context("Failed to serialize to a JSON string")?
+                    + "\n")
+                    .into_bytes()
             }
         }
         Some(Format::Toml) => {
-            let toml: Toml = ir_value
-                .try_into()
-                .context("Failed to convert to a TOML value")?;
+            let obj: Toml = ir.try_into().context("Failed to convert to a TOML value")?;
 
             if opt.is_pretty_print() {
-                toml::to_string_pretty(&toml)
-                    .context("Failed to serialize to a pretty-printed string of TOML")?
+                toml::to_string_pretty(&obj)
+                    .context("Failed to serialize to a pretty-printed TOML string")?
+                    .into_bytes()
             } else {
-                toml::to_string(&toml).context("Failed to serialize to a string of TOML")?
+                toml::to_string(&obj)
+                    .context("Failed to serialize to a TOML string")?
+                    .into_bytes()
             }
         }
         Some(Format::Yaml) => {
-            let yaml: Yaml = ir_value.into();
+            let obj: Yaml = ir.into();
 
-            serde_yaml::to_string(&yaml).context("Failed to serialize to a string of YAML")?
+            serde_yaml::to_string(&obj)
+                .context("Failed to serialize to a YAML string")?
+                .into_bytes()
         }
         _ => unreachable!(),
     };
@@ -145,7 +160,9 @@ fn main() -> Result<()> {
         Some(ref f) => {
             fs::write(f, output).with_context(|| format!("Failed to write to {}", f.display()))?
         }
-        None => print!("{}", output),
+        None => io::stdout()
+            .write_all(&output)
+            .context("Failed to write to stdout")?,
     }
 
     Ok(())
