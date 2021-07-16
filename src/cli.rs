@@ -127,15 +127,6 @@ impl Opt {
         self
     }
 
-    /// Do processing pretty option.
-    pub fn is_pretty_print(&self) -> bool {
-        if self.pretty.is_none() {
-            return false;
-        }
-
-        self.pretty.flatten().unwrap_or(true)
-    }
-
     /// Apply the config from the config file.
     pub fn apply_config(mut self) -> Result<Self> {
         if let Some(p) = Config::path() {
