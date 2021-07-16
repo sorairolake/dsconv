@@ -15,6 +15,8 @@ use std::io::{self, Read, Write};
 use std::str;
 
 use anyhow::{bail, Context, Result};
+use rmpv::Value as MessagePack;
+use serde_cbor::Value as Cbor;
 use serde_json::Value as Json;
 use serde_yaml::Value as Yaml;
 use structopt::StructOpt;
@@ -37,16 +39,20 @@ fn main() -> Result<()> {
     }
 
     if opt.list_input_formats {
+        println!("{}", Format::Cbor);
         println!("{}", Format::Hjson);
         println!("{}", Format::Json);
         println!("{}", Format::Json5);
+        println!("{}", Format::MessagePack);
         println!("{}", Format::Toml);
         println!("{}", Format::Yaml);
 
         return Ok(());
     }
     if opt.list_output_formats {
+        println!("{}", Format::Cbor);
         println!("{}", Format::Json);
+        println!("{}", Format::MessagePack);
         println!("{}", Format::Toml);
         println!("{}", Format::Yaml);
 
@@ -74,6 +80,13 @@ fn main() -> Result<()> {
     }
 
     let ir: Value = match opt.from {
+        Some(Format::Cbor) => {
+            let obj: Cbor = serde_cbor::from_slice(&input)
+                .context("Failed to deserialize from a CBOR bytes")?;
+
+            obj.try_into()
+                .context("Failed to convert from a CBOR value")?
+        }
         Some(Format::Hjson) => {
             let input =
                 str::from_utf8(&input).context("Failed to convert from bytes to a string")?;
@@ -98,6 +111,14 @@ fn main() -> Result<()> {
 
             obj.into()
         }
+        Some(Format::MessagePack) => {
+            let obj: Vec<u8> = rmp_serde::from_read_ref(&input)
+                .context("Failed to deserialize from a MessagePack bytes")?;
+
+            rmpv::decode::read_value(&mut obj.as_slice())?
+                .try_into()
+                .context("Failed to convert from a MessagePack value")?
+        }
         Some(Format::Toml) => {
             let input =
                 str::from_utf8(&input).context("Failed to convert from bytes to a string")?;
@@ -119,6 +140,11 @@ fn main() -> Result<()> {
     };
 
     let output = match opt.to {
+        Some(Format::Cbor) => {
+            let obj: Cbor = ir.into();
+
+            serde_cbor::to_vec(&obj).context("Failed to serialize to a CBOR bytes")?
+        }
         Some(Format::Json) => {
             let obj: Json = ir.try_into().context("Failed to convert to a JSON value")?;
 
@@ -132,6 +158,14 @@ fn main() -> Result<()> {
                     + "\n")
                     .into_bytes()
             }
+        }
+        Some(Format::MessagePack) => {
+            let mut buf = Vec::new();
+            let obj: MessagePack = ir.into();
+            rmpv::encode::write_value(&mut buf, &obj)
+                .context("Failed to write a MessagePack value to buffer")?;
+
+            rmp_serde::to_vec(&buf).context("Failed to serialize to a MessagePack bytes")?
         }
         Some(Format::Toml) => {
             let obj: Toml = ir.try_into().context("Failed to convert to a TOML value")?;

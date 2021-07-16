@@ -12,9 +12,11 @@ use indexmap::IndexMap;
 
 #[derive(Debug)]
 pub enum Format {
+    Cbor,
     Hjson,
     Json,
     Json5,
+    MessagePack,
     Toml,
     Yaml,
 }
@@ -22,9 +24,11 @@ pub enum Format {
 impl fmt::Display for Format {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
+            Format::Cbor => write!(f, "CBOR"),
             Format::Hjson => write!(f, "Hjson"),
             Format::Json => write!(f, "JSON"),
             Format::Json5 => write!(f, "JSON5"),
+            Format::MessagePack => write!(f, "MessagePack"),
             Format::Toml => write!(f, "TOML"),
             Format::Yaml => write!(f, "YAML"),
         }
@@ -36,9 +40,11 @@ impl FromStr for Format {
 
     fn from_str(format: &str) -> Result<Self> {
         match format.to_ascii_lowercase().as_str() {
+            "cbor" => Ok(Format::Cbor),
             "hjson" => Ok(Format::Hjson),
             "json" => Ok(Format::Json),
             "json5" => Ok(Format::Json5),
+            "messagepack" => Ok(Format::MessagePack),
             "toml" => Ok(Format::Toml),
             "yaml" => Ok(Format::Yaml),
             _ => unreachable!(),
@@ -46,7 +52,7 @@ impl FromStr for Format {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Value {
     Null,
     Bool(bool),
