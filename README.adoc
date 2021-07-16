@@ -27,10 +27,10 @@ FLAGS:
     -V, --version                Prints version information
 
 OPTIONS:
-    -f, --from <FORMAT>       Specify input format [possible values: hjson, json, json5, toml, yaml]
+    -f, --from <FORMAT>       Specify input format [possible values: cbor, hjson, json, json5, messagepack, toml, yaml]
     -o, --output <FILE>       Output to <FILE> instead of stdout
         --pretty <BOOLEAN>    Output as a pretty-printed string [possible values: true, false]
-    -t, --to <FORMAT>         Specify output format [possible values: json, toml, yaml]
+    -t, --to <FORMAT>         Specify output format [possible values: cbor, json, messagepack, toml, yaml]
 
 ARGS:
     <FILE>    Input from <FILE>
