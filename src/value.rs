@@ -10,7 +10,7 @@ use std::str::FromStr;
 use anyhow::{Error, Result};
 use indexmap::IndexMap;
 
-#[derive(Debug)]
+#[derive(Clone, Copy, Debug)]
 pub enum Format {
     Cbor,
     Hjson,

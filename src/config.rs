@@ -12,7 +12,7 @@ use directories::ProjectDirs;
 use serde::Deserialize;
 use structopt::clap::crate_name;
 
-#[derive(Deserialize)]
+#[derive(Clone, Debug, Deserialize)]
 pub struct Config {
     pub pretty: Option<bool>,
 }

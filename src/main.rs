@@ -150,7 +150,7 @@ fn main() -> Result<()> {
 
             if opt.pretty.flatten().unwrap_or(true) {
                 (serde_json::to_string_pretty(&obj)
-                    .context("Failed to serialize to a pretty-printed JSON string")?
+                    .context("Failed to serialize to a JSON string")?
                     + "\n")
                     .into_bytes()
             } else {
@@ -172,7 +172,7 @@ fn main() -> Result<()> {
 
             if opt.pretty.flatten().unwrap_or(true) {
                 toml::to_string_pretty(&obj)
-                    .context("Failed to serialize to a pretty-printed TOML string")?
+                    .context("Failed to serialize to a TOML string")?
                     .into_bytes()
             } else {
                 toml::to_string(&obj)
