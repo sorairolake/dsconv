@@ -11,12 +11,12 @@ license = "Apache-2.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-anyhow = "1.0.41"
+anyhow = "1.0.42"
 atty = "0.2.14"
 const_format = "0.2.14"
-deser-hjson = "0.1.13"
+deser-hjson = "1.0.1"
 directories = "3.0.2"
-indexmap = "1.6.2"
+indexmap = "1.7.0"
 json5 = "0.3.0"
 rmp-serde = "0.15.5"
 rmpv = "0.4.7"
@@ -24,7 +24,7 @@ serde = { version = "1.0.126", features = ["derive"] }
 serde_cbor = "0.11.1"
 serde_json = { version = "1.0.64", features = ["preserve_order"] }
 serde_yaml = "0.8.17"
-structopt = "0.3.21"
+structopt = "0.3.22"
 toml = { version = "0.5.8", features = ["preserve_order"] }
 
 [profile.release]

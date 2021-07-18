@@ -5,7 +5,7 @@ This document describes how to build and install *dsconv* from source code.
 == Prerequisites
 
 .To build *dsconv*, you need to have the following dependencies installed
-* https://doc.rust-lang.org/stable/cargo/[Cargo] (v1.46.0 or later)
+* https://doc.rust-lang.org/stable/cargo/[Cargo] (v1.49.0 or later)
 
 .To build the documentation, you need to have the following additional dependencies installed
 * https://mesonbuild.com/[Meson] (v0.52.0 or later)
