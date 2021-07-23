@@ -148,7 +148,7 @@ fn main() -> Result<()> {
         Some(Format::Json) => {
             let obj: Json = ir.try_into().context("Failed to convert to a JSON value")?;
 
-            if opt.pretty.flatten().unwrap_or(true) {
+            if opt.pretty.map_or(false, |p| p.unwrap_or(true)) {
                 format!(
                     "{}\n",
                     serde_json::to_string_pretty(&obj)
@@ -174,7 +174,7 @@ fn main() -> Result<()> {
         Some(Format::Toml) => {
             let obj: Toml = ir.try_into().context("Failed to convert to a TOML value")?;
 
-            if opt.pretty.flatten().unwrap_or(true) {
+            if opt.pretty.map_or(false, |p| p.unwrap_or(true)) {
                 toml::to_string_pretty(&obj)
                     .context("Failed to serialize to a TOML string")?
                     .into_bytes()
