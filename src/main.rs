@@ -149,14 +149,18 @@ fn main() -> Result<()> {
             let obj: Json = ir.try_into().context("Failed to convert to a JSON value")?;
 
             if opt.pretty.flatten().unwrap_or(true) {
-                (serde_json::to_string_pretty(&obj)
-                    .context("Failed to serialize to a JSON string")?
-                    + "\n")
-                    .into_bytes()
+                format!(
+                    "{}\n",
+                    serde_json::to_string_pretty(&obj)
+                        .context("Failed to serialize to a JSON string")?
+                )
+                .into_bytes()
             } else {
-                (serde_json::to_string(&obj).context("Failed to serialize to a JSON string")?
-                    + "\n")
-                    .into_bytes()
+                format!(
+                    "{}\n",
+                    serde_json::to_string(&obj).context("Failed to serialize to a JSON string")?
+                )
+                .into_bytes()
             }
         }
         Some(Format::MessagePack) => {
