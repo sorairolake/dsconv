@@ -33,9 +33,14 @@ const INPUT_FORMATS: [&str; 7] = [
     "yaml",
 ];
 const OUTPUT_FORMATS: [&str; 5] = ["cbor", "json", "messagepack", "toml", "yaml"];
+const APP_SETTINGS: [AppSettings; 3] = [
+    AppSettings::ArgRequiredElseHelp,
+    AppSettings::ColoredHelp,
+    AppSettings::DeriveDisplayOrder,
+];
 
 #[derive(StructOpt)]
-#[structopt(long_version = LONG_VERSION, about, setting = AppSettings::ColoredHelp)]
+#[structopt(long_version = LONG_VERSION, about, settings = &APP_SETTINGS)]
 pub struct Opt {
     /// Specify input format.
     #[structopt(
@@ -70,7 +75,7 @@ pub struct Opt {
     pub output: Option<PathBuf>,
 
     /// Output as a pretty-printed string.
-    #[structopt(long, value_name = "BOOLEAN", possible_values = &["true", "false"])]
+    #[structopt(short, long, value_name = "BOOLEAN", possible_values = &["true", "false"])]
     pub pretty: Option<Option<bool>>,
 
     /// Input from <FILE>.

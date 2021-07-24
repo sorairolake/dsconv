@@ -21,16 +21,16 @@ USAGE:
     dsconv [FLAGS] [OPTIONS] [FILE]
 
 FLAGS:
-    -h, --help                   Prints help information
         --list-input-formats     List supported input formats
         --list-output-formats    List supported output formats
+    -h, --help                   Prints help information
     -V, --version                Prints version information
 
 OPTIONS:
     -f, --from <FORMAT>       Specify input format [possible values: cbor, hjson, json, json5, messagepack, toml, yaml]
-    -o, --output <FILE>       Output to <FILE> instead of stdout
-        --pretty <BOOLEAN>    Output as a pretty-printed string [possible values: true, false]
     -t, --to <FORMAT>         Specify output format [possible values: cbor, json, messagepack, toml, yaml]
+    -o, --output <FILE>       Output to <FILE> instead of stdout
+    -p, --pretty <BOOLEAN>    Output as a pretty-printed string [possible values: true, false]
 
 ARGS:
     <FILE>    Input from <FILE>
