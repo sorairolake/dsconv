@@ -34,7 +34,7 @@ const INPUT_FORMATS: [&str; 7] = [
 ];
 const OUTPUT_FORMATS: [&str; 5] = ["cbor", "json", "messagepack", "toml", "yaml"];
 
-#[derive(Debug, StructOpt)]
+#[derive(StructOpt)]
 #[structopt(long_version = LONG_VERSION, about, setting = AppSettings::ColoredHelp)]
 pub struct Opt {
     /// Specify input format.
