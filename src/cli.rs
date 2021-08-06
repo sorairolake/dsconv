@@ -23,6 +23,11 @@ const LONG_VERSION: &str = formatcp!(
     "License: Apache License 2.0",
     "Reporting bugs: https://github.com/sorairolake/dsconv/issues"
 );
+const APP_SETTINGS: [AppSettings; 3] = [
+    AppSettings::ArgRequiredElseHelp,
+    AppSettings::ColoredHelp,
+    AppSettings::DeriveDisplayOrder,
+];
 const INPUT_FORMATS: [&str; 7] = [
     "cbor",
     "hjson",
@@ -33,11 +38,6 @@ const INPUT_FORMATS: [&str; 7] = [
     "yaml",
 ];
 const OUTPUT_FORMATS: [&str; 5] = ["cbor", "json", "messagepack", "toml", "yaml"];
-const APP_SETTINGS: [AppSettings; 3] = [
-    AppSettings::ArgRequiredElseHelp,
-    AppSettings::ColoredHelp,
-    AppSettings::DeriveDisplayOrder,
-];
 
 #[derive(StructOpt)]
 #[structopt(long_version = LONG_VERSION, about, settings = &APP_SETTINGS)]
