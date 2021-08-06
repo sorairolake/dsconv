@@ -14,7 +14,7 @@ use std::fs;
 use std::io::{self, Read, Write};
 use std::str;
 
-use anyhow::{bail, Context, Result};
+use anyhow::{ensure, Context, Result};
 use dialoguer::theme::ColorfulTheme;
 use rmpv::Value as MessagePack;
 use serde_cbor::Value as Cbor;
@@ -27,7 +27,10 @@ use crate::cli::Opt;
 use crate::value::{Format, Value};
 
 fn main() -> Result<()> {
-    let opt = Opt::from_args().apply_config()?;
+    let opt = Opt::from_args()
+        .guess_input_format()
+        .guess_output_format()
+        .apply_config()?;
 
     if let Some(s) = opt.generate_completion {
         if let Some(o) = opt.output {
@@ -60,6 +63,11 @@ fn main() -> Result<()> {
         return Ok(());
     }
 
+    ensure!(
+        opt.from.is_some() && opt.to.is_some(),
+        "Unable to determine input and/or output format"
+    );
+
     let input = match opt.input {
         Some(ref f) => {
             fs::read(f).with_context(|| format!("Failed to read bytes from {}", f.display()))?
@@ -79,12 +87,6 @@ fn main() -> Result<()> {
             buf
         }
     };
-
-    let opt = opt.guess_input_format().guess_output_format();
-
-    if opt.from.is_none() || opt.to.is_none() {
-        bail!("Unable to determine input and/or output format");
-    }
 
     let ir: Value = match opt.from {
         Some(Format::Cbor) => {
