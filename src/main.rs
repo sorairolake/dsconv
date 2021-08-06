@@ -15,6 +15,7 @@ use std::io::{self, Read, Write};
 use std::str;
 
 use anyhow::{bail, Context, Result};
+use dialoguer::theme::ColorfulTheme;
 use rmpv::Value as MessagePack;
 use serde_cbor::Value as Cbor;
 use serde_json::Value as Json;
@@ -63,14 +64,20 @@ fn main() -> Result<()> {
         Some(ref f) => {
             fs::read(f).with_context(|| format!("Failed to read bytes from {}", f.display()))?
         }
-        None if atty::isnt(atty::Stream::Stdin) => {
+        _ if atty::is(atty::Stream::Stdin) => {
+            dialoguer::Input::<String>::with_theme(&ColorfulTheme::default())
+                .with_prompt("Input")
+                .interact()
+                .context("Failed to read a string from stdin")?
+                .into_bytes()
+        }
+        _ => {
             let mut buf = Vec::new();
             io::stdin()
                 .read_to_end(&mut buf)
                 .context("Failed to read bytes from stdin")?;
             buf
         }
-        _ => bail!("Input from tty is invalid"),
     };
 
     let opt = opt.guess_input_format().guess_output_format();

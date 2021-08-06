@@ -23,11 +23,7 @@ const LONG_VERSION: &str = formatcp!(
     "License: Apache License 2.0",
     "Reporting bugs: https://github.com/sorairolake/dsconv/issues"
 );
-const APP_SETTINGS: [AppSettings; 3] = [
-    AppSettings::ArgRequiredElseHelp,
-    AppSettings::ColoredHelp,
-    AppSettings::DeriveDisplayOrder,
-];
+const APP_SETTINGS: [AppSettings; 2] = [AppSettings::ColoredHelp, AppSettings::DeriveDisplayOrder];
 const INPUT_FORMATS: [&str; 7] = [
     "cbor",
     "hjson",

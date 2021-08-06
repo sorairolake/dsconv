@@ -15,6 +15,7 @@ anyhow = "1.0.42"
 atty = "0.2.14"
 const_format = "0.2.14"
 deser-hjson = "1.0.1"
+dialoguer = { version = "0.8.0", default-features = false }
 directories = "3.0.2"
 indexmap = "1.7.0"
 json5 = "0.3.0"
