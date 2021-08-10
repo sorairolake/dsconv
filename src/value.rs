@@ -4,7 +4,7 @@
 // Copyright (C) 2021 Shun Sakai
 //
 
-use std::fmt;
+use std::fmt::{self, Display};
 use std::str::FromStr;
 
 use anyhow::{Error, Result};
@@ -53,11 +53,65 @@ impl FromStr for Format {
 }
 
 #[derive(Clone, Debug, PartialEq)]
+enum I {
+    Pos(u64),
+    Neg(i64),
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct Integer {
+    i: I,
+}
+
+impl Integer {
+    pub fn as_i64(&self) -> Option<i64> {
+        match self.i {
+            I::Pos(u) if u <= i64::MAX as u64 => Some(u as i64),
+            I::Neg(i) => Some(i),
+            _ => None,
+        }
+    }
+
+    pub fn as_u64(&self) -> Option<u64> {
+        match self.i {
+            I::Pos(u) => Some(u),
+            _ => None,
+        }
+    }
+}
+
+impl fmt::Display for Integer {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self.i {
+            I::Pos(u) => Display::fmt(&u, f),
+            I::Neg(i) => Display::fmt(&i, f),
+        }
+    }
+}
+
+impl From<i64> for Integer {
+    fn from(integer: i64) -> Self {
+        if integer < 0 {
+            Integer { i: I::Neg(integer) }
+        } else {
+            Integer {
+                i: I::Pos(integer as u64),
+            }
+        }
+    }
+}
+
+impl From<u64> for Integer {
+    fn from(integer: u64) -> Self {
+        Integer { i: I::Pos(integer) }
+    }
+}
+
+#[derive(Clone, Debug, PartialEq)]
 pub enum Value {
     Null,
     Bool(bool),
-    Int(i64),
-    UInt(u64),
+    Integer(Integer),
     Float(f64),
     String(String),
     Array(Vec<Value>),

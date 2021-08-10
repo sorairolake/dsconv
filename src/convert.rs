@@ -23,12 +23,14 @@ impl TryFrom<Cbor> for Value {
             Cbor::Null => Ok(Value::Null),
             Cbor::Bool(b) => Ok(Value::Bool(b)),
             Cbor::Integer(i) => {
-                if let Ok(i) = i.try_into() {
-                    return Ok(Value::Int(i));
+                if let Ok(i) = i64::try_from(i) {
+                    return Ok(Value::Integer(i.into()));
                 }
 
-                // Return value is definitely Some(T).
-                Ok(Value::UInt(i.try_into().unwrap()))
+                // Return value is definitely Ok(T).
+                Ok(Value::Integer(
+                    u64::try_from(i).expect("Invalid integer as IR").into(),
+                ))
             }
             Cbor::Float(f) => Ok(Value::Float(f)),
             Cbor::Bytes(_) => bail!("A byte string cannot be converted"),
@@ -66,14 +68,14 @@ impl From<Json> for Value {
             Json::Bool(b) => Value::Bool(b),
             Json::Number(n) => {
                 if let Some(i) = n.as_i64() {
-                    return Value::Int(i);
+                    return Value::Integer(i.into());
                 }
                 if let Some(u) = n.as_u64() {
-                    return Value::UInt(u);
+                    return Value::Integer(u.into());
                 }
 
                 // Return value is definitely Some(T).
-                Value::Float(n.as_f64().unwrap())
+                Value::Float(n.as_f64().expect("Invalid number as IR"))
             }
             Json::String(s) => Value::String(s),
             Json::Array(arr) => Value::Array(arr.into_iter().map(|v| v.into()).collect()),
@@ -91,11 +93,13 @@ impl TryFrom<MessagePack> for Value {
             MessagePack::Boolean(b) => Ok(Value::Bool(b)),
             MessagePack::Integer(i) => {
                 if let Some(i) = i.as_i64() {
-                    return Ok(Value::Int(i));
+                    return Ok(Value::Integer(i.into()));
                 }
 
                 // Return value is definitely Some(T).
-                Ok(Value::UInt(i.as_u64().unwrap()))
+                Ok(Value::Integer(
+                    i.as_u64().expect("Invalid integer as IR").into(),
+                ))
             }
             MessagePack::F32(f) => Ok(Value::Float(f.into())),
             MessagePack::F64(f) => Ok(Value::Float(f)),
@@ -139,7 +143,7 @@ impl From<Toml> for Value {
     fn from(value: Toml) -> Self {
         match value {
             Toml::String(s) => Value::String(s),
-            Toml::Integer(i) => Value::Int(i),
+            Toml::Integer(i) => Value::Integer(i.into()),
             Toml::Float(f) => Value::Float(f),
             Toml::Boolean(b) => Value::Bool(b),
             Toml::Datetime(dt) => Value::String(dt.to_string()),
@@ -160,14 +164,14 @@ impl TryFrom<Yaml> for Value {
             Yaml::Bool(b) => Ok(Value::Bool(b)),
             Yaml::Number(n) => {
                 if let Some(i) = n.as_i64() {
-                    return Ok(Value::Int(i));
+                    return Ok(Value::Integer(i.into()));
                 }
                 if let Some(u) = n.as_u64() {
-                    return Ok(Value::UInt(u));
+                    return Ok(Value::Integer(u.into()));
                 }
 
                 // Return value is definitely Some(T).
-                Ok(Value::Float(n.as_f64().unwrap()))
+                Ok(Value::Float(n.as_f64().expect("Invalid number as IR")))
             }
             Yaml::String(s) => Ok(Value::String(s)),
             Yaml::Sequence(seq) => {
@@ -202,8 +206,14 @@ impl From<Value> for Cbor {
         match value {
             Value::Null => Cbor::Null,
             Value::Bool(b) => Cbor::Bool(b),
-            Value::Int(i) => Cbor::Integer(i.into()),
-            Value::UInt(u) => Cbor::Integer(u.into()),
+            Value::Integer(i) => {
+                if let Some(i) = i.as_i64() {
+                    return Cbor::Integer(i.into());
+                }
+
+                // Return value is definitely Some(T).
+                Cbor::Integer(i.as_u64().expect("Invalid integer as CBOR").into())
+            }
             Value::Float(f) => Cbor::Float(f),
             Value::String(s) => Cbor::Text(s),
             Value::Array(arr) => Cbor::Array(arr.into_iter().map(|v| v.into()).collect()),
@@ -221,8 +231,16 @@ impl TryFrom<Value> for Json {
         match value {
             Value::Null => Ok(Json::Null),
             Value::Bool(b) => Ok(Json::Bool(b)),
-            Value::Int(i) => Ok(Json::Number(i.into())),
-            Value::UInt(u) => Ok(Json::Number(u.into())),
+            Value::Integer(i) => {
+                if let Some(i) = i.as_i64() {
+                    return Ok(Json::Number(i.into()));
+                }
+
+                // Return value is definitely Some(T).
+                Ok(Json::Number(
+                    i.as_u64().expect("Invalid integer as JSON").into(),
+                ))
+            }
             Value::Float(f) => {
                 let f = serde_json::Number::from_f64(f)
                     .with_context(|| format!("Infinite or NaN values are not allowed: {}", f))?;
@@ -253,8 +271,14 @@ impl From<Value> for MessagePack {
         match value {
             Value::Null => MessagePack::Nil,
             Value::Bool(b) => MessagePack::Boolean(b),
-            Value::Int(i) => MessagePack::Integer(i.into()),
-            Value::UInt(u) => MessagePack::Integer(u.into()),
+            Value::Integer(i) => {
+                if let Some(i) = i.as_i64() {
+                    return MessagePack::Integer(i.into());
+                }
+
+                // Return value is definitely Some(T).
+                MessagePack::Integer(i.as_u64().expect("Invalid integer as MessagePack").into())
+            }
             Value::Float(f) => MessagePack::F64(f),
             Value::String(s) => MessagePack::String(s.into()),
             Value::Array(arr) => MessagePack::Array(arr.into_iter().map(|v| v.into()).collect()),
@@ -272,8 +296,13 @@ impl TryFrom<Value> for Toml {
         match value {
             Value::Null => bail!("Null is not allowed"),
             Value::Bool(b) => Ok(Toml::Boolean(b)),
-            Value::Int(i) => Ok(Toml::Integer(i)),
-            Value::UInt(u) => bail!("Out of range of integer: {}", u),
+            Value::Integer(i) => {
+                let i = i
+                    .as_i64()
+                    .with_context(|| format!("Out of range of integer: {}", i))?;
+
+                Ok(Toml::Integer(i))
+            }
             Value::Float(f) => Ok(Toml::Float(f)),
             Value::String(s) => {
                 if let Ok(dt) = s.parse() {
@@ -305,8 +334,14 @@ impl From<Value> for Yaml {
         match value {
             Value::Null => Yaml::Null,
             Value::Bool(b) => Yaml::Bool(b),
-            Value::Int(i) => Yaml::Number(i.into()),
-            Value::UInt(u) => Yaml::Number(u.into()),
+            Value::Integer(i) => {
+                if let Some(i) = i.as_i64() {
+                    return Yaml::Number(i.into());
+                }
+
+                // Return value is definitely Some(T).
+                Yaml::Number(i.as_u64().expect("Invalid integer as YAML").into())
+            }
             Value::Float(f) => Yaml::Number(f.into()),
             Value::String(s) => Yaml::String(s),
             Value::Array(arr) => Yaml::Sequence(arr.into_iter().map(|v| v.into()).collect()),
@@ -329,12 +364,12 @@ mod tests {
             Value::Bool(bool::default())
         );
         assert_eq!(
-            TryInto::<Value>::try_into(Cbor::Integer(i64::MAX.into())).unwrap(),
-            Value::Int(i64::MAX)
+            TryInto::<Value>::try_into(Cbor::Integer(i64::MIN.into())).unwrap(),
+            Value::Integer(i64::MIN.into())
         );
         assert_eq!(
             TryInto::<Value>::try_into(Cbor::Integer(u64::MAX.into())).unwrap(),
-            Value::UInt(u64::MAX)
+            Value::Integer(u64::MAX.into())
         );
         assert_eq!(
             TryInto::<Value>::try_into(Cbor::Float(f64::default())).unwrap(),
@@ -374,12 +409,12 @@ mod tests {
             Value::Bool(bool::default())
         );
         assert_eq!(
-            Into::<Value>::into(Json::Number(i64::MAX.into())),
-            Value::Int(i64::MAX)
+            Into::<Value>::into(Json::Number(i64::MIN.into())),
+            Value::Integer(i64::MIN.into())
         );
         assert_eq!(
             Into::<Value>::into(Json::Number(u64::MAX.into())),
-            Value::UInt(u64::MAX)
+            Value::Integer(u64::MAX.into())
         );
         assert_eq!(
             Into::<Value>::into(Json::Number(
@@ -414,12 +449,12 @@ mod tests {
             Value::Bool(bool::default())
         );
         assert_eq!(
-            TryInto::<Value>::try_into(MessagePack::Integer(i64::MAX.into())).unwrap(),
-            Value::Int(i64::MAX)
+            TryInto::<Value>::try_into(MessagePack::Integer(i64::MIN.into())).unwrap(),
+            Value::Integer(i64::MIN.into())
         );
         assert_eq!(
             TryInto::<Value>::try_into(MessagePack::Integer(u64::MAX.into())).unwrap(),
-            Value::UInt(u64::MAX)
+            Value::Integer(u64::MAX.into())
         );
         assert_eq!(
             TryInto::<Value>::try_into(MessagePack::F32(f32::default())).unwrap(),
@@ -470,7 +505,7 @@ mod tests {
         );
         assert_eq!(
             Into::<Value>::into(Toml::Integer(i64::default())),
-            Value::Int(i64::default())
+            Value::Integer(i64::default().into())
         );
         assert_eq!(
             Into::<Value>::into(Toml::Float(f64::default())),
@@ -510,12 +545,12 @@ mod tests {
             Value::Bool(bool::default())
         );
         assert_eq!(
-            TryInto::<Value>::try_into(Yaml::Number(i64::MAX.into())).unwrap(),
-            Value::Int(i64::MAX)
+            TryInto::<Value>::try_into(Yaml::Number(i64::MIN.into())).unwrap(),
+            Value::Integer(i64::MIN.into())
         );
         assert_eq!(
             TryInto::<Value>::try_into(Yaml::Number(u64::MAX.into())).unwrap(),
-            Value::UInt(u64::MAX)
+            Value::Integer(u64::MAX.into())
         );
         assert_eq!(
             TryInto::<Value>::try_into(Yaml::Number(f64::default().into())).unwrap(),
@@ -553,11 +588,11 @@ mod tests {
             Cbor::Bool(bool::default())
         );
         assert_eq!(
-            Into::<Cbor>::into(Value::Int(i64::MAX)),
-            Cbor::Integer(i64::MAX.into())
+            Into::<Cbor>::into(Value::Integer(i64::MIN.into())),
+            Cbor::Integer(i64::MIN.into())
         );
         assert_eq!(
-            Into::<Cbor>::into(Value::UInt(u64::MAX)),
+            Into::<Cbor>::into(Value::Integer(u64::MAX.into())),
             Cbor::Integer(u64::MAX.into())
         );
         assert_eq!(
@@ -592,11 +627,11 @@ mod tests {
             Json::Bool(bool::default())
         );
         assert_eq!(
-            TryInto::<Json>::try_into(Value::Int(i64::MAX)).unwrap(),
-            Json::Number(i64::MAX.into())
+            TryInto::<Json>::try_into(Value::Integer(i64::MIN.into())).unwrap(),
+            Json::Number(i64::MIN.into())
         );
         assert_eq!(
-            TryInto::<Json>::try_into(Value::UInt(u64::MAX)).unwrap(),
+            TryInto::<Json>::try_into(Value::Integer(u64::MAX.into())).unwrap(),
             Json::Number(u64::MAX.into())
         );
         assert_eq!(
@@ -632,11 +667,11 @@ mod tests {
             MessagePack::Boolean(bool::default())
         );
         assert_eq!(
-            Into::<MessagePack>::into(Value::Int(i64::MAX)),
-            MessagePack::Integer(i64::MAX.into())
+            Into::<MessagePack>::into(Value::Integer(i64::MIN.into())),
+            MessagePack::Integer(i64::MIN.into())
         );
         assert_eq!(
-            Into::<MessagePack>::into(Value::UInt(u64::MAX)),
+            Into::<MessagePack>::into(Value::Integer(u64::MAX.into())),
             MessagePack::Integer(u64::MAX.into())
         );
         assert_eq!(
@@ -674,10 +709,9 @@ mod tests {
             Toml::Boolean(bool::default())
         );
         assert_eq!(
-            TryInto::<Toml>::try_into(Value::Int(i64::default())).unwrap(),
+            TryInto::<Toml>::try_into(Value::Integer(i64::default().into())).unwrap(),
             Toml::Integer(i64::default())
         );
-        assert!(TryInto::<Toml>::try_into(Value::UInt(u64::MAX)).is_err());
         assert_eq!(
             TryInto::<Toml>::try_into(Value::Float(f64::default())).unwrap(),
             Toml::Float(f64::default())
@@ -707,6 +741,8 @@ mod tests {
                     .collect()
             )
         );
+
+        assert!(TryInto::<Toml>::try_into(Value::Integer(u64::MAX.into())).is_err());
     }
 
     #[test]
@@ -717,11 +753,11 @@ mod tests {
             Yaml::Bool(bool::default())
         );
         assert_eq!(
-            Into::<Yaml>::into(Value::Int(i64::MAX)),
-            Yaml::Number(i64::MAX.into())
+            Into::<Yaml>::into(Value::Integer(i64::MIN.into())),
+            Yaml::Number(i64::MIN.into())
         );
         assert_eq!(
-            Into::<Yaml>::into(Value::UInt(u64::MAX)),
+            Into::<Yaml>::into(Value::Integer(u64::MAX.into())),
             Yaml::Number(u64::MAX.into())
         );
         assert_eq!(
