@@ -17,6 +17,7 @@ use std::str;
 use anyhow::{ensure, Context, Result};
 use dialoguer::theme::ColorfulTheme;
 use rmpv::Value as MessagePack;
+use ron::Value as Ron;
 use serde_cbor::Value as Cbor;
 use serde_json::Value as Json;
 use serde_yaml::Value as Yaml;
@@ -48,6 +49,7 @@ fn main() -> Result<()> {
         println!("{}", Format::Json);
         println!("{}", Format::Json5);
         println!("{}", Format::MessagePack);
+        println!("{}", Format::Ron);
         println!("{}", Format::Toml);
         println!("{}", Format::Yaml);
 
@@ -127,6 +129,15 @@ fn main() -> Result<()> {
             rmpv::decode::read_value(&mut obj.as_slice())?
                 .try_into()
                 .context("Failed to convert from a MessagePack value")?
+        }
+        Some(Format::Ron) => {
+            let input =
+                str::from_utf8(&input).context("Failed to convert from bytes to a string")?;
+            let obj: Ron =
+                ron::from_str(&input).context("Failed to deserialize from a RON string")?;
+
+            obj.try_into()
+                .context("Failed to convert from a RON value")?
         }
         Some(Format::Toml) => {
             let input =

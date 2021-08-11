@@ -24,12 +24,13 @@ const LONG_VERSION: &str = formatcp!(
     "Reporting bugs: https://github.com/sorairolake/dsconv/issues"
 );
 const APP_SETTINGS: [AppSettings; 2] = [AppSettings::ColoredHelp, AppSettings::DeriveDisplayOrder];
-const INPUT_FORMATS: [&str; 7] = [
+const INPUT_FORMATS: [&str; 8] = [
     "cbor",
     "hjson",
     "json",
     "json5",
     "messagepack",
+    "ron",
     "toml",
     "yaml",
 ];
@@ -90,6 +91,7 @@ impl Opt {
             "hjson" => Some(Format::Hjson),
             "json" => Some(Format::Json),
             "json5" => Some(Format::Json5),
+            "ron" => Some(Format::Ron),
             "toml" => Some(Format::Toml),
             "yaml" | "yml" => Some(Format::Yaml),
             _ => None,

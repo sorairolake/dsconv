@@ -8,6 +8,7 @@ use std::convert::{From, TryFrom, TryInto};
 
 use anyhow::{bail, Context, Result};
 use rmpv::Value as MessagePack;
+use ron::Value as Ron;
 use serde_cbor::Value as Cbor;
 use serde_json::Value as Json;
 use serde_yaml::Value as Yaml;
@@ -135,6 +136,48 @@ impl TryFrom<MessagePack> for Value {
                 ))
             }
             MessagePack::Ext(..) => bail!("An extension cannot be converted"),
+        }
+    }
+}
+
+impl TryFrom<Ron> for Value {
+    type Error = anyhow::Error;
+
+    fn try_from(value: Ron) -> Result<Self> {
+        match value {
+            Ron::Bool(b) => Ok(Value::Bool(b)),
+            Ron::Char(c) => Ok(Value::String(c.into())),
+            Ron::Map(map) => {
+                let keys: Result<Vec<_>> = map
+                    .keys()
+                    .cloned()
+                    .map(|k| k.into_rust().context("The key is not a string"))
+                    .collect();
+                let keys = keys?;
+                let values: Result<Vec<_>> = map.values().cloned().map(|v| v.try_into()).collect();
+                let values = values?;
+
+                Ok(Value::Map(
+                    keys.into_iter().zip(values.into_iter()).collect(),
+                ))
+            }
+            Ron::Number(n) => {
+                if let Some(i) = n.as_i64() {
+                    return Ok(Value::Integer(i.into()));
+                }
+
+                // Return value is definitely Some(T).
+                Ok(Value::Float(n.as_f64().expect("Invalid number as IR")))
+            }
+            Ron::Option(_) => bail!("The unit type cannot be converted"),
+            Ron::String(s) => Ok(Value::String(s)),
+            Ron::Seq(seq) => {
+                let arr: Result<Vec<_>> = seq.into_iter().map(|v| v.try_into()).collect();
+                let arr = arr?;
+
+                Ok(Value::Array(arr))
+            }
+            Ron::Unit => bail!("The Option type cannot be converted"),
         }
     }
 }
@@ -491,6 +534,56 @@ mod tests {
 
         assert!(TryInto::<Value>::try_into(MessagePack::Map(
             vec![(MessagePack::Nil, MessagePack::Nil)]
+                .into_iter()
+                .collect()
+        ))
+        .is_err());
+    }
+
+    #[test]
+    fn ron2ir() {
+        assert_eq!(
+            TryInto::<Value>::try_into(Ron::Bool(bool::default())).unwrap(),
+            Value::Bool(bool::default())
+        );
+        assert_eq!(
+            TryInto::<Value>::try_into(Ron::Char(char::default())).unwrap(),
+            Value::String(char::default().into())
+        );
+        assert_eq!(
+            TryInto::<Value>::try_into(Ron::Map(
+                vec![(Ron::String(String::default()), Ron::Bool(bool::default()))]
+                    .into_iter()
+                    .collect()
+            ))
+            .unwrap(),
+            Value::Map(
+                vec![(String::default(), Value::Bool(bool::default()))]
+                    .into_iter()
+                    .collect()
+            )
+        );
+        assert_eq!(
+            TryInto::<Value>::try_into(Ron::Number(i64::default().into())).unwrap(),
+            Value::Integer(i64::default().into())
+        );
+        assert_eq!(
+            TryInto::<Value>::try_into(Ron::Number(f64::default().into())).unwrap(),
+            Value::Float(f64::default())
+        );
+        assert!(TryInto::<Value>::try_into(Ron::Option(Option::default())).is_err());
+        assert_eq!(
+            TryInto::<Value>::try_into(Ron::String(String::default())).unwrap(),
+            Value::String(String::default())
+        );
+        assert_eq!(
+            TryInto::<Value>::try_into(Ron::Seq(vec![Ron::Bool(bool::default())])).unwrap(),
+            Value::Array(vec![Value::Bool(bool::default())])
+        );
+        assert!(TryInto::<Value>::try_into(Ron::Unit).is_err());
+
+        assert!(TryInto::<Value>::try_into(Ron::Map(
+            vec![(Ron::Bool(bool::default()), Ron::Bool(bool::default()))]
                 .into_iter()
                 .collect()
         ))
