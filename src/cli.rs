@@ -86,12 +86,12 @@ pub struct Opt {
 impl Opt {
     /// Apply the config from the config file.
     pub fn apply_config(mut self) -> Result<Self> {
-        if let Some(p) = Config::path() {
-            let config = Config::read(p)?;
+        if let Some(path) = Config::path() {
+            let config = Config::read(path)?;
 
-            if let Some(p) = config.pretty {
+            if let Some(pretty) = config.pretty {
                 if self.pretty.is_none() {
-                    self.pretty = Some(Some(p));
+                    self.pretty = Some(Some(pretty));
                 }
             }
         }

@@ -23,16 +23,16 @@ pub enum Format {
 }
 
 impl fmt::Display for Format {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Format::Cbor => write!(f, "CBOR"),
-            Format::Hjson => write!(f, "Hjson"),
-            Format::Json => write!(f, "JSON"),
-            Format::Json5 => write!(f, "JSON5"),
-            Format::MessagePack => write!(f, "MessagePack"),
-            Format::Ron => write!(f, "RON"),
-            Format::Toml => write!(f, "TOML"),
-            Format::Yaml => write!(f, "YAML"),
+            Format::Cbor => write!(fmt, "CBOR"),
+            Format::Hjson => write!(fmt, "Hjson"),
+            Format::Json => write!(fmt, "JSON"),
+            Format::Json5 => write!(fmt, "JSON5"),
+            Format::MessagePack => write!(fmt, "MessagePack"),
+            Format::Ron => write!(fmt, "RON"),
+            Format::Toml => write!(fmt, "TOML"),
+            Format::Yaml => write!(fmt, "YAML"),
         }
     }
 }
@@ -56,38 +56,38 @@ impl FromStr for Format {
 }
 
 #[derive(Clone, Debug, PartialEq)]
-enum I {
+enum Int {
     Pos(u64),
     Neg(i64),
 }
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Integer {
-    i: I,
+    int: Int,
 }
 
 impl Integer {
     pub fn as_i64(&self) -> Option<i64> {
-        match self.i {
-            I::Pos(u) if u <= i64::MAX as u64 => Some(u as i64),
-            I::Neg(i) => Some(i),
+        match self.int {
+            Int::Pos(uint) if uint <= i64::MAX as u64 => Some(uint as i64),
+            Int::Neg(sint) => Some(sint),
             _ => None,
         }
     }
 
     pub fn as_u64(&self) -> Option<u64> {
-        match self.i {
-            I::Pos(u) => Some(u),
+        match self.int {
+            Int::Pos(uint) => Some(uint),
             _ => None,
         }
     }
 }
 
 impl fmt::Display for Integer {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self.i {
-            I::Pos(u) => Display::fmt(&u, f),
-            I::Neg(i) => Display::fmt(&i, f),
+    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self.int {
+            Int::Pos(uint) => Display::fmt(&uint, fmt),
+            Int::Neg(sint) => Display::fmt(&sint, fmt),
         }
     }
 }
@@ -95,10 +95,12 @@ impl fmt::Display for Integer {
 impl From<i64> for Integer {
     fn from(integer: i64) -> Self {
         if integer < 0 {
-            Integer { i: I::Neg(integer) }
+            Integer {
+                int: Int::Neg(integer),
+            }
         } else {
             Integer {
-                i: I::Pos(integer as u64),
+                int: Int::Pos(integer as u64),
             }
         }
     }
@@ -106,7 +108,9 @@ impl From<i64> for Integer {
 
 impl From<u64> for Integer {
     fn from(integer: u64) -> Self {
-        Integer { i: I::Pos(integer) }
+        Integer {
+            int: Int::Pos(integer),
+        }
     }
 }
 

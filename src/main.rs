@@ -31,11 +31,11 @@ use crate::value::{Format, Value};
 fn main() -> Result<()> {
     let opt = Opt::from_args().apply_config()?;
 
-    if let Some(s) = opt.generate_completion {
-        if let Some(o) = opt.output {
-            Opt::generate_completion_to_file(s, o)?;
+    if let Some(shell) = opt.generate_completion {
+        if let Some(outdir) = opt.output {
+            Opt::generate_completion_to_file(shell, outdir)?;
         } else {
-            Opt::generate_completion_to_stdout(s);
+            Opt::generate_completion_to_stdout(shell);
         }
 
         return Ok(());
@@ -64,9 +64,8 @@ fn main() -> Result<()> {
     }
 
     let input = match opt.input {
-        Some(ref f) => {
-            fs::read(f).with_context(|| format!("Failed to read bytes from {}", f.display()))?
-        }
+        Some(ref file) => fs::read(file)
+            .with_context(|| format!("Failed to read bytes from {}", file.display()))?,
         _ if atty::is(atty::Stream::Stdin) => {
             dialoguer::Input::<String>::with_theme(&ColorfulTheme::default())
                 .with_prompt("Input")
@@ -90,71 +89,49 @@ fn main() -> Result<()> {
                 .and_then(|e| e.parse().ok())
         })
     }) {
-        Some(Format::Cbor) => {
-            let obj: Cbor = serde_cbor::from_slice(&input)
-                .context("Failed to deserialize from a CBOR bytes")?;
-
-            obj.try_into()
-                .context("Failed to convert from a CBOR value")?
-        }
-        Some(Format::Hjson) => {
-            let input =
-                str::from_utf8(&input).context("Failed to convert from bytes to a string")?;
-            let obj: Json = deser_hjson::from_str(input)
-                .context("Failed to deserialize from a Hjson string")?;
-
-            obj.into()
-        }
-        Some(Format::Json) => {
-            let input =
-                str::from_utf8(&input).context("Failed to convert from bytes to a string")?;
-            let obj: Json =
-                serde_json::from_str(input).context("Failed to deserialize from a JSON string")?;
-
-            obj.into()
-        }
-        Some(Format::Json5) => {
-            let input =
-                str::from_utf8(&input).context("Failed to convert from bytes to a string")?;
-            let obj: Json =
-                json5::from_str(input).context("Failed to deserialize from a JSON5 string")?;
-
-            obj.into()
-        }
-        Some(Format::MessagePack) => {
-            let obj: Vec<u8> = rmp_serde::from_read_ref(&input)
-                .context("Failed to deserialize from a MessagePack bytes")?;
-
-            rmpv::decode::read_value(&mut obj.as_slice())?
-                .try_into()
-                .context("Failed to convert from a MessagePack value")?
-        }
-        Some(Format::Ron) => {
-            let input =
-                str::from_utf8(&input).context("Failed to convert from bytes to a string")?;
-            let obj: Ron =
-                ron::from_str(input).context("Failed to deserialize from a RON string")?;
-
-            obj.try_into()
-                .context("Failed to convert from a RON value")?
-        }
-        Some(Format::Toml) => {
-            let input =
-                str::from_utf8(&input).context("Failed to convert from bytes to a string")?;
-            let obj: Toml =
-                toml::from_str(input).context("Failed to deserialize from a TOML string")?;
-
-            obj.into()
-        }
-        Some(Format::Yaml) => {
-            let input =
-                str::from_utf8(&input).context("Failed to convert from bytes to a string")?;
-            let obj: Yaml =
-                serde_yaml::from_str(input).context("Failed to deserialize from a YAML string")?;
-
-            obj.try_into()
-                .context("Failed to convert from a YAML value")?
-        }
+        Some(Format::Cbor) => serde_cbor::from_slice::<Cbor>(&input)
+            .context("Failed to deserialize from a CBOR bytes")?
+            .try_into()
+            .context("Failed to convert from a CBOR value")?,
+        Some(Format::Hjson) => deser_hjson::from_str::<Json>(
+            str::from_utf8(&input).context("Failed to convert from bytes to a string")?,
+        )
+        .context("Failed to deserialize from a Hjson string")?
+        .into(),
+        Some(Format::Json) => serde_json::from_str::<Json>(
+            str::from_utf8(&input).context("Failed to convert from bytes to a string")?,
+        )
+        .context("Failed to deserialize from a JSON string")?
+        .into(),
+        Some(Format::Json5) => json5::from_str::<Json>(
+            str::from_utf8(&input).context("Failed to convert from bytes to a string")?,
+        )
+        .context("Failed to deserialize from a JSON5 string")?
+        .into(),
+        Some(Format::MessagePack) => rmpv::decode::read_value(
+            &mut rmp_serde::from_read_ref::<_, Vec<u8>>(&input)
+                .context("Failed to deserialize from a MessagePack bytes")?
+                .as_slice(),
+        )?
+        .try_into()
+        .context("Failed to convert from a MessagePack value")?,
+        Some(Format::Ron) => ron::from_str::<Ron>(
+            str::from_utf8(&input).context("Failed to convert from bytes to a string")?,
+        )
+        .context("Failed to deserialize from a RON string")?
+        .try_into()
+        .context("Failed to convert from a RON value")?,
+        Some(Format::Toml) => toml::from_str::<Toml>(
+            str::from_utf8(&input).context("Failed to convert from bytes to a string")?,
+        )
+        .context("Failed to deserialize from a TOML string")?
+        .into(),
+        Some(Format::Yaml) => serde_yaml::from_str::<Yaml>(
+            str::from_utf8(&input).context("Failed to convert from bytes to a string")?,
+        )
+        .context("Failed to deserialize from a YAML string")?
+        .try_into()
+        .context("Failed to convert from a YAML value")?,
         None => bail!("Unable to determine input format"),
     };
 
@@ -166,9 +143,7 @@ fn main() -> Result<()> {
         })
     }) {
         Some(Format::Cbor) => {
-            let obj: Cbor = ir.into();
-
-            serde_cbor::to_vec(&obj).context("Failed to serialize to a CBOR bytes")?
+            serde_cbor::to_vec(&Cbor::from(ir)).context("Failed to serialize to a CBOR bytes")?
         }
         Some(Format::Json) => {
             let obj: Json = ir.try_into().context("Failed to convert to a JSON value")?;
@@ -190,8 +165,7 @@ fn main() -> Result<()> {
         }
         Some(Format::MessagePack) => {
             let mut buf = Vec::new();
-            let obj: MessagePack = ir.into();
-            rmpv::encode::write_value(&mut buf, &obj)
+            rmpv::encode::write_value(&mut buf, &MessagePack::from(ir))
                 .context("Failed to write a MessagePack value to buffer")?;
 
             rmp_serde::to_vec(&buf).context("Failed to serialize to a MessagePack bytes")?
@@ -209,20 +183,15 @@ fn main() -> Result<()> {
                     .into_bytes()
             }
         }
-        Some(Format::Yaml) => {
-            let obj: Yaml = ir.into();
-
-            serde_yaml::to_string(&obj)
-                .context("Failed to serialize to a YAML string")?
-                .into_bytes()
-        }
+        Some(Format::Yaml) => serde_yaml::to_string(&Yaml::from(ir))
+            .context("Failed to serialize to a YAML string")?
+            .into_bytes(),
         _ => bail!("Unable to determine output format"),
     };
 
     match opt.output {
-        Some(ref f) => {
-            fs::write(f, output).with_context(|| format!("Failed to write to {}", f.display()))?
-        }
+        Some(ref file) => fs::write(file, output)
+            .with_context(|| format!("Failed to write to {}", file.display()))?,
         None => io::stdout()
             .write_all(&output)
             .context("Failed to write to stdout")?,
