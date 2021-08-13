@@ -101,7 +101,7 @@ fn main() -> Result<()> {
         Some(Format::Hjson) => {
             let input =
                 str::from_utf8(&input).context("Failed to convert from bytes to a string")?;
-            let obj: Json = deser_hjson::from_str(&input)
+            let obj: Json = deser_hjson::from_str(input)
                 .context("Failed to deserialize from a Hjson string")?;
 
             obj.into()
@@ -110,7 +110,7 @@ fn main() -> Result<()> {
             let input =
                 str::from_utf8(&input).context("Failed to convert from bytes to a string")?;
             let obj: Json =
-                serde_json::from_str(&input).context("Failed to deserialize from a JSON string")?;
+                serde_json::from_str(input).context("Failed to deserialize from a JSON string")?;
 
             obj.into()
         }
@@ -118,7 +118,7 @@ fn main() -> Result<()> {
             let input =
                 str::from_utf8(&input).context("Failed to convert from bytes to a string")?;
             let obj: Json =
-                json5::from_str(&input).context("Failed to deserialize from a JSON5 string")?;
+                json5::from_str(input).context("Failed to deserialize from a JSON5 string")?;
 
             obj.into()
         }
@@ -134,7 +134,7 @@ fn main() -> Result<()> {
             let input =
                 str::from_utf8(&input).context("Failed to convert from bytes to a string")?;
             let obj: Ron =
-                ron::from_str(&input).context("Failed to deserialize from a RON string")?;
+                ron::from_str(input).context("Failed to deserialize from a RON string")?;
 
             obj.try_into()
                 .context("Failed to convert from a RON value")?
@@ -143,7 +143,7 @@ fn main() -> Result<()> {
             let input =
                 str::from_utf8(&input).context("Failed to convert from bytes to a string")?;
             let obj: Toml =
-                toml::from_str(&input).context("Failed to deserialize from a TOML string")?;
+                toml::from_str(input).context("Failed to deserialize from a TOML string")?;
 
             obj.into()
         }
@@ -151,7 +151,7 @@ fn main() -> Result<()> {
             let input =
                 str::from_utf8(&input).context("Failed to convert from bytes to a string")?;
             let obj: Yaml =
-                serde_yaml::from_str(&input).context("Failed to deserialize from a YAML string")?;
+                serde_yaml::from_str(input).context("Failed to deserialize from a YAML string")?;
 
             obj.try_into()
                 .context("Failed to convert from a YAML value")?
