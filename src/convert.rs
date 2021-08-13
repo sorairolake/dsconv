@@ -6,7 +6,7 @@
 
 use std::convert::{From, TryFrom, TryInto};
 
-use anyhow::{bail, Context, Result};
+use anyhow::{anyhow, Context, Result};
 use rmpv::Value as MessagePack;
 use ron::Value as Ron;
 use serde_cbor::Value as Cbor;
@@ -34,7 +34,7 @@ impl TryFrom<Cbor> for Value {
                 ))
             }
             Cbor::Float(f) => Ok(Value::Float(f)),
-            Cbor::Bytes(_) => bail!("A byte string cannot be converted"),
+            Cbor::Bytes(_) => Err(anyhow!("A byte string cannot be converted")),
             Cbor::Text(s) => Ok(Value::String(s)),
             Cbor::Array(arr) => {
                 let arr: Result<Vec<_>> = arr.into_iter().map(|v| v.try_into()).collect();
@@ -56,7 +56,7 @@ impl TryFrom<Cbor> for Value {
                     keys.into_iter().zip(values.into_iter()).collect(),
                 ))
             }
-            Cbor::Tag(..) => bail!("A semantic tag cannot be converted"),
+            Cbor::Tag(..) => Err(anyhow!("A semantic tag cannot be converted")),
             _ => unreachable!(),
         }
     }
@@ -111,7 +111,7 @@ impl TryFrom<MessagePack> for Value {
 
                 Ok(Value::String(s.to_string()))
             }
-            MessagePack::Binary(_) => bail!("A byte array cannot be converted"),
+            MessagePack::Binary(_) => Err(anyhow!("A byte array cannot be converted")),
             MessagePack::Array(arr) => {
                 let arr: Result<Vec<_>> = arr.into_iter().map(|v| v.try_into()).collect();
                 let arr = arr?;
@@ -135,7 +135,7 @@ impl TryFrom<MessagePack> for Value {
                         .collect(),
                 ))
             }
-            MessagePack::Ext(..) => bail!("An extension cannot be converted"),
+            MessagePack::Ext(..) => Err(anyhow!("An extension cannot be converted")),
         }
     }
 }
@@ -169,7 +169,7 @@ impl TryFrom<Ron> for Value {
                 // Return value is definitely Some(T).
                 Ok(Value::Float(n.as_f64().expect("Invalid number as IR")))
             }
-            Ron::Option(_) => bail!("The unit type cannot be converted"),
+            Ron::Option(_) => Err(anyhow!("The Option type cannot be converted")),
             Ron::String(s) => Ok(Value::String(s)),
             Ron::Seq(seq) => {
                 let arr: Result<Vec<_>> = seq.into_iter().map(|v| v.try_into()).collect();
@@ -177,7 +177,7 @@ impl TryFrom<Ron> for Value {
 
                 Ok(Value::Array(arr))
             }
-            Ron::Unit => bail!("The Option type cannot be converted"),
+            Ron::Unit => Err(anyhow!("The unit type cannot be converted")),
         }
     }
 }
@@ -337,7 +337,7 @@ impl TryFrom<Value> for Toml {
 
     fn try_from(value: Value) -> Result<Self> {
         match value {
-            Value::Null => bail!("Null is not allowed"),
+            Value::Null => Err(anyhow!("Null does not exist")),
             Value::Bool(b) => Ok(Toml::Boolean(b)),
             Value::Integer(i) => {
                 let i = i
