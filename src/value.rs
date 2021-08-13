@@ -7,10 +7,10 @@
 use std::fmt::{self, Display};
 use std::str::FromStr;
 
-use anyhow::{Error, Result};
+use anyhow::{anyhow, Error, Result};
 use indexmap::IndexMap;
 
-#[derive(Debug)]
+#[derive(Clone, Copy, Debug)]
 pub enum Format {
     Cbor,
     Hjson,
@@ -49,8 +49,8 @@ impl FromStr for Format {
             "messagepack" => Ok(Format::MessagePack),
             "ron" => Ok(Format::Ron),
             "toml" => Ok(Format::Toml),
-            "yaml" => Ok(Format::Yaml),
-            _ => unreachable!(),
+            "yaml" | "yml" => Ok(Format::Yaml),
+            _ => Err(anyhow!("Unknown format: {}", format)),
         }
     }
 }

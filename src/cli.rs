@@ -4,7 +4,6 @@
 // Copyright (C) 2021 Shun Sakai
 //
 
-use std::ffi::OsStr;
 use std::io;
 use std::path::{Path, PathBuf};
 
@@ -85,51 +84,6 @@ pub struct Opt {
 }
 
 impl Opt {
-    /// Guess the format from the extension.
-    fn guess_format(ext: &str) -> Option<Format> {
-        match ext {
-            "hjson" => Some(Format::Hjson),
-            "json" => Some(Format::Json),
-            "json5" => Some(Format::Json5),
-            "ron" => Some(Format::Ron),
-            "toml" => Some(Format::Toml),
-            "yaml" | "yml" => Some(Format::Yaml),
-            _ => None,
-        }
-    }
-
-    /// Guess the input format from the extension of a input file.
-    pub fn guess_input_format(mut self) -> Self {
-        if self.from.is_some() {
-            return self;
-        }
-
-        if let Some(ref f) = self.input {
-            self.from = f
-                .extension()
-                .and_then(OsStr::to_str)
-                .and_then(Self::guess_format);
-        }
-
-        self
-    }
-
-    /// Guess the output format from the extension of a output file.
-    pub fn guess_output_format(mut self) -> Self {
-        if self.to.is_some() {
-            return self;
-        }
-
-        if let Some(ref f) = self.output {
-            self.to = f
-                .extension()
-                .and_then(OsStr::to_str)
-                .and_then(Self::guess_format);
-        }
-
-        self
-    }
-
     /// Apply the config from the config file.
     pub fn apply_config(mut self) -> Result<Self> {
         if let Some(p) = Config::path() {

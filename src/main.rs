@@ -10,11 +10,12 @@ mod convert;
 mod value;
 
 use std::convert::TryInto;
+use std::ffi::OsStr;
 use std::fs;
 use std::io::{self, Read, Write};
 use std::str;
 
-use anyhow::{ensure, Context, Result};
+use anyhow::{bail, Context, Result};
 use dialoguer::theme::ColorfulTheme;
 use rmpv::Value as MessagePack;
 use ron::Value as Ron;
@@ -28,10 +29,7 @@ use crate::cli::Opt;
 use crate::value::{Format, Value};
 
 fn main() -> Result<()> {
-    let opt = Opt::from_args()
-        .guess_input_format()
-        .guess_output_format()
-        .apply_config()?;
+    let opt = Opt::from_args().apply_config()?;
 
     if let Some(s) = opt.generate_completion {
         if let Some(o) = opt.output {
@@ -65,11 +63,6 @@ fn main() -> Result<()> {
         return Ok(());
     }
 
-    ensure!(
-        opt.from.is_some() && opt.to.is_some(),
-        "Unable to determine input and/or output format"
-    );
-
     let input = match opt.input {
         Some(ref f) => {
             fs::read(f).with_context(|| format!("Failed to read bytes from {}", f.display()))?
@@ -90,7 +83,13 @@ fn main() -> Result<()> {
         }
     };
 
-    let ir: Value = match opt.from {
+    let ir: Value = match opt.from.or_else(|| {
+        opt.input.clone().and_then(|i| {
+            i.extension()
+                .and_then(OsStr::to_str)
+                .and_then(|e| e.parse().ok())
+        })
+    }) {
         Some(Format::Cbor) => {
             let obj: Cbor = serde_cbor::from_slice(&input)
                 .context("Failed to deserialize from a CBOR bytes")?;
@@ -156,10 +155,16 @@ fn main() -> Result<()> {
             obj.try_into()
                 .context("Failed to convert from a YAML value")?
         }
-        None => unreachable!(),
+        None => bail!("Unable to determine input format"),
     };
 
-    let output = match opt.to {
+    let output = match opt.to.or_else(|| {
+        opt.output.clone().and_then(|o| {
+            o.extension()
+                .and_then(OsStr::to_str)
+                .and_then(|e| e.parse().ok())
+        })
+    }) {
         Some(Format::Cbor) => {
             let obj: Cbor = ir.into();
 
@@ -211,7 +216,7 @@ fn main() -> Result<()> {
                 .context("Failed to serialize to a YAML string")?
                 .into_bytes()
         }
-        _ => unreachable!(),
+        _ => bail!("Unable to determine output format"),
     };
 
     match opt.output {
