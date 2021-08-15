@@ -23,33 +23,34 @@ impl TryFrom<Cbor> for Value {
         match value {
             Cbor::Null => Ok(Value::Null),
             Cbor::Bool(bool) => Ok(Value::Bool(bool)),
-            Cbor::Integer(int) => Ok(Value::Integer(i64::try_from(int).map_or_else(
-                |_| u64::try_from(int).expect("Invalid integer as IR").into(),
-                |s| s.into(),
-            ))),
+            Cbor::Integer(int) => match (i64::try_from(int), u64::try_from(int)) {
+                (Ok(sint), _) => Ok(Value::Integer(sint.into())),
+                (_, Ok(uint)) => Ok(Value::Integer(uint.into())),
+                _ => unreachable!(),
+            },
             Cbor::Float(float) => Ok(Value::Float(float)),
             Cbor::Bytes(_) => Err(anyhow!("A byte string cannot be converted")),
             Cbor::Text(str) => Ok(Value::String(str)),
-            Cbor::Array(arr) => Ok(Value::Array(
-                arr.into_iter()
-                    .map(|v| v.try_into())
-                    .collect::<Result<Vec<_>>>()?,
-            )),
-            Cbor::Map(map) => Ok(Value::Map(
-                map.keys()
-                    .cloned()
-                    .map(|k| serde_cbor::value::from_value(k).context("The key is not a string"))
-                    .collect::<Result<Vec<_>>>()?
-                    .into_iter()
-                    .zip(
-                        map.values()
-                            .cloned()
-                            .map(|v| v.try_into())
-                            .collect::<Result<Vec<_>>>()?
-                            .into_iter(),
-                    )
-                    .collect(),
-            )),
+            Cbor::Array(arr) => {
+                let arr: Result<Vec<_>> = arr.into_iter().map(|v| v.try_into()).collect();
+
+                Ok(Value::Array(arr?))
+            }
+            Cbor::Map(map) => {
+                let (keys, values): (Result<Vec<_>>, Result<Vec<_>>) = (
+                    map.keys()
+                        .cloned()
+                        .map(|k| {
+                            serde_cbor::value::from_value(k).context("The key is not a string")
+                        })
+                        .collect(),
+                    map.values().cloned().map(|v| v.try_into()).collect(),
+                );
+
+                Ok(Value::Map(
+                    keys?.into_iter().zip(values?.into_iter()).collect(),
+                ))
+            }
             Cbor::Tag(..) => Err(anyhow!("A semantic tag cannot be converted")),
             _ => unreachable!(),
         }
@@ -61,20 +62,23 @@ impl From<Json> for Value {
         match value {
             Json::Null => Value::Null,
             Json::Bool(bool) => Value::Bool(bool),
-            Json::Number(num) => {
-                if let Some(sint) = num.as_i64() {
-                    return Value::Integer(sint.into());
-                }
-                if let Some(uint) = num.as_u64() {
-                    return Value::Integer(uint.into());
-                }
-
-                // Return value is definitely Some(T).
-                Value::Float(num.as_f64().expect("Invalid number as IR"))
-            }
+            Json::Number(num) => match (num.as_i64(), num.as_u64(), num.as_f64()) {
+                (Some(sint), ..) => Value::Integer(sint.into()),
+                (_, Some(uint), _) => Value::Integer(uint.into()),
+                (.., Some(float)) => Value::Float(float),
+                _ => unreachable!(),
+            },
             Json::String(str) => Value::String(str),
-            Json::Array(arr) => Value::Array(arr.into_iter().map(|v| v.into()).collect()),
-            Json::Object(obj) => Value::Map(obj.into_iter().map(|(k, v)| (k, v.into())).collect()),
+            Json::Array(arr) => {
+                let arr = arr.into_iter().map(|v| v.into()).collect();
+
+                Value::Array(arr)
+            }
+            Json::Object(obj) => {
+                let map = obj.into_iter().map(|(k, v)| (k, v.into())).collect();
+
+                Value::Map(map)
+            }
         }
     }
 }
@@ -86,46 +90,46 @@ impl TryFrom<MessagePack> for Value {
         match value {
             MessagePack::Nil => Ok(Value::Null),
             MessagePack::Boolean(bool) => Ok(Value::Bool(bool)),
-            MessagePack::Integer(int) => Ok(Value::Integer(int.as_i64().map_or_else(
-                || int.as_u64().expect("Invalid integer as IR").into(),
-                |s| s.into(),
-            ))),
-            MessagePack::F32(single) => Ok(Value::Float(single.into())),
-            MessagePack::F64(double) => Ok(Value::Float(double)),
-            MessagePack::String(msgpack_str) => Ok(Value::String(
-                msgpack_str
+            MessagePack::Integer(int) => match (int.as_i64(), int.as_u64()) {
+                (Some(sint), _) => Ok(Value::Integer(sint.into())),
+                (_, Some(uint)) => Ok(Value::Integer(uint.into())),
+                _ => unreachable!(),
+            },
+            MessagePack::F32(float) => Ok(Value::Float(float.into())),
+            MessagePack::F64(float) => Ok(Value::Float(float)),
+            MessagePack::String(str) => {
+                let str = str
                     .as_str()
                     .with_context(|| {
-                        format!(
-                            "The string contains invalid UTF-8 sequence: {}",
-                            msgpack_str
-                        )
+                        format!("The string contains invalid UTF-8 sequence: {}", str)
                     })?
-                    .to_string(),
-            )),
+                    .to_string();
+
+                Ok(Value::String(str))
+            }
             MessagePack::Binary(_) => Err(anyhow!("A byte array cannot be converted")),
-            MessagePack::Array(arr) => Ok(Value::Array(
-                arr.into_iter()
-                    .map(|v| v.try_into())
-                    .collect::<Result<Vec<_>>>()?,
-            )),
-            MessagePack::Map(map) => Ok(Value::Map(
-                map.iter()
-                    .map(|(k, _)| k)
-                    .map(|k| k.as_str().context("The key is not a string"))
-                    .collect::<Result<Vec<_>>>()?
-                    .into_iter()
-                    .map(|k| k.to_string())
-                    .zip(
-                        map.iter()
-                            .map(|(_, v)| v)
-                            .cloned()
-                            .map(|v| v.try_into())
-                            .collect::<Result<Vec<_>>>()?
-                            .into_iter(),
-                    )
-                    .collect(),
-            )),
+            MessagePack::Array(arr) => {
+                let arr: Result<Vec<_>> = arr.into_iter().map(|v| v.try_into()).collect();
+
+                Ok(Value::Array(arr?))
+            }
+            MessagePack::Map(map) => {
+                let (keys, values): (Result<Vec<_>>, Result<Vec<_>>) = (
+                    map.iter()
+                        .map(|(k, _)| k)
+                        .map(|k| k.as_str().context("The key is not a string"))
+                        .map(|k| k.map(|k| k.to_string()))
+                        .collect(),
+                    map.into_iter()
+                        .map(|(_, v)| v)
+                        .map(|v| v.try_into())
+                        .collect(),
+                );
+
+                Ok(Value::Map(
+                    keys?.into_iter().zip(values?.into_iter()).collect(),
+                ))
+            }
             MessagePack::Ext(..) => Err(anyhow!("An extension cannot be converted")),
         }
     }
@@ -138,32 +142,31 @@ impl TryFrom<Ron> for Value {
         match value {
             Ron::Bool(bool) => Ok(Value::Bool(bool)),
             Ron::Char(char) => Ok(Value::String(char.into())),
-            Ron::Map(map) => Ok(Value::Map(
-                map.keys()
-                    .cloned()
-                    .map(|k| k.into_rust().context("The key is not a string"))
-                    .collect::<Result<Vec<_>>>()?
-                    .into_iter()
-                    .zip(
-                        map.values()
-                            .cloned()
-                            .map(|v| v.try_into())
-                            .collect::<Result<Vec<_>>>()?
-                            .into_iter(),
-                    )
-                    .collect(),
-            )),
-            Ron::Number(num) => Ok(num.as_i64().map_or_else(
-                || Value::Float(num.as_f64().expect("Invalid number as IR")),
-                |i| Value::Integer(i.into()),
-            )),
+            Ron::Map(map) => {
+                let (keys, values): (Result<Vec<_>>, Result<Vec<_>>) = (
+                    map.keys()
+                        .cloned()
+                        .map(|k| k.into_rust().context("The key is not a string"))
+                        .collect(),
+                    map.values().cloned().map(|v| v.try_into()).collect(),
+                );
+
+                Ok(Value::Map(
+                    keys?.into_iter().zip(values?.into_iter()).collect(),
+                ))
+            }
+            Ron::Number(num) => match (num.as_i64(), num.as_f64()) {
+                (Some(int), _) => Ok(Value::Integer(int.into())),
+                (_, Some(float)) => Ok(Value::Float(float)),
+                _ => unreachable!(),
+            },
             Ron::Option(_) => Err(anyhow!("The Option type cannot be converted")),
             Ron::String(str) => Ok(Value::String(str)),
-            Ron::Seq(seq) => Ok(Value::Array(
-                seq.into_iter()
-                    .map(|v| v.try_into())
-                    .collect::<Result<Vec<_>>>()?,
-            )),
+            Ron::Seq(seq) => {
+                let arr: Result<Vec<_>> = seq.into_iter().map(|v| v.try_into()).collect();
+
+                Ok(Value::Array(arr?))
+            }
             Ron::Unit => Err(anyhow!("The unit type cannot be converted")),
         }
     }
@@ -177,9 +180,15 @@ impl From<Toml> for Value {
             Toml::Float(float) => Value::Float(float),
             Toml::Boolean(bool) => Value::Bool(bool),
             Toml::Datetime(dt) => Value::String(dt.to_string()),
-            Toml::Array(arr) => Value::Array(arr.into_iter().map(|v| v.into()).collect()),
+            Toml::Array(arr) => {
+                let arr = arr.into_iter().map(|v| v.into()).collect();
+
+                Value::Array(arr)
+            }
             Toml::Table(table) => {
-                Value::Map(table.into_iter().map(|(k, v)| (k, v.into())).collect())
+                let map = table.into_iter().map(|(k, v)| (k, v.into())).collect();
+
+                Value::Map(map)
             }
         }
     }
@@ -192,40 +201,35 @@ impl TryFrom<Yaml> for Value {
         match value {
             Yaml::Null => Ok(Value::Null),
             Yaml::Bool(bool) => Ok(Value::Bool(bool)),
-            Yaml::Number(num) => {
-                if let Some(sint) = num.as_i64() {
-                    return Ok(Value::Integer(sint.into()));
-                }
-                if let Some(uint) = num.as_u64() {
-                    return Ok(Value::Integer(uint.into()));
-                }
-
-                // Return value is definitely Some(T).
-                Ok(Value::Float(num.as_f64().expect("Invalid number as IR")))
-            }
+            Yaml::Number(num) => match (num.as_i64(), num.as_u64(), num.as_f64()) {
+                (Some(sint), ..) => Ok(Value::Integer(sint.into())),
+                (_, Some(uint), _) => Ok(Value::Integer(uint.into())),
+                (.., Some(float)) => Ok(Value::Float(float)),
+                _ => unreachable!(),
+            },
             Yaml::String(str) => Ok(Value::String(str)),
-            Yaml::Sequence(seq) => Ok(Value::Array(
-                seq.into_iter()
-                    .map(|v| v.try_into())
-                    .collect::<Result<Vec<_>>>()?,
-            )),
-            Yaml::Mapping(map) => Ok(Value::Map(
-                map.iter()
-                    .map(|(k, _)| k)
-                    .map(|k| k.as_str().context("The key is not a string"))
-                    .collect::<Result<Vec<_>>>()?
-                    .into_iter()
-                    .map(|k| k.to_string())
-                    .zip(
-                        map.iter()
-                            .map(|(_, v)| v)
-                            .cloned()
-                            .map(|v| v.try_into())
-                            .collect::<Result<Vec<_>>>()?
-                            .into_iter(),
-                    )
-                    .collect(),
-            )),
+            Yaml::Sequence(seq) => {
+                let arr: Result<Vec<_>> = seq.into_iter().map(|v| v.try_into()).collect();
+
+                Ok(Value::Array(arr?))
+            }
+            Yaml::Mapping(map) => {
+                let (keys, values): (Result<Vec<_>>, Result<Vec<_>>) = (
+                    map.iter()
+                        .map(|(k, _)| k)
+                        .map(|k| k.as_str().context("The key is not a string"))
+                        .map(|k| k.map(|k| k.to_string()))
+                        .collect(),
+                    map.into_iter()
+                        .map(|(_, v)| v)
+                        .map(|v| v.try_into())
+                        .collect(),
+                );
+
+                Ok(Value::Map(
+                    keys?.into_iter().zip(values?.into_iter()).collect(),
+                ))
+            }
         }
     }
 }
@@ -235,15 +239,22 @@ impl From<Value> for Cbor {
         match value {
             Value::Null => Cbor::Null,
             Value::Bool(bool) => Cbor::Bool(bool),
-            Value::Integer(int) => Cbor::Integer(int.as_i64().map_or_else(
-                || int.as_u64().expect("Invalid integer as CBOR").into(),
-                |s| s.into(),
-            )),
+            Value::Integer(int) => match (int.as_i64(), int.as_u64()) {
+                (Some(sint), _) => Cbor::Integer(sint.into()),
+                (_, Some(uint)) => Cbor::Integer(uint.into()),
+                _ => unreachable!(),
+            },
             Value::Float(float) => Cbor::Float(float),
             Value::String(str) => Cbor::Text(str),
-            Value::Array(arr) => Cbor::Array(arr.into_iter().map(|v| v.into()).collect()),
+            Value::Array(arr) => {
+                let arr = arr.into_iter().map(|v| v.into()).collect();
+
+                Cbor::Array(arr)
+            }
             Value::Map(map) => {
-                Cbor::Map(map.into_iter().map(|(k, v)| (k.into(), v.into())).collect())
+                let map = map.into_iter().map(|(k, v)| (k.into(), v.into())).collect();
+
+                Cbor::Map(map)
             }
         }
     }
@@ -256,33 +267,31 @@ impl TryFrom<Value> for Json {
         match value {
             Value::Null => Ok(Json::Null),
             Value::Bool(bool) => Ok(Json::Bool(bool)),
-            Value::Integer(int) => Ok(Json::Number(int.as_i64().map_or_else(
-                || int.as_u64().expect("Invalid integer as JSON").into(),
-                |s| s.into(),
-            ))),
-            Value::Float(float) => Ok(Json::Number(
-                serde_json::Number::from_f64(float).with_context(|| {
+            Value::Integer(int) => match (int.as_i64(), int.as_u64()) {
+                (Some(sint), _) => Ok(Json::Number(sint.into())),
+                (_, Some(uint)) => Ok(Json::Number(uint.into())),
+                _ => unreachable!(),
+            },
+            Value::Float(float) => {
+                let float = serde_json::Number::from_f64(float).with_context(|| {
                     format!("Infinite or NaN values are not allowed: {}", float)
-                })?,
-            )),
+                })?;
+
+                Ok(Json::Number(float))
+            }
             Value::String(str) => Ok(Json::String(str)),
-            Value::Array(arr) => Ok(Json::Array(
-                arr.into_iter()
-                    .map(|v| v.try_into())
-                    .collect::<Result<Vec<_>>>()?,
-            )),
-            Value::Map(map) => Ok(Json::Object(
-                map.keys()
-                    .cloned()
-                    .zip(
-                        map.values()
-                            .cloned()
-                            .map(|v| v.try_into())
-                            .collect::<Result<Vec<_>>>()?
-                            .into_iter(),
-                    )
-                    .collect(),
-            )),
+            Value::Array(arr) => {
+                let arr: Result<Vec<_>> = arr.into_iter().map(|v| v.try_into()).collect();
+
+                Ok(Json::Array(arr?))
+            }
+            Value::Map(map) => {
+                let values: Result<Vec<_>> = map.values().cloned().map(|v| v.try_into()).collect();
+
+                Ok(Json::Object(
+                    map.keys().cloned().zip(values?.into_iter()).collect(),
+                ))
+            }
         }
     }
 }
@@ -292,15 +301,22 @@ impl From<Value> for MessagePack {
         match value {
             Value::Null => MessagePack::Nil,
             Value::Bool(bool) => MessagePack::Boolean(bool),
-            Value::Integer(int) => MessagePack::Integer(int.as_i64().map_or_else(
-                || int.as_u64().expect("Invalid integer as MessagePack").into(),
-                |s| s.into(),
-            )),
+            Value::Integer(int) => match (int.as_i64(), int.as_u64()) {
+                (Some(sint), _) => MessagePack::Integer(sint.into()),
+                (_, Some(uint)) => MessagePack::Integer(uint.into()),
+                _ => unreachable!(),
+            },
             Value::Float(float) => MessagePack::F64(float),
             Value::String(str) => MessagePack::String(str.into()),
-            Value::Array(arr) => MessagePack::Array(arr.into_iter().map(|v| v.into()).collect()),
+            Value::Array(arr) => {
+                let arr = arr.into_iter().map(|v| v.into()).collect();
+
+                MessagePack::Array(arr)
+            }
             Value::Map(map) => {
-                MessagePack::Map(map.into_iter().map(|(k, v)| (k.into(), v.into())).collect())
+                let map = map.into_iter().map(|(k, v)| (k.into(), v.into())).collect();
+
+                MessagePack::Map(map)
             }
         }
     }
@@ -314,29 +330,29 @@ impl TryFrom<Value> for Toml {
             Value::Null => Err(anyhow!("Null does not exist")),
             Value::Bool(bool) => Ok(Toml::Boolean(bool)),
             Value::Integer(int) => {
-                Ok(Toml::Integer(int.as_i64().with_context(|| {
-                    format!("Out of range of integer: {}", int)
-                })?))
+                let int = int
+                    .as_i64()
+                    .with_context(|| format!("Out of range of integer: {}", int))?;
+
+                Ok(Toml::Integer(int))
             }
             Value::Float(float) => Ok(Toml::Float(float)),
-            Value::String(str) => Ok(str.parse().map_or(Toml::String(str), Toml::Datetime)),
-            Value::Array(arr) => Ok(Toml::Array(
-                arr.into_iter()
-                    .map(|v| v.try_into())
-                    .collect::<Result<Vec<_>>>()?,
-            )),
-            Value::Map(map) => Ok(Toml::Table(
-                map.keys()
-                    .cloned()
-                    .zip(
-                        map.values()
-                            .cloned()
-                            .map(|v| v.try_into())
-                            .collect::<Result<Vec<_>>>()?
-                            .into_iter(),
-                    )
-                    .collect(),
-            )),
+            Value::String(str) => match str.parse() {
+                Ok(dt) => Ok(Toml::Datetime(dt)),
+                _ => Ok(Toml::String(str)),
+            },
+            Value::Array(arr) => {
+                let arr: Result<Vec<_>> = arr.into_iter().map(|v| v.try_into()).collect();
+
+                Ok(Toml::Array(arr?))
+            }
+            Value::Map(map) => {
+                let values: Result<Vec<_>> = map.values().cloned().map(|v| v.try_into()).collect();
+
+                Ok(Toml::Table(
+                    map.keys().cloned().zip(values?.into_iter()).collect(),
+                ))
+            }
         }
     }
 }
@@ -346,15 +362,22 @@ impl From<Value> for Yaml {
         match value {
             Value::Null => Yaml::Null,
             Value::Bool(bool) => Yaml::Bool(bool),
-            Value::Integer(int) => Yaml::Number(int.as_i64().map_or_else(
-                || int.as_u64().expect("Invalid integer as YAML").into(),
-                |s| s.into(),
-            )),
+            Value::Integer(int) => match (int.as_i64(), int.as_u64()) {
+                (Some(sint), _) => Yaml::Number(sint.into()),
+                (_, Some(uint)) => Yaml::Number(uint.into()),
+                _ => unreachable!(),
+            },
             Value::Float(float) => Yaml::Number(float.into()),
             Value::String(str) => Yaml::String(str),
-            Value::Array(arr) => Yaml::Sequence(arr.into_iter().map(|v| v.into()).collect()),
+            Value::Array(arr) => {
+                let seq = arr.into_iter().map(|v| v.into()).collect();
+
+                Yaml::Sequence(seq)
+            }
             Value::Map(map) => {
-                Yaml::Mapping(map.into_iter().map(|(k, v)| (k.into(), v.into())).collect())
+                let map = map.into_iter().map(|(k, v)| (k.into(), v.into())).collect();
+
+                Yaml::Mapping(map)
             }
         }
     }
