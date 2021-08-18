@@ -33,5 +33,8 @@ toml = { version = "0.5.8", features = ["preserve_order"] }
 assert_cmd = "2.0.0"
 predicates = "2.0.2"
 
+[build-dependencies]
+vergen = { version = "5.1.15", features = ["cargo", "git"], default-features = false }
+
 [profile.release]
 lto = true

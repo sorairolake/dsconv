@@ -15,13 +15,37 @@ use structopt::StructOpt;
 use crate::config::Config;
 use crate::value::Format;
 
-const LONG_VERSION: &str = formatcp!(
-    "{}\n\n{}\n{}\n{}",
-    crate_version!(),
-    "Copyright (C) 2021 Shun Sakai",
-    "License: Apache License 2.0",
-    "Reporting bugs: https://github.com/sorairolake/dsconv/issues"
-);
+const COMMIT_HASH: &str = if let Some(hash) = option_env!("VERGEN_GIT_SHA") {
+    hash
+} else {
+    ""
+};
+const COMMIT_DATE: &str = if let Some(date) = option_env!("VERGEN_GIT_COMMIT_DATE") {
+    date
+} else {
+    ""
+};
+const LONG_VERSION: &str = if !COMMIT_HASH.is_empty() && !COMMIT_DATE.is_empty() {
+    formatcp!(
+        "{} (built for {})\n\n{}\n{}\nCommit hash: {}\nCommit date: {}\n{}",
+        crate_version!(),
+        env!("VERGEN_CARGO_TARGET_TRIPLE"),
+        "Copyright (C) 2021 Shun Sakai",
+        "License: Apache License 2.0",
+        COMMIT_HASH,
+        COMMIT_DATE,
+        "Reporting bugs: https://github.com/sorairolake/dsconv/issues"
+    )
+} else {
+    formatcp!(
+        "{} (built for {})\n\n{}\n{}\n{}",
+        crate_version!(),
+        env!("VERGEN_CARGO_TARGET_TRIPLE"),
+        "Copyright (C) 2021 Shun Sakai",
+        "License: Apache License 2.0",
+        "Reporting bugs: https://github.com/sorairolake/dsconv/issues"
+    )
+};
 const APP_SETTINGS: [AppSettings; 2] = [AppSettings::ColoredHelp, AppSettings::DeriveDisplayOrder];
 const INPUT_FORMATS: [&str; 8] = [
     "cbor",
