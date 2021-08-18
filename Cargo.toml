@@ -29,5 +29,9 @@ serde_yaml = "0.8.17"
 structopt = "0.3.22"
 toml = { version = "0.5.8", features = ["preserve_order"] }
 
+[dev-dependencies]
+assert_cmd = "2.0.0"
+predicates = "2.0.2"
+
 [profile.release]
 lto = true
