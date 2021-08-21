@@ -23,6 +23,7 @@ use serde_cbor::Value as Cbor;
 use serde_json::Value as Json;
 use serde_yaml::Value as Yaml;
 use structopt::StructOpt;
+use strum::VariantNames;
 use toml::Value as Toml;
 
 use crate::cli::Opt;
@@ -42,23 +43,15 @@ fn main() -> Result<()> {
     }
 
     if opt.list_input_formats {
-        println!("{}", Format::Cbor);
-        println!("{}", Format::Hjson);
-        println!("{}", Format::Json);
-        println!("{}", Format::Json5);
-        println!("{}", Format::MessagePack);
-        println!("{}", Format::Ron);
-        println!("{}", Format::Toml);
-        println!("{}", Format::Yaml);
+        Format::VARIANTS.iter().for_each(|i| println!("{}", i));
 
         return Ok(());
     }
     if opt.list_output_formats {
-        println!("{}", Format::Cbor);
-        println!("{}", Format::Json);
-        println!("{}", Format::MessagePack);
-        println!("{}", Format::Toml);
-        println!("{}", Format::Yaml);
+        Format::VARIANTS
+            .iter()
+            .filter(|f| !matches!(**f, "Hjson" | "JSON5" | "RON"))
+            .for_each(|o| println!("{}", o));
 
         return Ok(());
     }

@@ -5,54 +5,39 @@
 //
 
 use std::fmt::{self, Display};
-use std::str::FromStr;
 
-use anyhow::{anyhow, Error, Result};
 use indexmap::IndexMap;
+use strum::{Display, EnumCount, EnumString, EnumVariantNames};
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, Display, EnumCount, EnumString, EnumVariantNames)]
+#[strum(serialize_all = "UPPERCASE", ascii_case_insensitive)]
 pub enum Format {
     Cbor,
+    #[strum(to_string = "Hjson")]
     Hjson,
     Json,
     Json5,
+    #[strum(serialize = "msgpack", to_string = "MessagePack")]
     MessagePack,
     Ron,
     Toml,
+    #[strum(serialize = "yml", to_string = "YAML")]
     Yaml,
 }
 
-impl fmt::Display for Format {
-    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Format::Cbor => write!(fmt, "CBOR"),
-            Format::Hjson => write!(fmt, "Hjson"),
-            Format::Json => write!(fmt, "JSON"),
-            Format::Json5 => write!(fmt, "JSON5"),
-            Format::MessagePack => write!(fmt, "MessagePack"),
-            Format::Ron => write!(fmt, "RON"),
-            Format::Toml => write!(fmt, "TOML"),
-            Format::Yaml => write!(fmt, "YAML"),
-        }
-    }
-}
-
-impl FromStr for Format {
-    type Err = Error;
-
-    fn from_str(format: &str) -> Result<Self> {
-        match format.to_ascii_lowercase().as_str() {
-            "cbor" => Ok(Format::Cbor),
-            "hjson" => Ok(Format::Hjson),
-            "json" => Ok(Format::Json),
-            "json5" => Ok(Format::Json5),
-            "messagepack" => Ok(Format::MessagePack),
-            "ron" => Ok(Format::Ron),
-            "toml" => Ok(Format::Toml),
-            "yaml" | "yml" => Ok(Format::Yaml),
-            _ => Err(anyhow!("Unknown format: {}", format)),
-        }
-    }
+impl Format {
+    pub const INPUT_VALUES: [&'static str; Self::COUNT] = [
+        "cbor",
+        "hjson",
+        "json",
+        "json5",
+        "messagepack",
+        "ron",
+        "toml",
+        "yaml",
+    ];
+    pub const OUTPUT_VALUES: [&'static str; Self::COUNT - 3] =
+        ["cbor", "json", "messagepack", "toml", "yaml"];
 }
 
 #[derive(Clone, Debug, PartialEq)]

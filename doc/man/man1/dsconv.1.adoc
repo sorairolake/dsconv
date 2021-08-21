@@ -6,7 +6,7 @@
 
 = dsconv(1)
 // Specify in UTC.
-:docdate: 2021-08-11
+:docdate: 2021-08-21
 :doctype: manpage
 :mansource: dsconv {manversion}
 :manmanual: General Commands Manual
@@ -79,7 +79,6 @@ If _FILE_ is not specified, the input is read from stdin.
 
 *-V*, *--version*::
   Print the version number and exit.
-  When the long option is specified, additional information will also be printed.
 
 == EXIT STATUS
 
