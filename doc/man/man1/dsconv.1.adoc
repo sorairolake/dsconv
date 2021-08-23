@@ -6,7 +6,7 @@
 
 = dsconv(1)
 // Specify in UTC.
-:docdate: 2021-08-21
+:docdate: 2021-08-23
 :doctype: manpage
 :mansource: dsconv {manversion}
 :manmanual: General Commands Manual
@@ -26,6 +26,8 @@ dsconv - a data-serialization format converter
 If _FILE_ is not specified, the input is read from stdin.
 
 == OPTIONS
+
+Unless otherwise noted, the value of each option is case-insensitive.
 
 === Conversion options
 
@@ -70,6 +72,7 @@ If _FILE_ is not specified, the input is read from stdin.
 *-p* [*true*|*false*], *--pretty*=[*true*|*false*]::
   Output as a pretty-printed string.
   If the value is omitted, it is the same as selecting *true*.
+  The value of this option is case-sensitive.
   This option is available when the output is JSON or TOML (default: *false*).
 
 === General options

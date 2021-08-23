@@ -25,21 +25,6 @@ pub enum Format {
     Yaml,
 }
 
-impl Format {
-    pub const INPUT_VALUES: [&'static str; Self::COUNT] = [
-        "cbor",
-        "hjson",
-        "json",
-        "json5",
-        "messagepack",
-        "ron",
-        "toml",
-        "yaml",
-    ];
-    pub const OUTPUT_VALUES: [&'static str; Self::COUNT - 3] =
-        ["cbor", "json", "messagepack", "toml", "yaml"];
-}
-
 #[derive(Clone, Debug, PartialEq)]
 enum Int {
     Pos(u64),

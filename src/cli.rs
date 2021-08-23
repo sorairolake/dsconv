@@ -10,6 +10,7 @@ use std::path::{Path, PathBuf};
 use anyhow::{ensure, Context, Result};
 use structopt::clap::{crate_name, AppSettings, Shell};
 use structopt::StructOpt;
+use strum::VariantNames;
 
 use crate::config::Config;
 use crate::value::Format;
@@ -22,7 +23,7 @@ pub struct Opt {
         short,
         long,
         value_name = "FORMAT",
-        possible_values = &Format::INPUT_VALUES,
+        possible_values = &Format::VARIANTS,
         case_insensitive = true
     )]
     pub from: Option<Format>,
@@ -32,7 +33,12 @@ pub struct Opt {
         short,
         long,
         value_name = "FORMAT",
-        possible_values = &Format::OUTPUT_VALUES,
+        possible_values =
+            &Format::VARIANTS
+                .iter()
+                .filter(|f| !matches!(**f, "Hjson" | "JSON5" | "RON"))
+                .copied()
+                .collect::<Vec<_>>(),
         case_insensitive = true
     )]
     pub to: Option<Format>,
