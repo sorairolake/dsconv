@@ -16,7 +16,11 @@ use crate::config::Config;
 use crate::value::Format;
 
 #[derive(StructOpt)]
-#[structopt(about, settings = &[AppSettings::ColoredHelp, AppSettings::DeriveDisplayOrder])]
+#[structopt(
+    about,
+    after_help = "See dsconv(1) for more details.",
+    settings = &[AppSettings::ColoredHelp, AppSettings::DeriveDisplayOrder]
+)]
 pub struct Opt {
     /// Specify input format.
     #[structopt(

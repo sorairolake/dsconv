@@ -35,15 +35,17 @@ OPTIONS:
 
 ARGS:
     <FILE>    Input from <FILE>
+
+See dsconv(1) for more details.
 ....
 
-See the link:doc/man/man1/dsconv.1.adoc[man page] (`man 1 dsconv`) for details.
+See link:doc/man/man1/dsconv.1.adoc[`dsconv(1)`] for more details.
 
 == Configuration
 
 If you want to change the default behavior, you can use the configuration file.
 
-See the link:doc/man/man5/dsconv-config.toml.5.adoc[man page] (`man 5 dsconv-config.toml`) for details.
+See link:doc/man/man5/dsconv-config.toml.5.adoc[`dsconv-config.toml(5)`] for more details.
 
 == Contributing
 
@@ -55,4 +57,4 @@ Copyright (C) 2021 Shun Sakai (see link:AUTHORS.adoc[])
 
 This program is distributed under the terms of the _Apache License 2.0_.
 
-See link:COPYING[] for details.
+See link:COPYING[] for more details.
