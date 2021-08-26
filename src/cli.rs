@@ -89,18 +89,18 @@ impl Opt {
     }
 
     /// Generate shell completion to a file.
-    pub fn generate_completion_to_file(shell: Shell, outdir: impl AsRef<Path>) -> Result<()> {
-        let outdir = outdir
+    pub fn generate_completion_to_file(shell: Shell, out_dir: impl AsRef<Path>) -> Result<()> {
+        let out_dir = out_dir
             .as_ref()
             .canonicalize()
             .context("Failed to generate shell completion to a file")?;
-        ensure!(outdir.is_dir(), "Output destination is not a directory");
+        ensure!(out_dir.is_dir(), "Output destination is not a directory");
 
-        Self::clap().gen_completions(crate_name!(), shell, &outdir);
+        Self::clap().gen_completions(crate_name!(), shell, &out_dir);
         eprintln!(
             "Generated a shell completion file of the {} in {}",
             shell,
-            outdir.display()
+            out_dir.display()
         );
 
         Ok(())

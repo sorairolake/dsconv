@@ -7,7 +7,7 @@
 alias all := default
 
 # Run default recipe
-default: build build-man
+default: build
 
 # Build a package
 @build:
@@ -28,11 +28,6 @@ default: build build-man
 # Run the linter
 @clippy:
     cargo clippy -- -D warnings
-
-# Build man pages
-@build-man:
-    meson setup builddir
-    ninja -C builddir
 
 # Update README
 @update-readme:

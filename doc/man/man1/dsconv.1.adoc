@@ -8,7 +8,7 @@
 // Specify in UTC.
 :docdate: 2021-08-23
 :doctype: manpage
-:mansource: dsconv {manversion}
+ifdef::manversion[:mansource: dsconv {manversion}]
 :manmanual: General Commands Manual
 :includedir: ../include
 

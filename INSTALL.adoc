@@ -7,9 +7,8 @@ This document describes how to build and install *dsconv* from source code.
 .To build *dsconv*, you need to have the following dependencies installed
 * https://doc.rust-lang.org/stable/cargo/[Cargo] (v1.49.0 or later)
 
-.To build the documentation, you need to have the following additional dependencies installed
-* https://mesonbuild.com/[Meson] (v0.52.0 or later)
-* https://asciidoctor.org/[Asciidoctor] (for building man page)
+.To build man pages, you need to have the following additional dependencies installed
+* https://asciidoctor.org/[Asciidoctor]
 
 == Building and installing from source
 
@@ -22,20 +21,15 @@ $ git clone https://github.com/sorairolake/dsconv.git
 $ cd dsconv
 ----
 
-.To install the executable
+.To build a package
 [source, shell]
 ----
-$ cargo install --path .
+$ cargo build --release
 ----
 
-.To install the documentation as well (when installing to `/usr/local`)
-[source, shell]
-----
-$ sudo cargo install --root /usr/local --path .
-$ meson setup builddir
-$ ninja -C builddir
-$ sudo ninja -C builddir install
-----
+NOTE: If Asciidoctor is available, man pages are generated (see also https://doc.rust-lang.org/cargo/reference/environment-variables.html#environment-variables-cargo-sets-for-build-scripts[the Cargo Book]).
+
+Now an executable is generated in `$CARGO_TARGET_DIR/release`, so copy this wherever you like.
 
 .To generate shell completion
 [source, shell]
@@ -44,5 +38,5 @@ $ sudo ninja -C builddir install
 $ cargo run -- --generate-completion <SHELL>
 
 # Output to a file.
-$ cargo run -- --generate-completion <SHELL> -o <OUTDIR>
+$ cargo run -- --generate-completion <SHELL> -o <OUT_DIR>
 ----

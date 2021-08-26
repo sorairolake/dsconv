@@ -33,8 +33,8 @@ fn main() -> Result<()> {
     let opt = Opt::from_args().apply_config()?;
 
     if let Some(shell) = opt.generate_completion {
-        if let Some(outdir) = opt.output {
-            Opt::generate_completion_to_file(shell, outdir)?;
+        if let Some(out_dir) = opt.output {
+            Opt::generate_completion_to_file(shell, out_dir)?;
         } else {
             Opt::generate_completion_to_stdout(shell);
         }
