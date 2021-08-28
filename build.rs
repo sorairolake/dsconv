@@ -7,38 +7,18 @@
 use std::env;
 use std::io;
 use std::path::Path;
-use std::process::Command;
+use std::process::{Command, ExitStatus};
 
-fn generate_man_page(source: impl AsRef<Path>, out_dir: impl AsRef<Path>) -> io::Result<()> {
-    let status = match Command::new("asciidoctor")
-        .args(["-a", concat!("manversion=", env!("CARGO_PKG_VERSION"))])
+fn generate_man_page(
+    source: impl AsRef<Path>,
+    out_dir: impl AsRef<Path>,
+) -> io::Result<ExitStatus> {
+    Command::new("asciidoctor")
+        .args(["-a", concat!("revnumber=", env!("CARGO_PKG_VERSION"))])
         .args(["-b", "manpage"])
         .args(["-D".as_ref(), out_dir.as_ref()])
         .arg(source.as_ref())
         .status()
-    {
-        Ok(status) => status,
-        Err(error) => {
-            return Err(io::Error::new(
-                io::ErrorKind::Other,
-                format!("Failed to execute Asciidoctor: {}", error),
-            ))
-        }
-    };
-
-    if status.success() {
-        Ok(())
-    } else {
-        Err(io::Error::new(
-            io::ErrorKind::Other,
-            format!(
-                "Asciidoctor failed with the exit code: {}",
-                status
-                    .code()
-                    .expect("The process was terminated by a signal")
-            ),
-        ))
-    }
 }
 
 fn main() {
@@ -55,16 +35,27 @@ fn main() {
     for man_page_source in &man_page_sources {
         println!("cargo:rerun-if-changed={}", man_page_source.display());
 
-        if let Err(error) = generate_man_page(man_page_source, &out_dir) {
-            println!(
-                "cargo:warning=Failed to generate a man page from {}: {}",
-                man_page_source
-                    .file_name()
-                    .map(AsRef::as_ref)
-                    .map(Path::display)
-                    .expect("Failed to get the final component of a path"),
-                error
-            );
+        match generate_man_page(man_page_source, &out_dir) {
+            Ok(status) => {
+                if !status.success() {
+                    println!(
+                        "cargo:warning={:?} was not generated (Asciidoctor failed: {})",
+                        man_page_source
+                            .file_stem()
+                            .expect("Failed to extract the stem"),
+                        status
+                    );
+                }
+            }
+            Err(error) => {
+                println!(
+                    "cargo:warning={:?} was not generated (failed to execute Asciidoctor: {})",
+                    man_page_source
+                        .file_stem()
+                        .expect("Failed to extract the stem"),
+                    error
+                );
+            }
         }
     }
 }

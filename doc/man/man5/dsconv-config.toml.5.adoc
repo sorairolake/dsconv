@@ -8,7 +8,7 @@
 // Specify in UTC.
 :docdate: 2021-06-13
 :doctype: manpage
-ifdef::manversion[:mansource: dsconv {manversion}]
+ifdef::revnumber[:mansource: dsconv {revnumber}]
 :manmanual: File Formats Manual
 :includedir: ../include
 

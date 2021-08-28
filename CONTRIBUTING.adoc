@@ -19,3 +19,26 @@ Please refer to the https://github.com/RomuloOliveira/commit-messages-guide[Comm
 === Coding style
 
 The coding style of this project is based on the https://github.com/rust-dev-tools/fmt-rfcs/blob/master/guide/guide.md[Rust style guide].
+
+== Development
+
+.Run tests
+[source, shell]
+----
+$ cargo test
+----
+
+.Run the code formatter
+[source, shell]
+----
+$ cargo fmt
+----
+
+.Run the linter
+[source, shell]
+----
+$ cargo clippy -- -D warnings
+----
+
+Also, the https://github.com/casey/just[just] command runner can be used.
+Run `just --list` for more details.

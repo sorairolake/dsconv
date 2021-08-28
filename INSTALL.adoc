@@ -27,7 +27,8 @@ $ cd dsconv
 $ cargo build --release
 ----
 
-NOTE: If Asciidoctor is available, man pages are generated (see also https://doc.rust-lang.org/cargo/reference/environment-variables.html#environment-variables-cargo-sets-for-build-scripts[the Cargo Book]).
+NOTE: If Asciidoctor is available, man pages are generated.
+Run `fd -I . target/{asterisk}/build/dsconv-{asterisk}/out` to find the generated.
 
 Now an executable is generated in `$CARGO_TARGET_DIR/release`, so copy this wherever you like.
 
