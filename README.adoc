@@ -41,6 +41,10 @@ See dsconv(1) for more details.
 
 See link:doc/man/man1/dsconv.1.adoc[`dsconv(1)`] for more details.
 
+== Changelog
+
+Please refer to the link:CHANGELOG.adoc[Changelog].
+
 == Configuration
 
 If you want to change the default behavior, you can use the configuration file.
