@@ -14,7 +14,7 @@ The branching model of this project is based on the https://nvie.com/posts/a-suc
 
 === Commit message
 
-Please refer to the https://github.com/RomuloOliveira/commit-messages-guide[Commit messages guide].
+Please see the https://github.com/RomuloOliveira/commit-messages-guide[Commit messages guide].
 
 === Coding style
 
