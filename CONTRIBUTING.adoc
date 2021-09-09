@@ -22,6 +22,8 @@ The coding style of this project is based on the https://github.com/rust-dev-too
 
 == Development
 
+=== Useful development tools
+
 .Run tests
 [source, shell]
 ----

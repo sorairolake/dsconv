@@ -2,4 +2,4 @@
 
 == Original author
 
-* https://github.com/sorairolake[Shun Sakai] <sorairolake@protonmail.ch>
+* https://github.com/sorairolake[Shun Sakai]
