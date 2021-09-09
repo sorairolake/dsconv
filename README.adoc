@@ -9,7 +9,7 @@ toc::[]
 
 === How to build and install
 
-Please refer to the link:INSTALL.adoc[Installation Guide].
+Please refer to the link:BUILD.adoc[Build Guide].
 
 == Usage
 
