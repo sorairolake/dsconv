@@ -1,7 +1,9 @@
 = dsconv
 :toc: macro
 
-image::https://github.com/sorairolake/dsconv/workflows/CI/badge.svg[CI, link=https://github.com/sorairolake/dsconv/actions?query=workflow%3ACI]
+image:https://github.com/sorairolake/dsconv/workflows/CI/badge.svg[CI, link=https://github.com/sorairolake/dsconv/actions?query=workflow%3ACI]
+image:https://img.shields.io/crates/v/dsconv[Version, link=https://crates.io/crates/dsconv]
+image:https://img.shields.io/crates/l/dsconv[License, link=https://apache.org/licenses/LICENSE-2.0]
 
 *dsconv* is a command-line utility for converting from one data-serialization format to another.
 
