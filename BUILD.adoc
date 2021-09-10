@@ -1,0 +1,43 @@
+= Build and Install
+
+This document describes how to build and install *dsconv* from source code.
+
+== Prerequisites
+
+.To build *dsconv*, you need to have the following dependencies installed
+* https://doc.rust-lang.org/stable/cargo/[Cargo] (v1.49.0 or later)
+
+.To build man pages, you need to have the following additional dependencies installed
+* https://asciidoctor.org/[Asciidoctor]
+
+== Building and installing from source
+
+First, either download the source archive or clone the https://github.com/sorairolake/dsconv[Git repository].
+
+.To clone the Git repository
+[source, shell]
+----
+$ git clone https://github.com/sorairolake/dsconv.git
+$ cd dsconv
+----
+
+.To build a package
+[source, shell]
+----
+$ cargo build --release
+----
+
+NOTE: If Asciidoctor is available, man pages are generated.
+Run `fd -I . target/{asterisk}/build/dsconv-{asterisk}/out` to find the generated.
+
+Now an executable is generated in `$CARGO_TARGET_DIR/release`, so copy this wherever you like.
+
+.To generate shell completion
+[source, shell]
+----
+# Output to stdout.
+$ cargo run -- --generate-completion <SHELL>
+
+# Output to a file.
+$ cargo run -- --generate-completion <SHELL> -o <OUT_DIR>
+----

@@ -1,0 +1,64 @@
+//
+// SPDX-License-Identifier: Apache-2.0
+//
+// Copyright (C) 2021 Shun Sakai
+//
+
+= dsconv-config.toml(5)
+// Specify in UTC.
+:docdate: 2021-06-13
+:doctype: manpage
+ifdef::revnumber[:mansource: dsconv {revnumber}]
+:manmanual: File Formats Manual
+:includedir: ../include
+
+== NAME
+
+dsconv-config.toml - configuration file for dsconv
+
+== DESCRIPTION
+
+*{manname}* is a configuration file for *dsconv*(1).
+This file is optional and not required.
+A file format of this file is TOML.
+
+== FORMAT
+
+*pretty*::
+  Output as a pretty-printed string (default: *false*).
+
+== FILES
+
+_$XDG_CONFIG_HOME/dsconv/config.toml_::
+_$HOME/.config/dsconv/config.toml_::
+  The location of the configuration file on Unix.
+
+_$HOME/Library/Application Support/dsconv/config.toml_::
+  The location of the configuration file on macOS.
+
+_%APPDATA%\dsconv\config\config.toml_::
+  The location of the configuration file on Windows.
+
+== NOTES
+
+Source code repository::
+  https://github.com/sorairolake/dsconv
+
+Specifications of TOML::
+  https://toml.io/
+
+== EXAMPLES
+
+.The following is an example of the configuration file
+[source, toml]
+----
+pretty = true
+----
+
+include::{includedir}/section-reporting-bugs.adoc[]
+
+include::{includedir}/section-copyright.adoc[]
+
+== SEE ALSO
+
+*dsconv*(1)
