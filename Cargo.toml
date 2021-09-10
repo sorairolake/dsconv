@@ -4,7 +4,6 @@ version = "0.1.0"
 authors = ["Shun Sakai <sorairolake@protonmail.ch>"]
 edition = "2018"
 description = "A data-serialization format converter"
-readme = "README.adoc"
 repository = "https://github.com/sorairolake/dsconv"
 license = "Apache-2.0"
 categories = ["command-line-utilities"]
