@@ -29,6 +29,7 @@ fn cbor2cbor() {
 }
 
 #[test]
+#[cfg(unix)]
 fn cbor2json() {
     command()
         .arg("-f")
@@ -55,6 +56,7 @@ fn cbor2messagepack() {
 }
 
 #[test]
+#[cfg(unix)]
 fn cbor2toml() {
     command()
         .arg("-f")
@@ -67,6 +69,7 @@ fn cbor2toml() {
 }
 
 #[test]
+#[cfg(unix)]
 fn cbor2yaml() {
     command()
         .arg("-f")
@@ -93,6 +96,7 @@ fn json2cbor() {
 }
 
 #[test]
+#[cfg(unix)]
 fn json2json() {
     command()
         .arg("-f")
@@ -119,6 +123,7 @@ fn json2messagepack() {
 }
 
 #[test]
+#[cfg(unix)]
 fn json2toml() {
     command()
         .arg("-f")
@@ -131,6 +136,7 @@ fn json2toml() {
 }
 
 #[test]
+#[cfg(unix)]
 fn json2yaml() {
     command()
         .arg("-f")
@@ -157,6 +163,7 @@ fn messagepack2cbor() {
 }
 
 #[test]
+#[cfg(unix)]
 fn messagepack2json() {
     command()
         .arg("-f")
@@ -183,6 +190,7 @@ fn messagepack2messagepack() {
 }
 
 #[test]
+#[cfg(unix)]
 fn messagepack2toml() {
     command()
         .arg("-f")
@@ -195,6 +203,7 @@ fn messagepack2toml() {
 }
 
 #[test]
+#[cfg(unix)]
 fn messagepack2yaml() {
     command()
         .arg("-f")
@@ -221,6 +230,7 @@ fn toml2cbor() {
 }
 
 #[test]
+#[cfg(unix)]
 fn toml2json() {
     command()
         .arg("-f")
@@ -247,6 +257,7 @@ fn toml2messagepack() {
 }
 
 #[test]
+#[cfg(unix)]
 fn toml2toml() {
     command()
         .arg("-f")
@@ -259,6 +270,7 @@ fn toml2toml() {
 }
 
 #[test]
+#[cfg(unix)]
 fn toml2yaml() {
     command()
         .arg("-f")
@@ -285,6 +297,7 @@ fn yaml2cbor() {
 }
 
 #[test]
+#[cfg(unix)]
 fn yaml2json() {
     command()
         .arg("-f")
@@ -311,6 +324,7 @@ fn yaml2messagepack() {
 }
 
 #[test]
+#[cfg(unix)]
 fn yaml2toml() {
     command()
         .arg("-f")
@@ -323,6 +337,7 @@ fn yaml2toml() {
 }
 
 #[test]
+#[cfg(unix)]
 fn yaml2yaml() {
     command()
         .arg("-f")
