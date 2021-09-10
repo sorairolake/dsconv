@@ -11,6 +11,17 @@ toc::[]
 
 == Installation
 
+=== Via a package manager
+
+|===
+|OS |Method |Package |Command
+
+|Any
+|Cargo
+|https://crates.io/crates/dsconv[`dsconv`]
+|`cargo install dsconv`
+|===
+
 === How to build and install
 
 Please see the link:BUILD.adoc[Build Guide].
