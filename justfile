@@ -40,4 +40,4 @@ default: build
     cargo -q run -- -h >> xx01
     cat xx0[0-2] > README.adoc
     rm xx0[0-2]
-    echo {{ if `git status --porcelain` == '' { 'README is up-to-date' } else { 'README has been updated!' } }}
+    echo {{ if `git status --porcelain README.adoc` == '' { 'README is up-to-date' } else { 'README has been updated!' } }}
