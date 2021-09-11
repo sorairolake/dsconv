@@ -29,6 +29,10 @@ default: build
 @clippy:
     cargo clippy -- -D warnings
 
+# Run the linter for GitHub Actions workflow files
+@lint-github-actions:
+    actionlint
+
 # Update README
 @update-readme:
     csplit -s README.adoc '/^\.\.\.\.$/' '{1}'
