@@ -1,6 +1,6 @@
 [package]
 name = "dsconv"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Shun Sakai <sorairolake@protonmail.ch>"]
 edition = "2018"
 description = "A data-serialization format converter"
@@ -24,7 +24,7 @@ ron = { version = "0.6.5", features = ["indexmap"] }
 serde = { version = "1.0.130", features = ["derive"] }
 serde_cbor = "0.11.2"
 serde_json = { version = "1.0.67", features = ["preserve_order"] }
-serde_yaml = "0.8.20"
+serde_yaml = "0.8.21"
 structopt = "0.3.23"
 strum = { version = "0.21.0", features = ["derive"] }
 toml = { version = "0.5.8", features = ["preserve_order"] }

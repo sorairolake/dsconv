@@ -11,6 +11,16 @@ The format is based on https://keepachangelog.com/[Keep a Changelog], and this p
 
 toc::[]
 
+== {compare-url}/v0.1.0\...v0.1.1[0.1.1] - 2021-09-11
+
+=== Added
+
+* Use the CI to check if the usage section of README is up-to-date
+
+=== Changed
+
+* Update README related to crates.io (see {pull-request-url}/3[#3])
+
 == {project-url}/releases/tag/v0.1.0[0.1.0] - 2021-09-10
 
 === Added
