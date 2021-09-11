@@ -29,7 +29,7 @@ Please see the link:BUILD.adoc[Build Guide].
 == Usage
 
 ....
-dsconv 0.1.0
+dsconv 0.1.1
 A data-serialization format converter
 
 USAGE:
