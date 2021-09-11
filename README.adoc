@@ -1,13 +1,26 @@
 = dsconv
 :toc: macro
 
-image::https://github.com/sorairolake/dsconv/workflows/CI/badge.svg[CI, link=https://github.com/sorairolake/dsconv/actions?query=workflow%3ACI]
+image:https://github.com/sorairolake/dsconv/workflows/CI/badge.svg[CI, link=https://github.com/sorairolake/dsconv/actions?query=workflow%3ACI]
+image:https://img.shields.io/crates/v/dsconv[Version, link=https://crates.io/crates/dsconv]
+image:https://img.shields.io/crates/l/dsconv[License, link=https://apache.org/licenses/LICENSE-2.0]
 
 *dsconv* is a command-line utility for converting from one data-serialization format to another.
 
 toc::[]
 
 == Installation
+
+=== Via a package manager
+
+|===
+|OS |Method |Package |Command
+
+|Any
+|Cargo
+|https://crates.io/crates/dsconv[`dsconv`]
+|`cargo install dsconv`
+|===
 
 === How to build and install
 
@@ -16,7 +29,7 @@ Please see the link:BUILD.adoc[Build Guide].
 == Usage
 
 ....
-dsconv 0.1.0
+dsconv 0.1.1
 A data-serialization format converter
 
 USAGE:

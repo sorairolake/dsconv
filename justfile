@@ -29,10 +29,15 @@ default: build
 @clippy:
     cargo clippy -- -D warnings
 
+# Run the linter for GitHub Actions workflow files
+@lint-github-actions:
+    actionlint
+
 # Update README
 @update-readme:
-    csplit -s README.adoc '/^....$/' '{*}'
+    csplit -s README.adoc '/^\.\.\.\.$/' '{1}'
     sed -i -n 1p xx01
     cargo -q run -- -h >> xx01
-    cat xx00 xx01 xx02 > README.adoc
-    rm xx00 xx01 xx02
+    cat xx0[0-2] > README.adoc
+    rm xx0[0-2]
+    echo {{ if `git status --porcelain README.adoc` == '' { 'README is up-to-date' } else { 'README has been updated!' } }}
