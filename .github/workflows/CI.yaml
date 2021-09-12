@@ -95,4 +95,10 @@ jobs:
     - name: Check if README is up-to-date
       run: |
         just update-readme
-        git diff --quiet
+        git diff --exit-code README.adoc
+    - name: Install Pandoc
+      run: |
+        sudo apt-get update
+        sudo apt-get install pandoc
+    - name: Check if README for crates.io is up-to-date
+      run: asciidoctor -b docbook5 -o - README.adoc | pandoc -f docbook -t gfm | diff -u doc/crates.io/README.md -

@@ -4,6 +4,7 @@ version = "0.1.1"
 authors = ["Shun Sakai <sorairolake@protonmail.ch>"]
 edition = "2018"
 description = "A data-serialization format converter"
+readme = "doc/crates.io/README.md"
 repository = "https://github.com/sorairolake/dsconv"
 license = "Apache-2.0"
 categories = ["command-line-utilities"]

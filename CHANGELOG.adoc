@@ -11,6 +11,12 @@ The format is based on https://keepachangelog.com/[Keep a Changelog], and this p
 
 toc::[]
 
+== {compare-url}/v0.1.1\...HEAD[Unreleased]
+
+=== Added
+
+* Add GFM version README for crates.io
+
 == {compare-url}/v0.1.0\...v0.1.1[0.1.1] - 2021-09-11
 
 === Added
