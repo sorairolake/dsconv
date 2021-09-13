@@ -10,7 +10,7 @@ data-serialization format to another.
 ## Via a package manager
 
 | OS  | Method | Package                                     | Command                |
-| --- | ------ | ------------------------------------------- | ---------------------- |
+|-----|--------|---------------------------------------------|------------------------|
 | Any | Cargo  | [`dsconv`](https://crates.io/crates/dsconv) | `cargo install dsconv` |
 
 ## How to build and install
@@ -21,26 +21,26 @@ Please see the [Build Guide](BUILD.adoc).
 
     dsconv 0.1.1
     A data-serialization format converter
-    
+
     USAGE:
         dsconv [FLAGS] [OPTIONS] [FILE]
-    
+
     FLAGS:
             --list-input-formats     List supported input formats
             --list-output-formats    List supported output formats
         -h, --help                   Prints help information
         -V, --version                Prints version information
-    
+
     OPTIONS:
         -f, --from <FORMAT>       Specify input format [possible values: CBOR, Hjson, JSON, JSON5, MessagePack, RON, TOML,
                                   YAML]
         -t, --to <FORMAT>         Specify output format [possible values: CBOR, JSON, MessagePack, TOML, YAML]
         -o, --output <FILE>       Output to <FILE> instead of stdout
         -p, --pretty <BOOLEAN>    Output as a pretty-printed string [possible values: true, false]
-    
+
     ARGS:
         <FILE>    Input from <FILE>
-    
+
     See dsconv(1) for more details.
 
 See [`dsconv(1)`](doc/man/man1/dsconv.1.adoc) for more details.
