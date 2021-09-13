@@ -15,7 +15,7 @@ jobs:
     - name: Setup Rust toolchain
       uses: actions-rs/toolchain@v1
       with:
-        toolchain: stable
+        toolchain: 1.53.0 # MSRV
         override: true
         profile: minimal
     - name: Build a package
@@ -36,7 +36,7 @@ jobs:
     - name: Setup Rust toolchain
       uses: actions-rs/toolchain@v1
       with:
-        toolchain: stable
+        toolchain: 1.53.0 # MSRV
         override: true
         profile: minimal
         components: rustfmt
@@ -55,7 +55,7 @@ jobs:
     - name: Setup Rust toolchain
       uses: actions-rs/toolchain@v1
       with:
-        toolchain: stable
+        toolchain: 1.53.0 # MSRV
         override: true
         profile: minimal
         components: clippy
@@ -87,7 +87,7 @@ jobs:
     - name: Setup Rust toolchain
       uses: actions-rs/toolchain@v1
       with:
-        toolchain: stable
+        toolchain: 1.53.0 # MSRV
         override: true
         profile: minimal
     - name: Setup the just command runner
