@@ -13,17 +13,17 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
     - name: Setup Rust toolchain
-      uses: actions-rs/toolchain@v1.0.6
+      uses: actions-rs/toolchain@v1
       with:
         toolchain: 1.53.0 # MSRV
         override: true
         profile: minimal
     - name: Build a package
-      uses: actions-rs/cargo@v1.0.1
+      uses: actions-rs/cargo@v1
       with:
         command: build
     - name: Run tests
-      uses: actions-rs/cargo@v1.0.1
+      uses: actions-rs/cargo@v1
       with:
         command: test
 
@@ -34,14 +34,14 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
     - name: Setup Rust toolchain
-      uses: actions-rs/toolchain@v1.0.6
+      uses: actions-rs/toolchain@v1
       with:
         toolchain: 1.53.0 # MSRV
         override: true
         profile: minimal
         components: rustfmt
     - name: Check code formatted
-      uses: actions-rs/cargo@v1.0.1
+      uses: actions-rs/cargo@v1
       with:
         command: fmt
         args: -- --check
@@ -53,14 +53,14 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
     - name: Setup Rust toolchain
-      uses: actions-rs/toolchain@v1.0.6
+      uses: actions-rs/toolchain@v1
       with:
         toolchain: 1.53.0 # MSRV
         override: true
         profile: minimal
         components: clippy
     - name: Check no lint warnings
-      uses: actions-rs/cargo@v1.0.1
+      uses: actions-rs/cargo@v1
       with:
         command: clippy
         args: -- -D warnings
@@ -85,7 +85,7 @@ jobs:
     - name: Clean the working tree
       run: git clean -f
     - name: Setup Rust toolchain
-      uses: actions-rs/toolchain@v1.0.6
+      uses: actions-rs/toolchain@v1
       with:
         toolchain: 1.53.0 # MSRV
         override: true
@@ -96,11 +96,9 @@ jobs:
       run: |
         just update-readme
         git diff --exit-code README.adoc
-    - name: AsciiDoc to DocBook
-      run: asciidoctor -b docbook5 README.adoc
-    - name: DocBook to GFM
-      uses: docker://pandoc/core:2.14
-      with:
-        args: -f docbook -t gfm -o doc/crates.io/README.md README.xml
+    - name: Install Pandoc
+      run: |
+        sudo apt-get update
+        sudo apt-get install pandoc
     - name: Check if README for crates.io is up-to-date
-      run: git diff --exit-code doc/crates.io/README.md
+      run: asciidoctor -b docbook5 -o - README.adoc | pandoc -f docbook -t gfm | diff -u doc/crates.io/README.md -
