@@ -47,14 +47,15 @@ jobs:
       uses: battila7/get-version-action@v2.2.1
     - name: Create a package for Unix
       if: matrix.os != 'windows-2019'
-      run: tar czvf "dsconv-${{ steps.get_version.outputs.version }}-${{ matrix.target }}.tar.gz" -C target/${{ matrix.target }}/release dsconv
+      run: tar czvf "dsconv-${{ steps.get_version.outputs.version }}-${{ matrix.target }}.tar.gz" AUTHORS.adoc CHANGELOG.adoc README.adoc COPYING -C target/${{ matrix.target }}/release dsconv
     - name: Create a package for Windows
       if: matrix.os == 'windows-2019'
-      run: 7z a "dsconv-${{ steps.get_version.outputs.version }}-${{ matrix.target }}.zip" ./target/${{ matrix.target }}/release/dsconv.exe
+      run: 7z a -bb "dsconv-${{ steps.get_version.outputs.version }}-${{ matrix.target }}.zip" AUTHORS.adoc CHANGELOG.adoc README.adoc COPYING ./target/${{ matrix.target }}/release/dsconv.exe
     - name: Release
       uses: softprops/action-gh-release@v0.1.13
       with:
         draft: true
         files: 'dsconv-*'
+        name: "Release version ${{ steps.get_version.outputs.version-without-v }}"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
