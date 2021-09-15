@@ -13,6 +13,11 @@ data-serialization format to another.
 |-----|--------|---------------------------------------------|------------------------|
 | Any | Cargo  | [`dsconv`](https://crates.io/crates/dsconv) | `cargo install dsconv` |
 
+## Via pre-built binaries
+
+Pre-built binaries for Linux, macOS and Windows are available on the
+[release page](https://github.com/sorairolake/dsconv/releases).
+
 ## How to build and install
 
 Please see the [Build Guide](BUILD.adoc).

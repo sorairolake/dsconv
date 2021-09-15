@@ -1,0 +1,60 @@
+name: CD
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+
+jobs:
+  build:
+    name: Build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        target:
+          - x86_64-unknown-linux-musl
+          - x86_64-apple-darwin
+          - x86_64-pc-windows-msvc
+        include:
+          - target: x86_64-unknown-linux-musl
+            os: ubuntu-20.04
+            use-cross: true
+          - target: x86_64-apple-darwin
+            os: macos-10.15
+          - target: x86_64-pc-windows-msvc
+            os: windows-2019
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Setup Rust toolchain
+      uses: actions-rs/toolchain@v1.0.6
+      with:
+        toolchain: 1.53.0 # MSRV
+        target: ${{ matrix.target }}
+        override: true
+        profile: minimal
+    - name: Build a package
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: build
+        args: --release --target ${{ matrix.target }}
+        use-cross: ${{ matrix.use-cross }}
+    - name: Strip release binary
+      if: matrix.os != 'windows-2019'
+      run: strip "target/${{ matrix.target }}/release/dsconv"
+    - name: Get version
+      id: get_version
+      uses: battila7/get-version-action@v2.2.1
+    - name: Create a package for Unix
+      if: matrix.os != 'windows-2019'
+      run: tar czvf "dsconv-${{ steps.get_version.outputs.version }}-${{ matrix.target }}.tar.gz" -C target/${{ matrix.target }}/release dsconv
+    - name: Create a package for Windows
+      if: matrix.os == 'windows-2019'
+      run: 7z a "dsconv-${{ steps.get_version.outputs.version }}-${{ matrix.target }}.zip" ./target/${{ matrix.target }}/release/dsconv.exe
+    - name: Release
+      uses: softprops/action-gh-release@v0.1.13
+      with:
+        draft: true
+        files: 'dsconv-*'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

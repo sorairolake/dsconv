@@ -22,6 +22,10 @@ toc::[]
 |`cargo install dsconv`
 |===
 
+=== Via pre-built binaries
+
+Pre-built binaries for Linux, macOS and Windows are available on the https://github.com/sorairolake/dsconv/releases[release page].
+
 === How to build and install
 
 Please see the link:BUILD.adoc[Build Guide].

@@ -16,6 +16,7 @@ toc::[]
 === Added
 
 * Add GFM version README for crates.io
+* Add continuous deployment by GitHub Actions
 
 === Fixed
 
