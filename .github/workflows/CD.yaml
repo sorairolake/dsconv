@@ -45,12 +45,45 @@ jobs:
     - name: Get version
       id: get_version
       uses: battila7/get-version-action@v2.2.1
-    - name: Create a package for Unix
+    - name: Setup Ruby
       if: matrix.os != 'windows-2019'
-      run: tar czvf "dsconv-${{ steps.get_version.outputs.version }}-${{ matrix.target }}.tar.gz" AUTHORS.adoc CHANGELOG.adoc README.adoc COPYING -C target/${{ matrix.target }}/release dsconv
-    - name: Create a package for Windows
-      if: matrix.os == 'windows-2019'
-      run: 7z a -bb "dsconv-${{ steps.get_version.outputs.version }}-${{ matrix.target }}.zip" AUTHORS.adoc CHANGELOG.adoc README.adoc COPYING ./target/${{ matrix.target }}/release/dsconv.exe
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 3.0
+    - name: Install Asciidoctor
+      if: matrix.os != 'windows-2019'
+      run: |
+        gem update --system
+        gem install asciidoctor
+        asciidoctor -V
+    - name: Build man pages
+      if: matrix.os != 'windows-2019'
+      run: |
+        mkdir -p doc/man/dest
+        asciidoctor -a "revnumber=${{ steps.get_version.outputs.version-without-v }}" -b manpage -D doc/man/dest doc/man/man*/*.adoc
+    - name: Create a package
+      shell: bash
+      run: |
+        if [ "${{ matrix.os }}" != "windows-2019" ] ; then
+          bin="target/${{ matrix.target }}/release/dsconv"
+        else
+          bin="target/${{ matrix.target }}/release/dsconv.exe"
+        fi
+        package="dsconv-${{ steps.get_version.outputs.version }}-${{ matrix.target }}"
+
+        mkdir -p "${package}"/doc
+        cp README.adoc COPYING "${bin}" "${package}"
+        cp {AUTHORS,BUILD,CHANGELOG,CONTRIBUTING}.adoc "${package}"/doc
+        if [ "${{ matrix.os }}" != "windows-2019" ] ; then
+          mkdir -p "${package}"/man
+          cp doc/man/dest/* "${package}"/man
+        fi
+
+        if [ "${{ matrix.os }}" != "windows-2019" ] ; then
+          ls "${package}" | tar cJvf "${package}.tar.xz" --format=pax -C "${package}" -T -
+        else
+          7z a -bb "${package}.7z" ./"${package}"/*
+        fi
     - name: Release
       uses: softprops/action-gh-release@v0.1.13
       with:
