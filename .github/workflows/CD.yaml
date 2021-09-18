@@ -80,7 +80,7 @@ jobs:
         fi
 
         if [ "${{ matrix.os }}" != "windows-2019" ] ; then
-          ls "${package}" | tar cJvf "${package}.tar.xz" --format=pax -C "${package}" -T -
+          find "${package}" -mindepth 1 -maxdepth 1 -exec basename -a {} + | tar cJvf "${package}.tar.xz" --format=pax -C "${package}" -T -
         else
           7z a -bb "${package}.7z" ./"${package}"/*
         fi
