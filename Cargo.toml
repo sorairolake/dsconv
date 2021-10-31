@@ -2,7 +2,8 @@
 name = "dsconv"
 version = "0.1.1"
 authors = ["Shun Sakai <sorairolake@protonmail.ch>"]
-edition = "2018"
+edition = "2021"
+rust-version = "1.56.0"
 description = "A data-serialization format converter"
 readme = "doc/crates.io/README.md"
 repository = "https://github.com/sorairolake/dsconv"
@@ -12,27 +13,27 @@ categories = ["command-line-utilities"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-anyhow = "1.0.43"
+anyhow = "1.0.44"
 atty = "0.2.14"
 deser-hjson = "1.0.2"
-dialoguer = { version = "0.8.0", default-features = false }
-directories = "3.0.2"
+dialoguer = { version = "0.9.0", default-features = false }
+directories = "4.0.1"
 indexmap = "1.7.0"
-json5 = "0.3.0"
+json5 = "0.4.1"
 rmp-serde = "0.15.5"
 rmpv = "1.0.0"
-ron = { version = "0.6.5", features = ["indexmap"] }
+ron = { version = "0.7.0", features = ["indexmap"] }
 serde = { version = "1.0.130", features = ["derive"] }
 serde_cbor = "0.11.2"
-serde_json = { version = "1.0.67", features = ["preserve_order"] }
+serde_json = { version = "1.0.68", features = ["preserve_order"] }
 serde_yaml = "0.8.21"
-structopt = "0.3.23"
-strum = { version = "0.21.0", features = ["derive"] }
+structopt = "0.3.25"
+strum = { version = "0.22.0", features = ["derive"] }
 toml = { version = "0.5.8", features = ["preserve_order"] }
 
 [dev-dependencies]
-assert_cmd = "2.0.1"
-predicates = "2.0.2"
+assert_cmd = "2.0.2"
+predicates = "2.0.3"
 
 [profile.release]
 lto = true

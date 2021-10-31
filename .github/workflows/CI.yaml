@@ -35,7 +35,7 @@ jobs:
     - name: Setup Rust toolchain
       uses: actions-rs/toolchain@v1.0.6
       with:
-        toolchain: 1.53.0 # MSRV
+        toolchain: 1.56.0 # MSRV
         target: ${{ matrix.target }}
         override: true
         profile: minimal
@@ -61,7 +61,7 @@ jobs:
     - name: Setup Rust toolchain
       uses: actions-rs/toolchain@v1.0.6
       with:
-        toolchain: 1.53.0 # MSRV
+        toolchain: stable
         override: true
         profile: minimal
         components: rustfmt
@@ -80,7 +80,7 @@ jobs:
     - name: Setup Rust toolchain
       uses: actions-rs/toolchain@v1.0.6
       with:
-        toolchain: 1.53.0 # MSRV
+        toolchain: stable
         override: true
         profile: minimal
         components: clippy
@@ -112,7 +112,7 @@ jobs:
     - name: Setup Rust toolchain
       uses: actions-rs/toolchain@v1.0.6
       with:
-        toolchain: 1.53.0 # MSRV
+        toolchain: stable
         override: true
         profile: minimal
     - name: Setup the just command runner

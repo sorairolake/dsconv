@@ -9,7 +9,6 @@ mod config;
 mod convert;
 mod value;
 
-use std::convert::TryInto;
 use std::ffi::OsStr;
 use std::fs;
 use std::io::{self, Read, Write};

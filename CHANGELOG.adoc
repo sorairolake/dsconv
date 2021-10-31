@@ -18,6 +18,10 @@ toc::[]
 * Add GFM version README for crates.io
 * Add continuous deployment by GitHub Actions
 
+=== Changed
+
+* Change the edition to the Rust 2021 Edition
+
 === Fixed
 
 * Fix the MSRV to 1.53.0
