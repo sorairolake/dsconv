@@ -128,6 +128,6 @@ jobs:
     - name: DocBook to GFM
       uses: docker://pandoc/core:2.15
       with:
-        args: -f docbook -t gfm -o doc/crates.io/README.md README.xml
+        args: -f docbook -t gfm -o README-crates.io.md README.xml
     - name: Check if README for crates.io is up-to-date
-      run: git diff --exit-code doc/crates.io/README.md
+      run: git diff --exit-code README-crates.io.md
