@@ -7,9 +7,9 @@
 use std::fmt::{self, Display};
 
 use indexmap::IndexMap;
-use strum::{Display, EnumCount, EnumString, EnumVariantNames};
+use strum::{Display, EnumString, EnumVariantNames};
 
-#[derive(Clone, Copy, Debug, Display, EnumCount, EnumString, EnumVariantNames)]
+#[derive(Clone, Copy, Debug, Display, EnumString, EnumVariantNames)]
 #[strum(serialize_all = "UPPERCASE", ascii_case_insensitive)]
 pub enum Format {
     Cbor,
