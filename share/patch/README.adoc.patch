@@ -1,5 +1,5 @@
 diff --git a/README.adoc b/README.adoc
-index 0a7ee44..c395252 100644
+index cf272f3..43eaccc 100644
 --- a/README.adoc
 +++ b/README.adoc
 @@ -1,4 +1,4 @@
@@ -32,7 +32,7 @@ index 0a7ee44..c395252 100644
 -=== How to build and install
 +==== How to build and install
  
- Please see the link:BUILD.adoc[Build Guide].
+ Please see link:BUILD.adoc[].
  
 -== Usage
 +=== Usage
@@ -46,7 +46,7 @@ index 0a7ee44..c395252 100644
 -== Changelog
 +=== Changelog
  
- Please see the link:CHANGELOG.adoc[Changelog].
+ Please see link:CHANGELOG.adoc[].
  
 -== Configuration
 +=== Configuration
@@ -58,7 +58,7 @@ index 0a7ee44..c395252 100644
 -== Contributing
 +=== Contributing
  
- Please see the link:CONTRIBUTING.adoc[Contribution Guide].
+ Please see link:CONTRIBUTING.adoc[].
  
 -== License
 +=== License

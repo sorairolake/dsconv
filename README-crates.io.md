@@ -22,7 +22,7 @@ Pre-built binaries for Linux, macOS and Windows are available on the
 
 ### How to build and install
 
-Please see the [Build Guide](BUILD.adoc).
+Please see [BUILD.adoc](BUILD.adoc).
 
 ## Usage
 
@@ -54,7 +54,7 @@ See [`dsconv(1)`](doc/man/man1/dsconv.1.adoc) for more details.
 
 ## Changelog
 
-Please see the [Changelog](CHANGELOG.adoc).
+Please see [CHANGELOG.adoc](CHANGELOG.adoc).
 
 ## Configuration
 
@@ -66,7 +66,7 @@ for more details.
 
 ## Contributing
 
-Please see the [Contribution Guide](CONTRIBUTING.adoc).
+Please see [CONTRIBUTING.adoc](CONTRIBUTING.adoc).
 
 ## License
 

@@ -28,7 +28,7 @@ Pre-built binaries for Linux, macOS and Windows are available on the https://git
 
 === How to build and install
 
-Please see the link:BUILD.adoc[Build Guide].
+Please see link:BUILD.adoc[].
 
 == Usage
 
@@ -62,7 +62,7 @@ See link:doc/man/man1/dsconv.1.adoc[`dsconv(1)`] for more details.
 
 == Changelog
 
-Please see the link:CHANGELOG.adoc[Changelog].
+Please see link:CHANGELOG.adoc[].
 
 == Configuration
 
@@ -72,7 +72,7 @@ See link:doc/man/man5/dsconv-config.toml.5.adoc[`dsconv-config.toml(5)`] for mor
 
 == Contributing
 
-Please see the link:CONTRIBUTING.adoc[Contribution Guide].
+Please see link:CONTRIBUTING.adoc[].
 
 == License
 
