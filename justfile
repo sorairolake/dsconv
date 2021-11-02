@@ -44,5 +44,7 @@ default: build
 
 # Generate GFM version README for crates.io
 @generate-gfm-readme:
+    git apply share/patch/README.adoc.patch
     asciidoctor -b docbook5 -o - README.adoc | pandoc -f docbook -t gfm -o doc/crates.io/README.md
     echo {{ if `git status --porcelain doc/crates.io/README.md` == '' { 'README for crates.io is up-to-date' } else { 'README for crates.io has been updated!' } }}
+    git restore README.adoc

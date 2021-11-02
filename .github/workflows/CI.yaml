@@ -122,9 +122,11 @@ jobs:
         just update-readme
         git diff --exit-code README.adoc
     - name: AsciiDoc to DocBook
-      run: asciidoctor -b docbook5 README.adoc
+      run: |
+        git apply share/patch/README.adoc.patch
+        asciidoctor -b docbook5 README.adoc
     - name: DocBook to GFM
-      uses: docker://pandoc/core:2.14
+      uses: docker://pandoc/core:2.15
       with:
         args: -f docbook -t gfm -o doc/crates.io/README.md README.xml
     - name: Check if README for crates.io is up-to-date
