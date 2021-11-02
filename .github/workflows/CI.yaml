@@ -123,7 +123,7 @@ jobs:
         git diff --exit-code README.adoc
     - name: AsciiDoc to DocBook
       run: |
-        git apply share/patch/README.adoc.patch
+        sed -i 's/^=/==/g' README.adoc
         asciidoctor -b docbook5 README.adoc
     - name: DocBook to GFM
       uses: docker://pandoc/core:2.15
