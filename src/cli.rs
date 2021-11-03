@@ -68,7 +68,7 @@ pub struct Opt {
     pub input: Option<PathBuf>,
 
     /// Generate shell completion.
-    #[structopt(long, value_name = "SHELL", possible_values = &Shell::variants(), hidden = true)]
+    #[structopt(long, value_name = "SHELL", possible_values = &Shell::variants())]
     pub generate_completion: Option<Shell>,
 }
 

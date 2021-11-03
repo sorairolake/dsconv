@@ -6,7 +6,7 @@
 
 = dsconv(1)
 // Specify in UTC.
-:docdate: 2021-08-23
+:docdate: 2021-11-03
 :doctype: manpage
 ifdef::revnumber[:mansource: dsconv {revnumber}]
 :manmanual: General Commands Manual
@@ -82,6 +82,19 @@ Unless otherwise noted, the value of each option is case-insensitive.
 
 *-V*, *--version*::
   Print the version number and exit.
+
+*--generate-completion*=_SHELL_::
+  Generate shell completion.
+  The generated shell completion is output to stdout.
+  To output as a shell completion file, specify the directory to store using *--output*=_OUT_DIR_.
+
+  _SHELL_ can be:::
+
+    * *bash* (Bash)
+    * *elvish* (Elvish)
+    * *fish* (fish)
+    * *powershell* (PowerShell)
+    * *zsh* (Zsh)
 
 == EXIT STATUS
 

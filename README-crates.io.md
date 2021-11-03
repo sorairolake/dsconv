@@ -39,11 +39,13 @@ Please see [BUILD.adoc](BUILD.adoc).
         -V, --version                Prints version information
 
     OPTIONS:
-        -f, --from <FORMAT>       Specify input format [possible values: CBOR, Hjson, JSON, JSON5, MessagePack, RON, TOML,
-                                  YAML]
-        -t, --to <FORMAT>         Specify output format [possible values: CBOR, JSON, MessagePack, TOML, YAML]
-        -o, --output <FILE>       Output to <FILE> instead of stdout
-        -p, --pretty <BOOLEAN>    Output as a pretty-printed string [possible values: true, false]
+        -f, --from <FORMAT>                  Specify input format [possible values: CBOR, Hjson, JSON, JSON5, MessagePack,
+                                             RON, TOML, YAML]
+        -t, --to <FORMAT>                    Specify output format [possible values: CBOR, JSON, MessagePack, TOML, YAML]
+        -o, --output <FILE>                  Output to <FILE> instead of stdout
+        -p, --pretty <BOOLEAN>               Output as a pretty-printed string [possible values: true, false]
+            --generate-completion <SHELL>    Generate shell completion [possible values: zsh, bash, fish, powershell,
+                                             elvish]
 
     ARGS:
         <FILE>    Input from <FILE>
