@@ -33,9 +33,9 @@ fn main() -> Result<()> {
 
     if let Some(shell) = opt.generate_completion {
         if let Some(out_dir) = opt.output {
-            Opt::generate_completion_to_file(shell, out_dir)?;
+            Opt::generate_completion_to(shell, out_dir)?;
         } else {
-            Opt::generate_completion_to_stdout(shell);
+            Opt::generate_completion(shell);
         }
 
         return Ok(());

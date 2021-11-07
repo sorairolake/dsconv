@@ -88,8 +88,13 @@ impl Opt {
         Ok(self)
     }
 
+    /// Generate shell completion to stdout.
+    pub fn generate_completion(shell: Shell) {
+        Self::clap().gen_completions_to(crate_name!(), shell, &mut io::stdout())
+    }
+
     /// Generate shell completion to a file.
-    pub fn generate_completion_to_file(shell: Shell, out_dir: impl AsRef<Path>) -> Result<()> {
+    pub fn generate_completion_to(shell: Shell, out_dir: impl AsRef<Path>) -> Result<()> {
         let out_dir = out_dir
             .as_ref()
             .canonicalize()
@@ -104,10 +109,5 @@ impl Opt {
         );
 
         Ok(())
-    }
-
-    /// Generate shell completion to stdout.
-    pub fn generate_completion_to_stdout(shell: Shell) {
-        Self::clap().gen_completions_to(crate_name!(), shell, &mut io::stdout())
     }
 }
