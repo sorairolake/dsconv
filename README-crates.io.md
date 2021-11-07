@@ -44,6 +44,8 @@ Please see [BUILD.adoc](BUILD.adoc).
         -t, --to <FORMAT>                    Specify output format [possible values: CBOR, JSON, MessagePack, TOML, YAML]
         -o, --output <FILE>                  Output to <FILE> instead of stdout
         -p, --pretty <BOOLEAN>               Output as a pretty-printed string [possible values: true, false]
+            --color <WHEN>                   Specify when to use colored output [default: auto]  [possible values: auto,
+                                             always, never]
             --generate-completion <SHELL>    Generate shell completion [possible values: zsh, bash, fish, powershell,
                                              elvish]
 

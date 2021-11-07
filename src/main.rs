@@ -14,7 +14,8 @@ use std::fs;
 use std::io::{self, Read, Write};
 use std::str;
 
-use anyhow::{bail, Context, Result};
+use anyhow::{bail, ensure, Context, Result};
+use bat::PrettyPrinter;
 use dialoguer::theme::ColorfulTheme;
 use rmpv::Value as MessagePack;
 use ron::Value as Ron;
@@ -26,7 +27,7 @@ use strum::VariantNames;
 use toml::Value as Toml;
 
 use crate::cli::Opt;
-use crate::value::{Format, Value};
+use crate::value::{Color, Format, Value};
 
 fn main() -> Result<()> {
     let opt = Opt::from_args().apply_config()?;
@@ -184,9 +185,32 @@ fn main() -> Result<()> {
     match opt.output {
         Some(ref file) => fs::write(file, output)
             .with_context(|| format!("Failed to write to {}", file.display()))?,
-        None => io::stdout()
-            .write_all(&output)
-            .context("Failed to write to stdout")?,
+        None => {
+            let is_colored_output = match opt.color {
+                Color::Auto if atty::is(atty::Stream::Stdout) => true,
+                Color::Always => true,
+                _ => false,
+            };
+            if is_colored_output {
+                let language = opt.to.expect("Unable to determine output format");
+                ensure!(
+                    !matches!(language, Format::Cbor | Format::MessagePack),
+                    "{} cannot colored output",
+                    language
+                );
+
+                let language = language.to_string();
+                PrettyPrinter::new()
+                    .input_from_bytes(&output)
+                    .language(&language)
+                    .print()
+                    .expect("Failed to colored output");
+            } else {
+                io::stdout()
+                    .write_all(&output)
+                    .context("Failed to write to stdout")?
+            }
+        }
     }
 
     Ok(())

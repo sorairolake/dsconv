@@ -6,7 +6,7 @@
 
 = dsconv(1)
 // Specify in UTC.
-:docdate: 2021-11-03
+:docdate: 2021-11-07
 :doctype: manpage
 ifdef::revnumber[:mansource: dsconv {revnumber}]
 :manmanual: General Commands Manual
@@ -74,6 +74,15 @@ Unless otherwise noted, the value of each option is case-insensitive.
   If the value is omitted, it is the same as selecting *true*.
   The value of this option is case-sensitive.
   This option is available when the output is JSON or TOML (default: *false*).
+
+*--color*=_WHEN_::
+  Specify when to use colored output.
+
+  _WHEN_ can be:::
+
+    * *auto* (display colors when the terminal is detected, default)
+    * *always* (always display colors)
+    * *never* (never display colors)
 
 === General options
 

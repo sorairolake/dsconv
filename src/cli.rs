@@ -13,7 +13,7 @@ use structopt::StructOpt;
 use strum::VariantNames;
 
 use crate::config::Config;
-use crate::value::Format;
+use crate::value::{Color, Format};
 
 #[derive(StructOpt)]
 #[structopt(
@@ -56,12 +56,22 @@ pub struct Opt {
     pub list_output_formats: bool,
 
     /// Output to <FILE> instead of stdout.
-    #[structopt(short, long, value_name = "FILE")]
+    #[structopt(short, long, value_name = "FILE", conflicts_with = "color")]
     pub output: Option<PathBuf>,
 
     /// Output as a pretty-printed string.
     #[structopt(short, long, value_name = "BOOLEAN", possible_values = &["true", "false"])]
     pub pretty: Option<Option<bool>>,
+
+    /// Specify when to use colored output.
+    #[structopt(
+        long,
+        value_name = "WHEN",
+        possible_values = &Color::VARIANTS,
+        case_insensitive = true,
+        default_value
+    )]
+    pub color: Color,
 
     /// Input from <FILE>.
     #[structopt(value_name = "FILE")]
