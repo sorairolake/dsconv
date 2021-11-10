@@ -9,7 +9,7 @@ use std::fmt::{self, Display};
 use indexmap::IndexMap;
 use strum::{Display, EnumString, EnumVariantNames};
 
-#[derive(Clone, Copy, Debug, Display, EnumString, EnumVariantNames)]
+#[derive(Clone, Copy, Display, EnumString, EnumVariantNames)]
 #[strum(serialize_all = "UPPERCASE", ascii_case_insensitive)]
 pub enum Format {
     Cbor,
@@ -93,4 +93,18 @@ pub enum Value {
     String(String),
     Array(Vec<Value>),
     Map(IndexMap<String, Value>),
+}
+
+#[derive(Display, EnumString, EnumVariantNames)]
+#[strum(serialize_all = "lowercase", ascii_case_insensitive)]
+pub enum Color {
+    Auto,
+    Always,
+    Never,
+}
+
+impl Default for Color {
+    fn default() -> Self {
+        Color::Auto
+    }
 }

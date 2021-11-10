@@ -13,7 +13,7 @@ use structopt::StructOpt;
 use strum::VariantNames;
 
 use crate::config::Config;
-use crate::value::Format;
+use crate::value::{Color, Format};
 
 #[derive(StructOpt)]
 #[structopt(
@@ -56,19 +56,29 @@ pub struct Opt {
     pub list_output_formats: bool,
 
     /// Output to <FILE> instead of stdout.
-    #[structopt(short, long, value_name = "FILE")]
+    #[structopt(short, long, value_name = "FILE", conflicts_with = "color")]
     pub output: Option<PathBuf>,
 
     /// Output as a pretty-printed string.
     #[structopt(short, long, value_name = "BOOLEAN", possible_values = &["true", "false"])]
     pub pretty: Option<Option<bool>>,
 
+    /// Specify when to use colored output.
+    #[structopt(
+        long,
+        value_name = "WHEN",
+        possible_values = &Color::VARIANTS,
+        case_insensitive = true,
+        default_value
+    )]
+    pub color: Color,
+
     /// Input from <FILE>.
     #[structopt(value_name = "FILE")]
     pub input: Option<PathBuf>,
 
     /// Generate shell completion.
-    #[structopt(long, value_name = "SHELL", possible_values = &Shell::variants(), hidden = true)]
+    #[structopt(long, value_name = "SHELL", possible_values = &Shell::variants())]
     pub generate_completion: Option<Shell>,
 }
 
@@ -88,8 +98,13 @@ impl Opt {
         Ok(self)
     }
 
+    /// Generate shell completion to stdout.
+    pub fn generate_completion(shell: Shell) {
+        Self::clap().gen_completions_to(crate_name!(), shell, &mut io::stdout())
+    }
+
     /// Generate shell completion to a file.
-    pub fn generate_completion_to_file(shell: Shell, out_dir: impl AsRef<Path>) -> Result<()> {
+    pub fn generate_completion_to(shell: Shell, out_dir: impl AsRef<Path>) -> Result<()> {
         let out_dir = out_dir
             .as_ref()
             .canonicalize()
@@ -104,10 +119,5 @@ impl Opt {
         );
 
         Ok(())
-    }
-
-    /// Generate shell completion to stdout.
-    pub fn generate_completion_to_stdout(shell: Shell) {
-        Self::clap().gen_completions_to(crate_name!(), shell, &mut io::stdout())
     }
 }

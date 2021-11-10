@@ -11,6 +11,16 @@ The format is based on https://keepachangelog.com/[Keep a Changelog], and this p
 
 toc::[]
 
+== {compare-url}/v0.2.0\...v0.3.0[0.3.0] - 2021-11-10
+
+=== Added
+
+* Add `--color` for colored output
+
+=== Changed
+
+* Change to display `--generate-completion`
+
 == {compare-url}/v0.1.1\...v0.2.0[0.2.0] - 2021-11-02
 
 === Added
