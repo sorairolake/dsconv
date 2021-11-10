@@ -1,6 +1,6 @@
 [package]
 name = "dsconv"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["Shun Sakai <sorairolake@protonmail.ch>"]
 edition = "2021"
 rust-version = "1.56.0"
@@ -13,7 +13,7 @@ categories = ["command-line-utilities"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-anyhow = "1.0.44"
+anyhow = "1.0.45"
 atty = "0.2.14"
 bat = { version = "0.18.3", default-features = false }
 deser-hjson = "1.0.2"
@@ -26,7 +26,7 @@ rmpv = "1.0.0"
 ron = { version = "0.7.0", features = ["indexmap"] }
 serde = { version = "1.0.130", features = ["derive"] }
 serde_cbor = "0.11.2"
-serde_json = { version = "1.0.68", features = ["preserve_order"] }
+serde_json = { version = "1.0.69", features = ["preserve_order"] }
 serde_yaml = "0.8.21"
 structopt = "0.3.25"
 strum = { version = "0.22.0", features = ["derive"] }
