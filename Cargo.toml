@@ -15,7 +15,7 @@ categories = ["command-line-utilities"]
 [dependencies]
 anyhow = "1.0.44"
 atty = "0.2.14"
-bat = { version = "0.18.3", features = ["regex-fancy"], default-features = false }
+bat = { version = "0.18.3", default-features = false }
 deser-hjson = "1.0.2"
 dialoguer = { version = "0.9.0", default-features = false }
 directories = "4.0.1"
@@ -35,6 +35,13 @@ toml = { version = "0.5.8", features = ["preserve_order"] }
 [dev-dependencies]
 assert_cmd = "2.0.2"
 predicates = "2.0.3"
+
+[features]
+default = ["regex-fancy"]
+
+# You need to enable either of the following to build:
+regex-onig = ["bat/regex-onig"] # Use the Oniguruma regex library
+regex-fancy = ["bat/regex-fancy"] # Use the fancy-regex regex library
 
 [profile.release]
 lto = true
