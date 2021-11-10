@@ -26,7 +26,7 @@ Please see [BUILD.adoc](BUILD.adoc).
 
 ## Usage
 
-    dsconv 0.2.0
+    dsconv 0.3.0
     A data-serialization format converter
 
     USAGE:
