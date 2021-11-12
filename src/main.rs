@@ -7,6 +7,7 @@
 mod cli;
 mod config;
 mod convert;
+mod macros;
 mod value;
 
 use std::ffi::OsStr;

@@ -9,6 +9,19 @@ use std::io;
 use std::path::Path;
 use std::process::{Command, ExitStatus};
 
+fn vergen() {
+    let mut config = vergen::Config::default();
+
+    if vergen::vergen(config).is_err() {
+        *config.git_mut().enabled_mut() = false;
+    } else {
+        *config.git_mut().commit_timestamp_kind_mut() = vergen::TimestampKind::DateOnly;
+        *config.git_mut().sha_kind_mut() = vergen::ShaKind::Short;
+    }
+
+    vergen::vergen(config).expect("Failed to generate `cargo:` instructions")
+}
+
 fn generate_man_page(
     source: impl AsRef<Path>,
     out_dir: impl AsRef<Path>,
@@ -22,6 +35,8 @@ fn generate_man_page(
 }
 
 fn main() {
+    vergen();
+
     let out_dir =
         env::var_os("OUT_DIR").expect("OUT_DIR is not defined as an environment variable");
 

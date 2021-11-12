@@ -13,10 +13,12 @@ use structopt::StructOpt;
 use strum::VariantNames;
 
 use crate::config::Config;
+use crate::long_version;
 use crate::value::{Color, Format};
 
 #[derive(StructOpt)]
 #[structopt(
+    long_version = long_version!().as_str(),
     about,
     after_help = "See dsconv(1) for more details.",
     settings = &[AppSettings::ColoredHelp, AppSettings::DeriveDisplayOrder]

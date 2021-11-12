@@ -11,6 +11,12 @@ The format is based on https://keepachangelog.com/[Keep a Changelog], and this p
 
 toc::[]
 
+== {compare-url}/v0.3.0\...HEAD[Unreleased]
+
+=== Changed
+
+* Include the commit hash and the committer date of Git in output of `--version`, if available
+
 == {compare-url}/v0.2.0\...v0.3.0[0.3.0] - 2021-11-10
 
 === Added
