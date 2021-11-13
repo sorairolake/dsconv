@@ -25,6 +25,32 @@ pub enum Format {
     Yaml,
 }
 
+#[derive(EnumString, EnumVariantNames)]
+#[strum(serialize_all = "UPPERCASE", ascii_case_insensitive)]
+pub enum InputFormat {
+    Cbor,
+    #[strum(to_string = "Hjson")]
+    Hjson,
+    Json,
+    Json5,
+    #[strum(to_string = "MessagePack")]
+    MessagePack,
+    Ron,
+    Toml,
+    Yaml,
+}
+
+#[derive(EnumString, EnumVariantNames)]
+#[strum(serialize_all = "UPPERCASE", ascii_case_insensitive)]
+pub enum OutputFormat {
+    Cbor,
+    Json,
+    #[strum(to_string = "MessagePack")]
+    MessagePack,
+    Toml,
+    Yaml,
+}
+
 #[derive(Clone, Debug, PartialEq)]
 enum Int {
     Pos(u64),

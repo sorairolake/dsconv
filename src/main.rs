@@ -28,7 +28,7 @@ use strum::VariantNames;
 use toml::Value as Toml;
 
 use crate::cli::Opt;
-use crate::value::{Color, Format, Value};
+use crate::value::{Color, Format, InputFormat, OutputFormat, Value};
 
 fn main() -> Result<()> {
     let opt = Opt::from_args().apply_config()?;
@@ -44,14 +44,13 @@ fn main() -> Result<()> {
     }
 
     if opt.list_input_formats {
-        Format::VARIANTS.iter().for_each(|i| println!("{}", i));
+        InputFormat::VARIANTS.iter().for_each(|i| println!("{}", i));
 
         return Ok(());
     }
     if opt.list_output_formats {
-        Format::VARIANTS
+        OutputFormat::VARIANTS
             .iter()
-            .filter(|f| !matches!(**f, "Hjson" | "JSON5" | "RON"))
             .for_each(|o| println!("{}", o));
 
         return Ok(());

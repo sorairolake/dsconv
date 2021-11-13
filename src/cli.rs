@@ -14,7 +14,7 @@ use strum::VariantNames;
 
 use crate::config::Config;
 use crate::long_version;
-use crate::value::{Color, Format};
+use crate::value::{Color, Format, InputFormat, OutputFormat};
 
 #[derive(StructOpt)]
 #[structopt(
@@ -29,7 +29,7 @@ pub struct Opt {
         short,
         long,
         value_name = "FORMAT",
-        possible_values = &Format::VARIANTS,
+        possible_values = &InputFormat::VARIANTS,
         case_insensitive = true
     )]
     pub from: Option<Format>,
@@ -39,12 +39,7 @@ pub struct Opt {
         short,
         long,
         value_name = "FORMAT",
-        possible_values =
-            &Format::VARIANTS
-                .iter()
-                .filter(|f| !matches!(**f, "Hjson" | "JSON5" | "RON"))
-                .copied()
-                .collect::<Vec<_>>(),
+        possible_values = &OutputFormat::VARIANTS,
         case_insensitive = true
     )]
     pub to: Option<Format>,
