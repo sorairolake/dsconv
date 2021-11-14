@@ -25,6 +25,9 @@ use crate::value::{Color, Format, InputFormat, OutputFormat};
 )]
 pub struct Opt {
     /// Specify input format.
+    ///
+    /// This option can be omitted if the input file is specified and <FORMAT>
+    /// can be determined from the filename extension.
     #[structopt(
         short,
         long,
@@ -35,6 +38,9 @@ pub struct Opt {
     pub from: Option<Format>,
 
     /// Specify output format.
+    ///
+    /// This option can be omitted if the output file is specified and <FORMAT>
+    /// can be determined from the filename extension.
     #[structopt(
         short,
         long,
@@ -57,6 +63,10 @@ pub struct Opt {
     pub output: Option<PathBuf>,
 
     /// Output as a pretty-printed string.
+    ///
+    /// If the value is omitted, it is the same as selecting `true`.
+    /// The value of this option is case-sensitive.
+    /// This option is available when the output is JSON or TOML.
     #[structopt(short, long, value_name = "BOOLEAN", possible_values = &["true", "false"])]
     pub pretty: Option<Option<bool>>,
 
@@ -75,6 +85,10 @@ pub struct Opt {
     pub input: Option<PathBuf>,
 
     /// Generate shell completion.
+    ///
+    /// The generated shell completion is output to stdout.
+    /// To output as a shell completion file, specify the directory to store
+    /// using `--output`=<OUT_DIR>.
     #[structopt(long, value_name = "SHELL", possible_values = &Shell::variants())]
     pub generate_completion: Option<Shell>,
 }
