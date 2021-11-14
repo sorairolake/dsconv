@@ -24,10 +24,12 @@ macro_rules! long_version {
                 env!("CARGO_PKG_VERSION").to_string()
             };
             format!(
-                "{}\n\n{}\n{}\n\n{}",
+                "{}\n\n{}\n\n{}\n\n{}\n{}\n\n{}",
                 head,
                 "Copyright (C) 2021 Shun Sakai",
                 "License: Apache License 2.0",
+                "This is free software: you are free to change and redistribute it.",
+                "There is NO WARRANTY, to the extent permitted by law.",
                 "Report bugs to https://github.com/sorairolake/dsconv/issues"
             )
         })
