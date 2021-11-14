@@ -41,3 +41,16 @@ $ cargo run -- --generate-completion <SHELL>
 # Output to a file.
 $ cargo run -- --generate-completion <SHELL> -o <OUT_DIR>
 ----
+
+== Crate features
+
+=== Regex library features
+
+`regex-onig`::
+  Enable the https://github.com/rust-onig/rust-onig[Oniguruma regex library].
+
+`regex-fancy`::
+  Enable the https://github.com/fancy-regex/fancy-regex[fancy-regex regex library].
+  This feature is enabled by default.
+
+IMPORTANT: You need to enable either of the preceding to build.
