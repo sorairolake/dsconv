@@ -19,20 +19,20 @@ impl TryFrom<Cbor> for Value {
 
     fn try_from(value: Cbor) -> Result<Self> {
         match value {
-            Cbor::Null => Ok(Value::Null),
-            Cbor::Bool(bool) => Ok(Value::Bool(bool)),
+            Cbor::Null => Ok(Self::Null),
+            Cbor::Bool(bool) => Ok(Self::Bool(bool)),
             Cbor::Integer(int) => match (i64::try_from(int), u64::try_from(int)) {
-                (Ok(sint), _) => Ok(Value::Integer(sint.into())),
-                (_, Ok(uint)) => Ok(Value::Integer(uint.into())),
+                (Ok(sint), _) => Ok(Self::Integer(sint.into())),
+                (_, Ok(uint)) => Ok(Self::Integer(uint.into())),
                 _ => unreachable!(),
             },
-            Cbor::Float(float) => Ok(Value::Float(float)),
+            Cbor::Float(float) => Ok(Self::Float(float)),
             Cbor::Bytes(_) => Err(anyhow!("A byte string cannot be converted")),
-            Cbor::Text(str) => Ok(Value::String(str)),
+            Cbor::Text(str) => Ok(Self::String(str)),
             Cbor::Array(arr) => {
-                let arr: Result<Vec<_>> = arr.into_iter().map(|v| v.try_into()).collect();
+                let arr: Result<Vec<_>> = arr.into_iter().map(TryFrom::try_from).collect();
 
-                Ok(Value::Array(arr?))
+                Ok(Self::Array(arr?))
             }
             Cbor::Map(map) => {
                 let (keys, values): (Result<Vec<_>>, Result<Vec<_>>) = (
@@ -42,10 +42,10 @@ impl TryFrom<Cbor> for Value {
                             serde_cbor::value::from_value(k).context("The key is not a string")
                         })
                         .collect(),
-                    map.values().cloned().map(|v| v.try_into()).collect(),
+                    map.values().cloned().map(TryFrom::try_from).collect(),
                 );
 
-                Ok(Value::Map(
+                Ok(Self::Map(
                     keys?.into_iter().zip(values?.into_iter()).collect(),
                 ))
             }
@@ -58,24 +58,24 @@ impl TryFrom<Cbor> for Value {
 impl From<Json> for Value {
     fn from(value: Json) -> Self {
         match value {
-            Json::Null => Value::Null,
-            Json::Bool(bool) => Value::Bool(bool),
+            Json::Null => Self::Null,
+            Json::Bool(bool) => Self::Bool(bool),
             Json::Number(num) => match (num.as_i64(), num.as_u64(), num.as_f64()) {
-                (Some(sint), ..) => Value::Integer(sint.into()),
-                (_, Some(uint), _) => Value::Integer(uint.into()),
-                (.., Some(float)) => Value::Float(float),
+                (Some(sint), ..) => Self::Integer(sint.into()),
+                (_, Some(uint), _) => Self::Integer(uint.into()),
+                (.., Some(float)) => Self::Float(float),
                 _ => unreachable!(),
             },
-            Json::String(str) => Value::String(str),
+            Json::String(str) => Self::String(str),
             Json::Array(arr) => {
-                let arr = arr.into_iter().map(|v| v.into()).collect();
+                let arr = arr.into_iter().map(From::from).collect();
 
-                Value::Array(arr)
+                Self::Array(arr)
             }
             Json::Object(obj) => {
                 let map = obj.into_iter().map(|(k, v)| (k, v.into())).collect();
 
-                Value::Map(map)
+                Self::Map(map)
             }
         }
     }
@@ -86,15 +86,15 @@ impl TryFrom<MessagePack> for Value {
 
     fn try_from(value: MessagePack) -> Result<Self> {
         match value {
-            MessagePack::Nil => Ok(Value::Null),
-            MessagePack::Boolean(bool) => Ok(Value::Bool(bool)),
+            MessagePack::Nil => Ok(Self::Null),
+            MessagePack::Boolean(bool) => Ok(Self::Bool(bool)),
             MessagePack::Integer(int) => match (int.as_i64(), int.as_u64()) {
-                (Some(sint), _) => Ok(Value::Integer(sint.into())),
-                (_, Some(uint)) => Ok(Value::Integer(uint.into())),
+                (Some(sint), _) => Ok(Self::Integer(sint.into())),
+                (_, Some(uint)) => Ok(Self::Integer(uint.into())),
                 _ => unreachable!(),
             },
-            MessagePack::F32(float) => Ok(Value::Float(float.into())),
-            MessagePack::F64(float) => Ok(Value::Float(float)),
+            MessagePack::F32(float) => Ok(Self::Float(float.into())),
+            MessagePack::F64(float) => Ok(Self::Float(float)),
             MessagePack::String(str) => {
                 let str = str
                     .as_str()
@@ -103,28 +103,28 @@ impl TryFrom<MessagePack> for Value {
                     })?
                     .to_string();
 
-                Ok(Value::String(str))
+                Ok(Self::String(str))
             }
             MessagePack::Binary(_) => Err(anyhow!("A byte array cannot be converted")),
             MessagePack::Array(arr) => {
-                let arr: Result<Vec<_>> = arr.into_iter().map(|v| v.try_into()).collect();
+                let arr: Result<Vec<_>> = arr.into_iter().map(TryFrom::try_from).collect();
 
-                Ok(Value::Array(arr?))
+                Ok(Self::Array(arr?))
             }
             MessagePack::Map(map) => {
                 let (keys, values): (Result<Vec<_>>, Result<Vec<_>>) = (
                     map.iter()
                         .map(|(k, _)| k)
                         .map(|k| k.as_str().context("The key is not a string"))
-                        .map(|k| k.map(|k| k.to_string()))
+                        .map(|k| k.map(str::to_string))
                         .collect(),
                     map.into_iter()
                         .map(|(_, v)| v)
-                        .map(|v| v.try_into())
+                        .map(TryFrom::try_from)
                         .collect(),
                 );
 
-                Ok(Value::Map(
+                Ok(Self::Map(
                     keys?.into_iter().zip(values?.into_iter()).collect(),
                 ))
             }
@@ -138,32 +138,32 @@ impl TryFrom<Ron> for Value {
 
     fn try_from(value: Ron) -> Result<Self> {
         match value {
-            Ron::Bool(bool) => Ok(Value::Bool(bool)),
-            Ron::Char(char) => Ok(Value::String(char.into())),
+            Ron::Bool(bool) => Ok(Self::Bool(bool)),
+            Ron::Char(char) => Ok(Self::String(char.into())),
             Ron::Map(map) => {
                 let (keys, values): (Result<Vec<_>>, Result<Vec<_>>) = (
                     map.keys()
                         .cloned()
                         .map(|k| k.into_rust().context("The key is not a string"))
                         .collect(),
-                    map.values().cloned().map(|v| v.try_into()).collect(),
+                    map.values().cloned().map(TryFrom::try_from).collect(),
                 );
 
-                Ok(Value::Map(
+                Ok(Self::Map(
                     keys?.into_iter().zip(values?.into_iter()).collect(),
                 ))
             }
             Ron::Number(num) => match (num.as_i64(), num.as_f64()) {
-                (Some(int), _) => Ok(Value::Integer(int.into())),
-                (_, Some(float)) => Ok(Value::Float(float)),
+                (Some(int), _) => Ok(Self::Integer(int.into())),
+                (_, Some(float)) => Ok(Self::Float(float)),
                 _ => unreachable!(),
             },
             Ron::Option(_) => Err(anyhow!("The Option type cannot be converted")),
-            Ron::String(str) => Ok(Value::String(str)),
+            Ron::String(str) => Ok(Self::String(str)),
             Ron::Seq(seq) => {
-                let arr: Result<Vec<_>> = seq.into_iter().map(|v| v.try_into()).collect();
+                let arr: Result<Vec<_>> = seq.into_iter().map(TryFrom::try_from).collect();
 
-                Ok(Value::Array(arr?))
+                Ok(Self::Array(arr?))
             }
             Ron::Unit => Err(anyhow!("The unit type cannot be converted")),
         }
@@ -173,20 +173,20 @@ impl TryFrom<Ron> for Value {
 impl From<Toml> for Value {
     fn from(value: Toml) -> Self {
         match value {
-            Toml::String(str) => Value::String(str),
-            Toml::Integer(int) => Value::Integer(int.into()),
-            Toml::Float(float) => Value::Float(float),
-            Toml::Boolean(bool) => Value::Bool(bool),
-            Toml::Datetime(dt) => Value::String(dt.to_string()),
+            Toml::String(str) => Self::String(str),
+            Toml::Integer(int) => Self::Integer(int.into()),
+            Toml::Float(float) => Self::Float(float),
+            Toml::Boolean(bool) => Self::Bool(bool),
+            Toml::Datetime(dt) => Self::String(dt.to_string()),
             Toml::Array(arr) => {
-                let arr = arr.into_iter().map(|v| v.into()).collect();
+                let arr = arr.into_iter().map(From::from).collect();
 
-                Value::Array(arr)
+                Self::Array(arr)
             }
             Toml::Table(table) => {
                 let map = table.into_iter().map(|(k, v)| (k, v.into())).collect();
 
-                Value::Map(map)
+                Self::Map(map)
             }
         }
     }
@@ -197,34 +197,34 @@ impl TryFrom<Yaml> for Value {
 
     fn try_from(value: Yaml) -> Result<Self> {
         match value {
-            Yaml::Null => Ok(Value::Null),
-            Yaml::Bool(bool) => Ok(Value::Bool(bool)),
+            Yaml::Null => Ok(Self::Null),
+            Yaml::Bool(bool) => Ok(Self::Bool(bool)),
             Yaml::Number(num) => match (num.as_i64(), num.as_u64(), num.as_f64()) {
-                (Some(sint), ..) => Ok(Value::Integer(sint.into())),
-                (_, Some(uint), _) => Ok(Value::Integer(uint.into())),
-                (.., Some(float)) => Ok(Value::Float(float)),
+                (Some(sint), ..) => Ok(Self::Integer(sint.into())),
+                (_, Some(uint), _) => Ok(Self::Integer(uint.into())),
+                (.., Some(float)) => Ok(Self::Float(float)),
                 _ => unreachable!(),
             },
-            Yaml::String(str) => Ok(Value::String(str)),
+            Yaml::String(str) => Ok(Self::String(str)),
             Yaml::Sequence(seq) => {
-                let arr: Result<Vec<_>> = seq.into_iter().map(|v| v.try_into()).collect();
+                let arr: Result<Vec<_>> = seq.into_iter().map(TryFrom::try_from).collect();
 
-                Ok(Value::Array(arr?))
+                Ok(Self::Array(arr?))
             }
             Yaml::Mapping(map) => {
                 let (keys, values): (Result<Vec<_>>, Result<Vec<_>>) = (
                     map.iter()
                         .map(|(k, _)| k)
                         .map(|k| k.as_str().context("The key is not a string"))
-                        .map(|k| k.map(|k| k.to_string()))
+                        .map(|k| k.map(str::to_string))
                         .collect(),
                     map.into_iter()
                         .map(|(_, v)| v)
-                        .map(|v| v.try_into())
+                        .map(TryFrom::try_from)
                         .collect(),
                 );
 
-                Ok(Value::Map(
+                Ok(Self::Map(
                     keys?.into_iter().zip(values?.into_iter()).collect(),
                 ))
             }
@@ -235,24 +235,24 @@ impl TryFrom<Yaml> for Value {
 impl From<Value> for Cbor {
     fn from(value: Value) -> Self {
         match value {
-            Value::Null => Cbor::Null,
-            Value::Bool(bool) => Cbor::Bool(bool),
+            Value::Null => Self::Null,
+            Value::Bool(bool) => Self::Bool(bool),
             Value::Integer(int) => match (int.as_i64(), int.as_u64()) {
-                (Some(sint), _) => Cbor::Integer(sint.into()),
-                (_, Some(uint)) => Cbor::Integer(uint.into()),
+                (Some(sint), _) => Self::Integer(sint.into()),
+                (_, Some(uint)) => Self::Integer(uint.into()),
                 _ => unreachable!(),
             },
-            Value::Float(float) => Cbor::Float(float),
-            Value::String(str) => Cbor::Text(str),
+            Value::Float(float) => Self::Float(float),
+            Value::String(str) => Self::Text(str),
             Value::Array(arr) => {
-                let arr = arr.into_iter().map(|v| v.into()).collect();
+                let arr = arr.into_iter().map(From::from).collect();
 
-                Cbor::Array(arr)
+                Self::Array(arr)
             }
             Value::Map(map) => {
                 let map = map.into_iter().map(|(k, v)| (k.into(), v.into())).collect();
 
-                Cbor::Map(map)
+                Self::Map(map)
             }
         }
     }
@@ -263,11 +263,11 @@ impl TryFrom<Value> for Json {
 
     fn try_from(value: Value) -> Result<Self> {
         match value {
-            Value::Null => Ok(Json::Null),
-            Value::Bool(bool) => Ok(Json::Bool(bool)),
+            Value::Null => Ok(Self::Null),
+            Value::Bool(bool) => Ok(Self::Bool(bool)),
             Value::Integer(int) => match (int.as_i64(), int.as_u64()) {
-                (Some(sint), _) => Ok(Json::Number(sint.into())),
-                (_, Some(uint)) => Ok(Json::Number(uint.into())),
+                (Some(sint), _) => Ok(Self::Number(sint.into())),
+                (_, Some(uint)) => Ok(Self::Number(uint.into())),
                 _ => unreachable!(),
             },
             Value::Float(float) => {
@@ -275,18 +275,18 @@ impl TryFrom<Value> for Json {
                     format!("Infinite or NaN values are not allowed: {}", float)
                 })?;
 
-                Ok(Json::Number(float))
+                Ok(Self::Number(float))
             }
-            Value::String(str) => Ok(Json::String(str)),
+            Value::String(str) => Ok(Self::String(str)),
             Value::Array(arr) => {
-                let arr: Result<Vec<_>> = arr.into_iter().map(|v| v.try_into()).collect();
+                let arr: Result<Vec<_>> = arr.into_iter().map(TryFrom::try_from).collect();
 
-                Ok(Json::Array(arr?))
+                Ok(Self::Array(arr?))
             }
             Value::Map(map) => {
-                let values: Result<Vec<_>> = map.values().cloned().map(|v| v.try_into()).collect();
+                let values: Result<Vec<_>> = map.values().cloned().map(TryFrom::try_from).collect();
 
-                Ok(Json::Object(
+                Ok(Self::Object(
                     map.keys().cloned().zip(values?.into_iter()).collect(),
                 ))
             }
@@ -297,24 +297,24 @@ impl TryFrom<Value> for Json {
 impl From<Value> for MessagePack {
     fn from(value: Value) -> Self {
         match value {
-            Value::Null => MessagePack::Nil,
-            Value::Bool(bool) => MessagePack::Boolean(bool),
+            Value::Null => Self::Nil,
+            Value::Bool(bool) => Self::Boolean(bool),
             Value::Integer(int) => match (int.as_i64(), int.as_u64()) {
-                (Some(sint), _) => MessagePack::Integer(sint.into()),
-                (_, Some(uint)) => MessagePack::Integer(uint.into()),
+                (Some(sint), _) => Self::Integer(sint.into()),
+                (_, Some(uint)) => Self::Integer(uint.into()),
                 _ => unreachable!(),
             },
-            Value::Float(float) => MessagePack::F64(float),
-            Value::String(str) => MessagePack::String(str.into()),
+            Value::Float(float) => Self::F64(float),
+            Value::String(str) => Self::String(str.into()),
             Value::Array(arr) => {
-                let arr = arr.into_iter().map(|v| v.into()).collect();
+                let arr = arr.into_iter().map(From::from).collect();
 
-                MessagePack::Array(arr)
+                Self::Array(arr)
             }
             Value::Map(map) => {
                 let map = map.into_iter().map(|(k, v)| (k.into(), v.into())).collect();
 
-                MessagePack::Map(map)
+                Self::Map(map)
             }
         }
     }
@@ -326,28 +326,28 @@ impl TryFrom<Value> for Toml {
     fn try_from(value: Value) -> Result<Self> {
         match value {
             Value::Null => Err(anyhow!("Null does not exist")),
-            Value::Bool(bool) => Ok(Toml::Boolean(bool)),
+            Value::Bool(bool) => Ok(Self::Boolean(bool)),
             Value::Integer(int) => {
                 let int = int
                     .as_i64()
                     .with_context(|| format!("Out of range of integer: {}", int))?;
 
-                Ok(Toml::Integer(int))
+                Ok(Self::Integer(int))
             }
-            Value::Float(float) => Ok(Toml::Float(float)),
+            Value::Float(float) => Ok(Self::Float(float)),
             Value::String(str) => match str.parse() {
-                Ok(dt) => Ok(Toml::Datetime(dt)),
-                _ => Ok(Toml::String(str)),
+                Ok(dt) => Ok(Self::Datetime(dt)),
+                _ => Ok(Self::String(str)),
             },
             Value::Array(arr) => {
-                let arr: Result<Vec<_>> = arr.into_iter().map(|v| v.try_into()).collect();
+                let arr: Result<Vec<_>> = arr.into_iter().map(TryFrom::try_from).collect();
 
-                Ok(Toml::Array(arr?))
+                Ok(Self::Array(arr?))
             }
             Value::Map(map) => {
-                let values: Result<Vec<_>> = map.values().cloned().map(|v| v.try_into()).collect();
+                let values: Result<Vec<_>> = map.values().cloned().map(TryFrom::try_from).collect();
 
-                Ok(Toml::Table(
+                Ok(Self::Table(
                     map.keys().cloned().zip(values?.into_iter()).collect(),
                 ))
             }
@@ -358,24 +358,24 @@ impl TryFrom<Value> for Toml {
 impl From<Value> for Yaml {
     fn from(value: Value) -> Self {
         match value {
-            Value::Null => Yaml::Null,
-            Value::Bool(bool) => Yaml::Bool(bool),
+            Value::Null => Self::Null,
+            Value::Bool(bool) => Self::Bool(bool),
             Value::Integer(int) => match (int.as_i64(), int.as_u64()) {
-                (Some(sint), _) => Yaml::Number(sint.into()),
-                (_, Some(uint)) => Yaml::Number(uint.into()),
+                (Some(sint), _) => Self::Number(sint.into()),
+                (_, Some(uint)) => Self::Number(uint.into()),
                 _ => unreachable!(),
             },
-            Value::Float(float) => Yaml::Number(float.into()),
-            Value::String(str) => Yaml::String(str),
+            Value::Float(float) => Self::Number(float.into()),
+            Value::String(str) => Self::String(str),
             Value::Array(arr) => {
-                let seq = arr.into_iter().map(|v| v.into()).collect();
+                let seq = arr.into_iter().map(From::from).collect();
 
-                Yaml::Sequence(seq)
+                Self::Sequence(seq)
             }
             Value::Map(map) => {
                 let map = map.into_iter().map(|(k, v)| (k.into(), v.into())).collect();
 
-                Yaml::Mapping(map)
+                Self::Mapping(map)
             }
         }
     }

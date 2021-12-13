@@ -111,7 +111,7 @@ impl Opt {
 
     /// Generate shell completion to stdout.
     pub fn generate_completion(shell: Shell) {
-        Self::clap().gen_completions_to(crate_name!(), shell, &mut io::stdout())
+        Self::clap().gen_completions_to(crate_name!(), shell, &mut io::stdout());
     }
 
     /// Generate shell completion to a file.

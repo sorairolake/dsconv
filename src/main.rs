@@ -44,14 +44,16 @@ fn main() -> Result<()> {
     }
 
     if opt.list_input_formats {
-        InputFormat::VARIANTS.iter().for_each(|i| println!("{}", i));
+        for input_format in InputFormat::VARIANTS {
+            println!("{}", input_format);
+        }
 
         return Ok(());
     }
     if opt.list_output_formats {
-        OutputFormat::VARIANTS
-            .iter()
-            .for_each(|o| println!("{}", o));
+        for output_format in OutputFormat::VARIANTS {
+            println!("{}", output_format);
+        }
 
         return Ok(());
     }
@@ -182,34 +184,33 @@ fn main() -> Result<()> {
         _ => bail!("Unable to determine output format"),
     };
 
-    match opt.output {
-        Some(ref file) => fs::write(file, output)
-            .with_context(|| format!("Failed to write to {}", file.display()))?,
-        None => {
-            let is_colored_output = match opt.color {
-                Color::Auto if atty::is(atty::Stream::Stdout) => true,
-                Color::Always => true,
-                _ => false,
-            };
-            if is_colored_output {
-                let language = opt.to.expect("Unable to determine output format");
-                ensure!(
-                    !matches!(language, Format::Cbor | Format::MessagePack),
-                    "{} cannot colored output",
-                    language
-                );
+    if let Some(ref file) = opt.output {
+        fs::write(file, output)
+            .with_context(|| format!("Failed to write to {}", file.display()))?;
+    } else {
+        let is_colored_output = match opt.color {
+            Color::Auto if atty::is(atty::Stream::Stdout) => true,
+            Color::Always => true,
+            _ => false,
+        };
+        if is_colored_output {
+            let language = opt.to.expect("Unable to determine output format");
+            ensure!(
+                !matches!(language, Format::Cbor | Format::MessagePack),
+                "{} cannot colored output",
+                language
+            );
 
-                let language = language.to_string();
-                PrettyPrinter::new()
-                    .input_from_bytes(&output)
-                    .language(&language)
-                    .print()
-                    .expect("Failed to colored output");
-            } else {
-                io::stdout()
-                    .write_all(&output)
-                    .context("Failed to write to stdout")?
-            }
+            let language = language.to_string();
+            PrettyPrinter::new()
+                .input_from_bytes(&output)
+                .language(&language)
+                .print()
+                .expect("Failed to colored output");
+        } else {
+            io::stdout()
+                .write_all(&output)
+                .context("Failed to write to stdout")?;
         }
     }
 

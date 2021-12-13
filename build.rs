@@ -19,7 +19,7 @@ fn vergen() {
         *config.git_mut().sha_kind_mut() = vergen::ShaKind::Short;
     }
 
-    vergen::vergen(config).expect("Failed to generate `cargo:` instructions")
+    vergen::vergen(config).expect("Failed to generate `cargo:` instructions");
 }
 
 fn generate_man_page(

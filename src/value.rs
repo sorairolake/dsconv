@@ -65,16 +65,16 @@ pub struct Integer {
 impl Integer {
     pub fn as_i64(&self) -> Option<i64> {
         match self.int {
-            Int::Pos(uint) if uint <= i64::MAX as u64 => Some(uint as i64),
+            Int::Pos(uint) if i64::try_from(uint).is_ok() => Some(uint as i64),
             Int::Neg(sint) => Some(sint),
-            _ => None,
+            Int::Pos(_) => None,
         }
     }
 
-    pub fn as_u64(&self) -> Option<u64> {
+    pub const fn as_u64(&self) -> Option<u64> {
         match self.int {
             Int::Pos(uint) => Some(uint),
-            _ => None,
+            Int::Neg(_) => None,
         }
     }
 }
@@ -91,11 +91,11 @@ impl fmt::Display for Integer {
 impl From<i64> for Integer {
     fn from(integer: i64) -> Self {
         if integer < 0 {
-            Integer {
+            Self {
                 int: Int::Neg(integer),
             }
         } else {
-            Integer {
+            Self {
                 int: Int::Pos(integer as u64),
             }
         }
@@ -104,7 +104,7 @@ impl From<i64> for Integer {
 
 impl From<u64> for Integer {
     fn from(integer: u64) -> Self {
-        Integer {
+        Self {
             int: Int::Pos(integer),
         }
     }
@@ -131,6 +131,6 @@ pub enum Color {
 
 impl Default for Color {
     fn default() -> Self {
-        Color::Auto
+        Self::Auto
     }
 }
