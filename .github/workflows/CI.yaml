@@ -103,7 +103,6 @@ jobs:
         ruby-version: 3.0
     - name: Install Asciidoctor
       run: |
-        gem update --system
         gem install asciidoctor
         asciidoctor -V
     - name: Build man pages
@@ -121,14 +120,17 @@ jobs:
     - name: Check if README is up-to-date
       run: |
         just update-readme
-        git diff --exit-code README.adoc
-    - name: AsciiDoc to DocBook
-      run: |
-        sed -i 's/^=/==/g' README.adoc
-        asciidoctor -b docbook5 README.adoc
-    - name: DocBook to GFM
-      uses: docker://pandoc/core:2.15
+        git diff --exit-code README.md
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v2
       with:
-        args: -f docbook -t gfm -o README-crates.io.md README.xml
-    - name: Check if README for crates.io is up-to-date
-      run: git diff --exit-code README-crates.io.md
+        node-version: 16
+    - name: Install dependencies
+      run: |
+        npm install markdownlint-cli prettier
+        npx markdownlint -V
+        npx prettier -v
+    - name: Check code formatted
+      run: npx prettier -c README.md
+    - name: Check no lint warnings
+      run: npx markdownlint README.md

@@ -1,38 +1,30 @@
-= dsconv
-:toc: macro
+# dsconv
 
-image:https://github.com/sorairolake/dsconv/workflows/CI/badge.svg[CI, link=https://github.com/sorairolake/dsconv/actions?query=workflow%3ACI]
-image:https://img.shields.io/crates/v/dsconv[Version, link=https://crates.io/crates/dsconv]
-image:https://img.shields.io/crates/l/dsconv[License, link=https://apache.org/licenses/LICENSE-2.0]
+[![CI](https://github.com/sorairolake/dsconv/workflows/CI/badge.svg)](https://github.com/sorairolake/dsconv/actions?query=workflow%3ACI)
+[![Version](https://img.shields.io/crates/v/dsconv)](https://crates.io/crates/dsconv)
+[![License](https://img.shields.io/crates/l/dsconv)](https://apache.org/licenses/LICENSE-2.0)
 
-*dsconv* is a command-line utility for converting from one data-serialization format to another.
+**dsconv** is a command-line utility for converting from one data-serialization format to another.
 
-toc::[]
+## Installation
 
-== Installation
+### Via a package manager
 
-=== Via a package manager
+| OS  | Method | Package                                     | Command                |
+| --- | ------ | ------------------------------------------- | ---------------------- |
+| Any | Cargo  | [`dsconv`](https://crates.io/crates/dsconv) | `cargo install dsconv` |
 
-|===
-|OS |Method |Package |Command
+### Via pre-built binaries
 
-|Any
-|Cargo
-|https://crates.io/crates/dsconv[`dsconv`]
-|`cargo install dsconv`
-|===
+Pre-built binaries for Linux, macOS and Windows are available on the [release page](https://github.com/sorairolake/dsconv/releases).
 
-=== Via pre-built binaries
+### How to build and install
 
-Pre-built binaries for Linux, macOS and Windows are available on the https://github.com/sorairolake/dsconv/releases[release page].
+Please see [BUILD.adoc](BUILD.adoc).
 
-=== How to build and install
+## Usage
 
-Please see link:BUILD.adoc[].
-
-== Usage
-
-....
+```text
 dsconv 0.3.0
 A data-serialization format converter
 
@@ -60,28 +52,28 @@ ARGS:
     <FILE>    Input from <FILE>
 
 See dsconv(1) for more details.
-....
+```
 
-See link:doc/man/man1/dsconv.1.adoc[`dsconv(1)`] for more details.
+See [`dsconv(1)`](doc/man/man1/dsconv.1.adoc) for more details.
 
-== Changelog
+## Changelog
 
-Please see link:CHANGELOG.adoc[].
+Please see [CHANGELOG.adoc](CHANGELOG.adoc).
 
-== Configuration
+## Configuration
 
 If you want to change the default behavior, you can use the configuration file.
 
-See link:doc/man/man5/dsconv-config.toml.5.adoc[`dsconv-config.toml(5)`] for more details.
+See [`dsconv-config.toml(5)`](doc/man/man5/dsconv-config.toml.5.adoc) for more details.
 
-== Contributing
+## Contributing
 
-Please see link:CONTRIBUTING.adoc[].
+Please see [CONTRIBUTING.adoc](CONTRIBUTING.adoc).
 
-== License
+## License
 
-Copyright (C) 2021 Shun Sakai (see link:AUTHORS.adoc[])
+Copyright (C) 2021 Shun Sakai (see [AUTHORS.adoc](AUTHORS.adoc))
 
 This program is distributed under the terms of the _Apache License 2.0_.
 
-See link:COPYING[] for more details.
+See [COPYING](COPYING) for more details.

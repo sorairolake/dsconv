@@ -35,16 +35,17 @@ default: build
 
 # Update README
 @update-readme:
-    csplit -s README.adoc '/^\.\.\.\.$/' '{1}'
+    csplit -s README.md '/^```/' '{1}'
     sed -i -n 1p xx01
     cargo -q run -- -h >> xx01
-    cat xx0[0-2] > README.adoc
+    cat xx0[0-2] > README.md
     rm xx0[0-2]
-    echo {{ if `git status --porcelain README.adoc` == '' { 'README is up-to-date' } else { 'README has been updated!' } }}
+    echo {{ if `git status --porcelain README.md` == '' { 'README is up-to-date' } else { 'README has been updated!' } }}
 
-# Generate GFM version README for crates.io
-@generate-gfm-readme:
-    sed -i 's/^=/==/g' README.adoc
-    asciidoctor -b docbook5 -o - README.adoc | pandoc -f docbook -t gfm -o README-crates.io.md
-    echo {{ if `git status --porcelain README-crates.io.md` == '' { 'README for crates.io is up-to-date' } else { 'README for crates.io has been updated!' } }}
-    git restore README.adoc
+# Run the code formatter for the README
+@fmt-readme:
+    npx prettier -w README.md
+
+# Run the linter for the README
+@lint-readme:
+    npx markdownlint --disable MD013 README.md
