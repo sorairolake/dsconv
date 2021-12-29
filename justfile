@@ -48,4 +48,4 @@ default: build
 
 # Run the linter for the README
 @lint-readme:
-    npx markdownlint --disable MD013 README.md
+    npx markdownlint README.md
