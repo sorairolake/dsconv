@@ -6,6 +6,7 @@
 
 use std::fmt::{self, Display};
 
+use clap::ArgEnum;
 use indexmap::IndexMap;
 use strum::{Display, EnumString, EnumVariantNames};
 
@@ -25,30 +26,54 @@ pub enum Format {
     Yaml,
 }
 
-#[derive(EnumString, EnumVariantNames)]
-#[strum(serialize_all = "UPPERCASE", ascii_case_insensitive)]
+#[derive(ArgEnum, Clone, Copy)]
+#[clap(rename_all = "lower")]
 pub enum InputFormat {
     Cbor,
-    #[strum(to_string = "Hjson")]
     Hjson,
     Json,
     Json5,
-    #[strum(to_string = "MessagePack")]
     MessagePack,
     Ron,
     Toml,
     Yaml,
 }
 
-#[derive(EnumString, EnumVariantNames)]
-#[strum(serialize_all = "UPPERCASE", ascii_case_insensitive)]
+impl From<InputFormat> for Format {
+    fn from(value: InputFormat) -> Self {
+        match value {
+            InputFormat::Cbor => Self::Cbor,
+            InputFormat::Hjson => Self::Hjson,
+            InputFormat::Json => Self::Json,
+            InputFormat::Json5 => Self::Json5,
+            InputFormat::MessagePack => Self::MessagePack,
+            InputFormat::Ron => Self::Ron,
+            InputFormat::Toml => Self::Toml,
+            InputFormat::Yaml => Self::Yaml,
+        }
+    }
+}
+
+#[derive(ArgEnum, Clone, Copy)]
+#[clap(rename_all = "lower")]
 pub enum OutputFormat {
     Cbor,
     Json,
-    #[strum(to_string = "MessagePack")]
     MessagePack,
     Toml,
     Yaml,
+}
+
+impl From<OutputFormat> for Format {
+    fn from(value: OutputFormat) -> Self {
+        match value {
+            OutputFormat::Cbor => Self::Cbor,
+            OutputFormat::Json => Self::Json,
+            OutputFormat::MessagePack => Self::MessagePack,
+            OutputFormat::Toml => Self::Toml,
+            OutputFormat::Yaml => Self::Yaml,
+        }
+    }
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -121,8 +146,9 @@ pub enum Value {
     Map(IndexMap<String, Value>),
 }
 
-#[derive(Display, EnumString, EnumVariantNames)]
+#[derive(ArgEnum, Clone, Display, EnumString, EnumVariantNames)]
 #[strum(serialize_all = "lowercase", ascii_case_insensitive)]
+#[clap(rename_all = "lower")]
 pub enum Color {
     Auto,
     Always,

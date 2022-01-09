@@ -29,27 +29,43 @@ dsconv 0.3.0
 A data-serialization format converter
 
 USAGE:
-    dsconv [FLAGS] [OPTIONS] [FILE]
-
-FLAGS:
-        --list-input-formats     List supported input formats
-        --list-output-formats    List supported output formats
-    -h, --help                   Prints help information
-    -V, --version                Prints version information
-
-OPTIONS:
-    -f, --from <FORMAT>                  Specify input format [possible values: CBOR, Hjson, JSON, JSON5, MessagePack,
-                                         RON, TOML, YAML]
-    -t, --to <FORMAT>                    Specify output format [possible values: CBOR, JSON, MessagePack, TOML, YAML]
-    -o, --output <FILE>                  Output to <FILE> instead of stdout
-    -p, --pretty <BOOLEAN>               Output as a pretty-printed string [possible values: true, false]
-        --color <WHEN>                   Specify when to use colored output [default: auto]  [possible values: auto,
-                                         always, never]
-        --generate-completion <SHELL>    Generate shell completion [possible values: zsh, bash, fish, powershell,
-                                         elvish]
+    dsconv [OPTIONS] [FILE]
 
 ARGS:
     <FILE>    Input from <FILE>
+
+OPTIONS:
+    -f, --from <FORMAT>
+            Specify input format [possible values: cbor, hjson, json, json5, messagepack, ron, toml,
+            yaml]
+
+    -t, --to <FORMAT>
+            Specify output format [possible values: cbor, json, messagepack, toml, yaml]
+
+        --list-input-formats
+            List supported input formats
+
+        --list-output-formats
+            List supported output formats
+
+    -o, --output <FILE>
+            Output to <FILE> instead of stdout
+
+    -p, --pretty <BOOLEAN>
+            Output as a pretty-printed string [possible values: true, false]
+
+        --color <WHEN>
+            Specify when to use colored output [default: auto] [possible values: auto, always,
+            never]
+
+        --generate-completion <SHELL>
+            Generate shell completion [possible values: bash, elvish, fish, powershell, zsh]
+
+    -h, --help
+            Print help information
+
+    -V, --version
+            Print version information
 
 See dsconv(1) for more details.
 ```

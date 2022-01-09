@@ -8,58 +8,46 @@ use std::io;
 use std::path::{Path, PathBuf};
 
 use anyhow::{ensure, Context, Result};
-use structopt::clap::{crate_name, AppSettings, Shell};
-use structopt::StructOpt;
-use strum::VariantNames;
+use clap::{crate_name, AppSettings, ArgEnum, IntoApp, Parser};
+use clap_complete::Shell;
 
 use crate::config::Config;
 use crate::long_version;
-use crate::value::{Color, Format, InputFormat, OutputFormat};
+use crate::value::{Color, InputFormat, OutputFormat};
 
-#[derive(StructOpt)]
-#[structopt(
+#[derive(Parser)]
+#[clap(
+    version,
     long_version = long_version!().as_str(),
     about,
     after_help = "See dsconv(1) for more details.",
-    settings = &[AppSettings::ColoredHelp, AppSettings::DeriveDisplayOrder]
+    setting = AppSettings::DeriveDisplayOrder
 )]
 pub struct Opt {
     /// Specify input format.
     ///
     /// This option can be omitted if the input file is specified and <FORMAT>
     /// can be determined from the filename extension.
-    #[structopt(
-        short,
-        long,
-        value_name = "FORMAT",
-        possible_values = &InputFormat::VARIANTS,
-        case_insensitive = true
-    )]
-    pub from: Option<Format>,
+    #[clap(short, long, value_name = "FORMAT", arg_enum, ignore_case = true)]
+    pub from: Option<InputFormat>,
 
     /// Specify output format.
     ///
     /// This option can be omitted if the output file is specified and <FORMAT>
     /// can be determined from the filename extension.
-    #[structopt(
-        short,
-        long,
-        value_name = "FORMAT",
-        possible_values = &OutputFormat::VARIANTS,
-        case_insensitive = true
-    )]
-    pub to: Option<Format>,
+    #[clap(short, long, value_name = "FORMAT", arg_enum, ignore_case = true)]
+    pub to: Option<OutputFormat>,
 
     /// List supported input formats.
-    #[structopt(long, conflicts_with = "list-output-formats")]
+    #[clap(long, conflicts_with = "list-output-formats")]
     pub list_input_formats: bool,
 
     /// List supported output formats.
-    #[structopt(long)]
+    #[clap(long)]
     pub list_output_formats: bool,
 
     /// Output to <FILE> instead of stdout.
-    #[structopt(short, long, value_name = "FILE", conflicts_with = "color")]
+    #[clap(short, long, value_name = "FILE", conflicts_with = "color")]
     pub output: Option<PathBuf>,
 
     /// Output as a pretty-printed string.
@@ -67,21 +55,21 @@ pub struct Opt {
     /// If the value is omitted, it is the same as selecting `true`.
     /// The value of this option is case-sensitive.
     /// This option is available when the output is JSON or TOML.
-    #[structopt(short, long, value_name = "BOOLEAN", possible_values = &["true", "false"])]
+    #[clap(short, long, value_name = "BOOLEAN", possible_values = &["true", "false"])]
     pub pretty: Option<Option<bool>>,
 
     /// Specify when to use colored output.
-    #[structopt(
+    #[clap(
         long,
         value_name = "WHEN",
-        possible_values = &Color::VARIANTS,
-        case_insensitive = true,
-        default_value
+        arg_enum,
+        ignore_case = true,
+        default_value_t
     )]
     pub color: Color,
 
     /// Input from <FILE>.
-    #[structopt(value_name = "FILE")]
+    #[clap(value_name = "FILE")]
     pub input: Option<PathBuf>,
 
     /// Generate shell completion.
@@ -89,7 +77,7 @@ pub struct Opt {
     /// The generated shell completion is output to stdout.
     /// To output as a shell completion file, specify the directory to store
     /// using `--output`=<OUT_DIR>.
-    #[structopt(long, value_name = "SHELL", possible_values = &Shell::variants())]
+    #[clap(long, value_name = "SHELL", arg_enum)]
     pub generate_completion: Option<Shell>,
 }
 
@@ -111,7 +99,12 @@ impl Opt {
 
     /// Generate shell completion to stdout.
     pub fn generate_completion(shell: Shell) {
-        Self::clap().gen_completions_to(crate_name!(), shell, &mut io::stdout());
+        clap_complete::generate(
+            shell,
+            &mut Self::into_app(),
+            crate_name!(),
+            &mut io::stdout(),
+        );
     }
 
     /// Generate shell completion to a file.
@@ -122,11 +115,12 @@ impl Opt {
             .context("Failed to generate shell completion to a file")?;
         ensure!(out_dir.is_dir(), "Output destination is not a directory");
 
-        Self::clap().gen_completions(crate_name!(), shell, &out_dir);
+        let dest =
+            clap_complete::generate_to(shell, &mut Self::into_app(), crate_name!(), out_dir)?;
         eprintln!(
             "Generated a shell completion file of the {} in {}",
             shell,
-            out_dir.display()
+            dest.display()
         );
 
         Ok(())

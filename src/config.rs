@@ -8,9 +8,9 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use anyhow::{Context, Result};
+use clap::crate_name;
 use directories::ProjectDirs;
 use serde::Deserialize;
-use structopt::clap::crate_name;
 
 #[derive(Deserialize)]
 pub struct Config {

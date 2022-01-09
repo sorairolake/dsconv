@@ -17,21 +17,20 @@ use std::str;
 
 use anyhow::{bail, ensure, Context, Result};
 use bat::PrettyPrinter;
+use clap::{ArgEnum, Parser};
 use dialoguer::theme::ColorfulTheme;
 use rmpv::Value as MessagePack;
 use ron::Value as Ron;
 use serde_cbor::Value as Cbor;
 use serde_json::Value as Json;
 use serde_yaml::Value as Yaml;
-use structopt::StructOpt;
-use strum::VariantNames;
 use toml::Value as Toml;
 
 use crate::cli::Opt;
 use crate::value::{Color, Format, InputFormat, OutputFormat, Value};
 
 fn main() -> Result<()> {
-    let opt = Opt::from_args().apply_config()?;
+    let opt = Opt::parse().apply_config()?;
 
     if let Some(shell) = opt.generate_completion {
         if let Some(out_dir) = opt.output {
@@ -44,15 +43,15 @@ fn main() -> Result<()> {
     }
 
     if opt.list_input_formats {
-        for input_format in InputFormat::VARIANTS {
-            println!("{}", input_format);
+        for input_format in InputFormat::value_variants() {
+            println!("{}", Format::from(*input_format));
         }
 
         return Ok(());
     }
     if opt.list_output_formats {
-        for output_format in OutputFormat::VARIANTS {
-            println!("{}", output_format);
+        for output_format in OutputFormat::value_variants() {
+            println!("{}", Format::from(*output_format));
         }
 
         return Ok(());
@@ -77,7 +76,7 @@ fn main() -> Result<()> {
         }
     };
 
-    let ir: Value = match opt.from.or_else(|| {
+    let ir: Value = match opt.from.map(Format::from).or_else(|| {
         opt.input.clone().and_then(|i| {
             i.extension()
                 .and_then(OsStr::to_str)
@@ -130,7 +129,7 @@ fn main() -> Result<()> {
         None => bail!("Unable to determine input format"),
     };
 
-    let output = match opt.to.or_else(|| {
+    let output = match opt.to.map(Format::from).or_else(|| {
         opt.output.clone().and_then(|o| {
             o.extension()
                 .and_then(OsStr::to_str)
@@ -194,7 +193,7 @@ fn main() -> Result<()> {
             _ => false,
         };
         if is_colored_output {
-            let language = opt.to.expect("Unable to determine output format");
+            let language = Format::from(opt.to.expect("Unable to determine output format"));
             ensure!(
                 !matches!(language, Format::Cbor | Format::MessagePack),
                 "{} cannot colored output",

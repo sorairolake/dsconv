@@ -17,6 +17,7 @@ toc::[]
 
 * Include the commit hash and the committer date of Git in output of `--version`, if available
 * Print detailed help information in `--help`
+* Replace StructOpt with clap
 
 == {compare-url}/v0.2.0\...v0.3.0[0.3.0] - 2021-11-10
 
