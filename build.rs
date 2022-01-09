@@ -12,7 +12,7 @@ use std::process::{Command, ExitStatus};
 fn vergen() {
     let mut config = vergen::Config::default();
 
-    if vergen::vergen(config).is_err() {
+    if vergen::vergen(config.clone()).is_err() {
         *config.git_mut().enabled_mut() = false;
     } else {
         *config.git_mut().commit_timestamp_kind_mut() = vergen::TimestampKind::DateOnly;
