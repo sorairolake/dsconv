@@ -6,7 +6,7 @@
 
 = dsconv-config.toml(5)
 // Specify in UTC.
-:docdate: 2021-06-13
+:docdate: 2022-04-19
 :doctype: manpage
 ifdef::revnumber[:mansource: dsconv {revnumber}]
 :manmanual: File Formats Manual
@@ -25,7 +25,8 @@ A file format of this file is TOML.
 == FORMAT
 
 *pretty*::
-  Output as a pretty-printed string (default: *false*).
+  Output as a pretty-printed string.
+  Default is *false*.
 
 == FILES
 
@@ -38,14 +39,6 @@ _$HOME/Library/Application Support/dsconv/config.toml_::
 
 _%APPDATA%\dsconv\config\config.toml_::
   The location of the configuration file on Windows.
-
-== NOTES
-
-Source code repository::
-  https://github.com/sorairolake/dsconv
-
-Specifications of TOML::
-  https://toml.io/
 
 == EXAMPLES
 

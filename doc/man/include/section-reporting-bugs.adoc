@@ -6,4 +6,5 @@
 
 == REPORTING BUGS
 
-Bugs and feature requests can be reported at https://github.com/sorairolake/dsconv/issues.
+Bugs can be reported on GitHub at:{blank}::
+  https://github.com/sorairolake/dsconv/issues

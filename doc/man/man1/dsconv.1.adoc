@@ -6,7 +6,7 @@
 
 = dsconv(1)
 // Specify in UTC.
-:docdate: 2021-11-07
+:docdate: 2022-04-19
 :doctype: manpage
 ifdef::revnumber[:mansource: dsconv {revnumber}]
 :manmanual: General Commands Manual
@@ -31,11 +31,11 @@ Unless otherwise noted, the value of each option is case-insensitive.
 
 === Conversion options
 
-*-f* _FORMAT_, *--from*=_FORMAT_::
+*-f*, *--from* _FORMAT_::
   Specify input format.
   This option can be omitted if the input file is specified and _FORMAT_ can be determined from the filename extension.
 
-  _FORMAT_ can be:::
+  Possible values:{blank}:::
 
     * *cbor* (CBOR)
     * *hjson* (Hjson)
@@ -46,11 +46,11 @@ Unless otherwise noted, the value of each option is case-insensitive.
     * *toml* (TOML)
     * *yaml* (YAML)
 
-*-t* _FORMAT_, *--to*=_FORMAT_::
+*-t*, *--to* _FORMAT_::
   Specify output format.
   This option can be omitted if the output file is specified and _FORMAT_ can be determined from the filename extension.
 
-  _FORMAT_ can be:::
+  Possible values:{blank}:::
 
     * *cbor* (CBOR)
     * *json* (JSON)
@@ -66,19 +66,20 @@ Unless otherwise noted, the value of each option is case-insensitive.
 
 === I/O options
 
-*-o* _FILE_, *--output*=_FILE_::
+*-o*, *--output* _FILE_::
   Output to _FILE_ instead of stdout.
 
-*-p* [*true*|*false*], *--pretty*=[*true*|*false*]::
+*-p*, *--pretty* [*true*|*false*]::
   Output as a pretty-printed string.
   If the value is omitted, it is the same as selecting *true*.
   The value of this option is case-sensitive.
-  This option is available when the output is JSON or TOML (default: *false*).
+  This option is available when the output is JSON or TOML.
+  Default is *false*.
 
-*--color*=_WHEN_::
+*--color* _WHEN_::
   Specify when to use colored output.
 
-  _WHEN_ can be:::
+  Possible values:{blank}:::
 
     * *auto* (display colors when the terminal is detected, default)
     * *always* (always display colors)
@@ -92,12 +93,12 @@ Unless otherwise noted, the value of each option is case-insensitive.
 *-V*, *--version*::
   Print the version number and exit.
 
-*--generate-completion*=_SHELL_::
+*--generate-completion* _SHELL_::
   Generate shell completion.
   The generated shell completion is output to stdout.
-  To output as a shell completion file, specify the directory to store using *--output*=_OUT_DIR_.
+  To output as a shell completion file, specify the directory to store using *--output* _OUT_DIR_.
 
-  _SHELL_ can be:::
+  Possible values:{blank}:::
 
     * *bash* (Bash)
     * *elvish* (Elvish)
@@ -110,15 +111,10 @@ Unless otherwise noted, the value of each option is case-insensitive.
 If successful, return 0 as the exit status.
 Otherwise, return non-zero as the exit status.
 
-== NOTES
-
-Source code repository::
-  https://github.com/sorairolake/dsconv
-
 == EXAMPLES
 
-Convert a JSON file to TOML::
-  $ *{manname} -t toml file.json*
+Convert a JSON file to TOML:{blank}::
+  $ *{manname} -t toml input.json*
 
 include::{includedir}/section-reporting-bugs.adoc[]
 
