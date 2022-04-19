@@ -7,7 +7,8 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on https://keepachangelog.com/[Keep a Changelog], and this project adheres to https://semver.org/[Semantic Versioning].
+The format is based on https://keepachangelog.com/[Keep a Changelog], and this
+project adheres to https://semver.org/[Semantic Versioning].
 
 toc::[]
 
@@ -15,7 +16,8 @@ toc::[]
 
 === Changed
 
-* Include the commit hash and the committer date of Git in output of `--version`, if available
+* Include the commit hash and the committer date of Git in output of
+  `--version`, if available
 * Print detailed help information in `--help`
 * Replace StructOpt with clap
 

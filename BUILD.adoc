@@ -12,7 +12,8 @@ This document describes how to build and install *dsconv* from source code.
 
 == Building and installing from source
 
-First, either download the source archive or clone the https://github.com/sorairolake/dsconv[Git repository].
+First, either download the source archive or clone the
+https://github.com/sorairolake/dsconv[Git repository].
 
 .To clone the Git repository
 [source, shell]
@@ -28,9 +29,11 @@ $ cargo build --release
 ----
 
 NOTE: If Asciidoctor is available, man pages are generated.
-Run `fd -I . target/{asterisk}/build/dsconv-{asterisk}/out` to find the generated.
+Run `fd -I . target/{asterisk}/build/dsconv-{asterisk}/out` to find the
+generated.
 
-Now an executable is generated in `$CARGO_TARGET_DIR/release`, so copy this wherever you like.
+Now an executable is generated in `$CARGO_TARGET_DIR/release`, so copy this
+wherever you like.
 
 .To generate shell completion
 [source, shell]
@@ -50,7 +53,8 @@ $ cargo run -- --generate-completion <SHELL> -o <OUT_DIR>
   Enable the https://github.com/rust-onig/rust-onig[Oniguruma regex library].
 
 `regex-fancy`::
-  Enable the https://github.com/fancy-regex/fancy-regex[fancy-regex regex library].
+  Enable the
+  https://github.com/fancy-regex/fancy-regex[fancy-regex regex library].
   This feature is enabled by default.
 
 IMPORTANT: You need to enable either of the preceding to build.

@@ -4,7 +4,8 @@
 [![Version](https://img.shields.io/crates/v/dsconv)](https://crates.io/crates/dsconv)
 [![License](https://img.shields.io/crates/l/dsconv)](https://apache.org/licenses/LICENSE-2.0)
 
-**dsconv** is a command-line utility for converting from one data-serialization format to another.
+**dsconv** is a command-line utility for converting from one data-serialization
+format to another.
 
 ## Installation
 
@@ -16,7 +17,8 @@
 
 ### Via pre-built binaries
 
-Pre-built binaries for Linux, macOS and Windows are available on the [release page](https://github.com/sorairolake/dsconv/releases).
+Pre-built binaries for Linux, macOS and Windows are available on the
+[release page](https://github.com/sorairolake/dsconv/releases).
 
 ### How to build and install
 
@@ -80,7 +82,8 @@ Please see [CHANGELOG.adoc](CHANGELOG.adoc).
 
 If you want to change the default behavior, you can use the configuration file.
 
-See [`dsconv-config.toml(5)`](doc/man/man5/dsconv-config.toml.5.adoc) for more details.
+See [`dsconv-config.toml(5)`](doc/man/man5/dsconv-config.toml.5.adoc) for more
+details.
 
 ## Contributing
 

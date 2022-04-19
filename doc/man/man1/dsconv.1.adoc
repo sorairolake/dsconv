@@ -22,7 +22,8 @@ dsconv - a data-serialization format converter
 
 == DESCRIPTION
 
-*{manname}* is a command-line utility for converting from one data-serialization format to another.
+*{manname}* is a command-line utility for converting from one
+data-serialization format to another.
 If _FILE_ is not specified, the input is read from stdin.
 
 == OPTIONS
@@ -33,7 +34,8 @@ Unless otherwise noted, the value of each option is case-insensitive.
 
 *-f*, *--from* _FORMAT_::
   Specify input format.
-  This option can be omitted if the input file is specified and _FORMAT_ can be determined from the filename extension.
+  This option can be omitted if the input file is specified and _FORMAT_ can be
+  determined from the filename extension.
 
   Possible values:{blank}:::
 
@@ -48,7 +50,8 @@ Unless otherwise noted, the value of each option is case-insensitive.
 
 *-t*, *--to* _FORMAT_::
   Specify output format.
-  This option can be omitted if the output file is specified and _FORMAT_ can be determined from the filename extension.
+  This option can be omitted if the output file is specified and _FORMAT_ can
+  be determined from the filename extension.
 
   Possible values:{blank}:::
 
@@ -96,7 +99,8 @@ Unless otherwise noted, the value of each option is case-insensitive.
 *--generate-completion* _SHELL_::
   Generate shell completion.
   The generated shell completion is output to stdout.
-  To output as a shell completion file, specify the directory to store using *--output* _OUT_DIR_.
+  To output as a shell completion file, specify the directory to store using
+  *--output* _OUT_DIR_.
 
   Possible values:{blank}:::
 
