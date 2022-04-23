@@ -37,7 +37,7 @@ Unless otherwise noted, the value of each option is case-insensitive.
   This option can be omitted if the input file is specified and _FORMAT_ can be
   determined from the filename extension.
 
-  Possible values:{blank}:::
+  Possible values for this option are:{blank}:::
 
     * *cbor* (CBOR)
     * *hjson* (Hjson)
@@ -53,7 +53,7 @@ Unless otherwise noted, the value of each option is case-insensitive.
   This option can be omitted if the output file is specified and _FORMAT_ can
   be determined from the filename extension.
 
-  Possible values:{blank}:::
+  Possible values for this option are:{blank}:::
 
     * *cbor* (CBOR)
     * *json* (JSON)
@@ -82,7 +82,7 @@ Unless otherwise noted, the value of each option is case-insensitive.
 *--color* _WHEN_::
   Specify when to use colored output.
 
-  Possible values:{blank}:::
+  Possible values for this option are:{blank}:::
 
     * *auto* (display colors when the terminal is detected, default)
     * *always* (always display colors)
@@ -102,7 +102,7 @@ Unless otherwise noted, the value of each option is case-insensitive.
   To output as a shell completion file, specify the directory to store using
   *--output* _OUT_DIR_.
 
-  Possible values:{blank}:::
+  Possible values for this option are:{blank}:::
 
     * *bash* (Bash)
     * *elvish* (Elvish)
