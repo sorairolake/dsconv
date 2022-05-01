@@ -33,15 +33,6 @@ default: build
 @lint-github-actions:
     actionlint
 
-# Update README
-@update-readme:
-    csplit -s README.md '/^```/' '{1}'
-    sed -i -n 1p xx01
-    cargo -q run -- -h >> xx01
-    cat xx0[0-2] > README.md
-    rm xx0[0-2]
-    echo {{ if `git status --porcelain README.md` == '' { 'README is up-to-date' } else { 'README has been updated!' } }}
-
 # Run the code formatter for the README
 @fmt-readme:
     npx prettier -w README.md

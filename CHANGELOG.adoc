@@ -21,6 +21,10 @@ toc::[]
 * Print detailed help information in `--help`
 * Replace StructOpt with clap
 
+=== Removed
+
+* Remove the help information from the usage section
+
 == {compare-url}/v0.2.0\...v0.3.0[0.3.0] - 2021-11-10
 
 === Added

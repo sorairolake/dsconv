@@ -107,20 +107,6 @@ jobs:
         asciidoctor -V
     - name: Build man pages
       run: asciidoctor -b manpage doc/man/man*/*.adoc
-    - name: Clean the working tree
-      run: git clean -f
-    - name: Setup Rust toolchain
-      uses: actions-rs/toolchain@v1.0.6
-      with:
-        toolchain: stable
-        override: true
-        profile: minimal
-    - name: Setup the just command runner
-      uses: extractions/setup-just@v1
-    - name: Check if README is up-to-date
-      run: |
-        just update-readme
-        git diff --exit-code README.md
     - name: Setup Node.js environment
       uses: actions/setup-node@v2
       with:

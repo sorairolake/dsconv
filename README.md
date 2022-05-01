@@ -26,53 +26,7 @@ Please see [BUILD.adoc](BUILD.adoc).
 
 ## Usage
 
-```text
-dsconv 0.3.0
-A data-serialization format converter
-
-USAGE:
-    dsconv [OPTIONS] [FILE]
-
-ARGS:
-    <FILE>    Input from <FILE>
-
-OPTIONS:
-    -f, --from <FORMAT>
-            Specify input format [possible values: cbor, hjson, json, json5, messagepack, ron, toml,
-            yaml]
-
-    -t, --to <FORMAT>
-            Specify output format [possible values: cbor, json, messagepack, toml, yaml]
-
-        --list-input-formats
-            List supported input formats
-
-        --list-output-formats
-            List supported output formats
-
-    -o, --output <FILE>
-            Output to <FILE> instead of stdout
-
-    -p, --pretty <BOOLEAN>
-            Output as a pretty-printed string [possible values: true, false]
-
-        --color <WHEN>
-            Specify when to use colored output [default: auto] [possible values: auto, always,
-            never]
-
-        --generate-completion <SHELL>
-            Generate shell completion [possible values: bash, elvish, fish, powershell, zsh]
-
-    -h, --help
-            Print help information
-
-    -V, --version
-            Print version information
-
-See dsconv(1) for more details.
-```
-
-See [`dsconv(1)`](doc/man/man1/dsconv.1.adoc) for more details.
+Please see [`dsconv(1)`](doc/man/man1/dsconv.1.adoc).
 
 ## Changelog
 
